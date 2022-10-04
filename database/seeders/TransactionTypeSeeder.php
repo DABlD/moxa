@@ -15,18 +15,13 @@ class TransactionTypeSeeder extends Seeder
     public function run()
     {
         $array = [
-            ["Physical Count", "+", 0, 0],
-            ["Sales", "-", 0, 0],
-            ["Sales Return", "+", 0, 0],
-            ["Ending Inventory", null, 0, 0],
-            ["Purchase Order", "+", 0, 0],
-            ["Issued To", "-", 0, 0],
-            ["Receive", "+", 0, 0],
-            ["Adj. Entry Plus", "+", 0, 0],
-            ["Adj. Entry Minus", "-", 0, 0]
+            ["Power", null, 0, 0],
+            ["Water", null, 0, 0],
+            ["Electricity", null, 0, 0],
+            ["Air", null, 0, 0]
         ];
 
-        for($i = 2; $i <= 4; $i++){
+        for($i = 1; $i <= 2; $i++){
             foreach($array as $type){
                 $this->addTransactionType($type[0], $type[1], $type[2], $type[3], $i);
             }

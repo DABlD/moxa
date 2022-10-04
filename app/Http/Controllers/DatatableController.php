@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Request as Req, Rx, Location, Data};
+use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Request as Req, Rx, Location, Data, Moxa};
 use DB;
 
 class DatatableController extends Controller
@@ -72,6 +72,49 @@ class DatatableController extends Controller
         foreach($array as $item){
             $item->actions = $item->actions;
         }
+        echo json_encode($array->toArray());
+    }
+
+    public function moxa(Request $req){
+        $array = Moxa::select($req->select);
+
+        // IF HAS SORT PARAMETER $ORDER
+        if($req->order){
+            $array = $array->orderBy($req->order[0], $req->order[1]);
+        }
+
+        // IF HAS WHERE
+        if($req->where){
+            $array = $array->where($req->where[0], $req->where[1]);
+        }
+
+        if($req->category_id != "%%"){
+            $array = $array->where('category_id', 'LIKE', $req->category_id);
+        }
+
+        $array = $array->get();
+
+        // IF HAS GROUP
+        if($req->group){
+            $array = $array->groupBy($req->group);
+        }
+
+        // IF HAS LOAD
+        if($array->count() && $req->load){
+            foreach($req->load as $table){
+                $array->load($table);
+            }
+        }
+
+        foreach($array as $item){
+            $item->actions = $item->actions;
+        }
+
+
+        if($req->category_id == "%%"){
+            $array = $this->addCategories($array)->values();
+        }
+
         echo json_encode($array->toArray());
     }
 
@@ -230,19 +273,13 @@ class DatatableController extends Controller
 
         foreach($categories as $category){
 
-            $temp = new Medicine();
+            $temp = new Moxa();
             $temp->id = null;
-            $temp->category = $category;
-            $temp->image = null;
-            $temp->code = null;
-            $temp->brand = null;
+            $temp->category = (object)["name" => $category->name];
             $temp->name = null;
-            $temp->packaging = null;
-            $temp->unit_price = null;
-            $temp->cost_price = null;
-            $temp->reorder = (object)["point" => null, "stock" => null];
-            $temp->point = null;
-            $temp->rs = null;
+            $temp->location = null;
+            $temp->floor = null;
+            $temp->utility = null;
             $temp->actions = null;
 
             $array->push($temp);
@@ -253,14 +290,6 @@ class DatatableController extends Controller
 
     public function transactionType(Request $req){
         $array = TransactionType::select($req->select);
-
-        if(auth()->user()->role == "Admin"){
-            $array = $array->where('admin_id', auth()->user()->id);
-        }
-        elseif(auth()->user()->role == "RHU"){
-            $array = $array->join('rhus as r', 'r.admin_id', '=', 'transaction_types.admin_id');
-            $array = $array->where('r.user_id', auth()->user()->id);
-        }
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){

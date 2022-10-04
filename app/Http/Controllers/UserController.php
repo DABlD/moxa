@@ -63,7 +63,7 @@ class UserController extends Controller
 
     private function initAdmin($user){
         $array = [
-            ["app_name", "SEDI"],
+            ["app_name", "MOXA"],
             ["logo_img", 'images/sedi_banner.png'],
             ["login_banner_img", "images/sedi_logo.png"],
             ["login_bg_img", null],
@@ -83,27 +83,22 @@ class UserController extends Controller
             $data->save();
         }
 
-        $array = [
-            ["Physical Count", "+", 0, 0],
-            ["Sales", "-", 0, 0],
-            ["Sales Return", "+", 0, 0],
-            ["Ending Inventory", null, 0, 0],
-            ["Purchase Order", "+", 0, 0],
-            ["Issued To", "-", 0, 0],
-            ["Receive", "+", 0, 0],
-            ["Adj. Entry Plus", "+", 0, 0],
-            ["Adj. Entry Minus", "-", 0, 0]
-        ];
+        // $array = [
+        //     ["Power", null, 0, 0],
+        //     ["Water", null, 0, 0],
+        //     ["Electricity", null, 0, 0],
+        //     ["Air", null, 0, 0]
+        // ];
 
-        foreach($array as $type){
-            $tType = new TransactionType();
-            $tType->admin_id = auth()->user()->id;
-            $tType->type = $type[0];
-            $tType->operator = $type[1];
-            $tType->inDashboard = $type[2];
-            $tType->canDelete = $type[3];
-            $tType->save();
-        }
+        // foreach($array as $type){
+        //     $tType = new TransactionType();
+        //     $tType->admin_id = auth()->user()->id;
+        //     $tType->type = $type[0];
+        //     $tType->operator = $type[1];
+        //     $tType->inDashboard = $type[2];
+        //     $tType->canDelete = $type[3];
+        //     $tType->save();
+        // }
     }
 
     public function update(Request $req){

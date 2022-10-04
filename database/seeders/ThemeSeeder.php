@@ -15,7 +15,7 @@ class ThemeSeeder extends Seeder
     public function run()
     {
         $array = [
-            ["app_name", "SEDI"],
+            ["app_name", "MOXA"],
             ["logo_img", 'images/sedi_banner.png'],
             ["login_banner_img", "images/sedi_logo.png"],
             ["login_bg_img", null],
@@ -27,7 +27,7 @@ class ThemeSeeder extends Seeder
             ["table_group_font_color", "#ffffff"],
         ];
 
-        for($i = 1; $i <= 1; $i++){ 
+        for($i = 1; $i <= 2; $i++){ 
             foreach($array as $theme){
                 $this->seed($theme[0], $theme[1], $i);
             }

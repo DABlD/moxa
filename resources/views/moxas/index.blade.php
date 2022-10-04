@@ -13,9 +13,7 @@
                             List
                         </h3>
 
-                        @if(auth()->user()->role == "Admin")
-                        	@include('medicines.includes.toolbar')
-                        @endif
+                        @include('moxas.includes.toolbar')
                     </div>
 
                     <div class="card-body table-responsive">
@@ -23,14 +21,15 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
-                    				<th>Category</th>
                     				<th>Name</th>
+                    				<th>Serial</th>
                     				<th>Location</th>
                     				<th>Floor</th>
                     				<th>Utility</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
+
                     		<tbody>
                     		</tbody>
                     	</table>
@@ -47,122 +46,63 @@
 @push('styles')
 	<link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+	{{-- <link rel="stylesheet" href="{{ asset('css/datatables-jquery.min.css') }}"> --}}
 @endpush
 
 @push('scripts')
 	<script src="{{ asset('js/datatables.min.js') }}"></script>
 	<script src="{{ asset('js/select2.min.js') }}"></script>
+	{{-- <script src="{{ asset('js/datatables-jquery.min.js') }}"></script> --}}
 
 	<script>
-		var category_id = "%%";
-
 		$(document).ready(()=> {
 			var table = $('#table').DataTable({
 				ajax: {
 					url: "{{ route('datatable.moxa') }}",
                 	dataType: "json",
-                	dataSrc:'',
-					data: f => {
-						f.select = "*";
-						f.where = ['user_id', {{ auth()->user()->id }}];
-						f.load = ['category']
-						f.category_id = category_id;
+                	dataSrc: "",
+					data: {
+						table: 'Moxa',
+						select: "*",
+						where: ['user_id', {{ auth()->user()->id }}]
 					}
 				},
 				columns: [
 					{data: 'id'},
-					{data: 'category.name', visible: false},
+					{data: 'serial'},
 					{data: 'name'},
 					{data: 'location'},
 					{data: 'floor'},
 					{data: 'utility'},
-					{data: 'actions'}
+					{data: 'actions'},
 				],
-        		order: [[1, 'asc']],
         		pageLength: 25,
-        		rowCallback: function( row, data, index ) {
-				    if (data['id'] == null) {
-				        $(row).hide();
-				    }
-				},
-		        drawCallback: function (settings) {
-		            let api = this.api();
-		            let rows = api.rows({ page: 'current' }).nodes();
-		            let last = null;
-		 
-		            api.column(1, { page: 'current' })
-		                .data()
-		                .each(function (medicine, i) {
-		                    if (last !== medicine) {
-		                        $(rows)
-		                            .eq(i)
-		                            .before(`
-		                            	<tr class="group">
-		                            		<td colspan="5">
-		                            			${medicine}
-		                            		</td>
-		                            	</tr>
-		                            `);
-		 
-		                        last = medicine;
-		                    }
-		                });
-
-
-					let groups = $('tr.group td');
-
-					if(groups.length){
-						groups.each((index, row) => {
-							let category = row.innerText;
-							$(row).after(`
-								<td>
-									@if(auth()->user()->role == "Admin")
-									<a class='btn btn-primary btn-sm' data-toggle='tooltip' title='Add Item' onclick='create("${category}")'>
-										<i class='fas fa-plus fa-2xl'></i>
-									</a>
-									<a class='btn btn-warning btn-sm' data-toggle='tooltip' title='Edit Category' onclick='editCategory("${category}")'>
-										<i class='fas fa-pencil'></i>
-									</a>
-									@endif
-								</td>
-							`);
-						});
-					}
-				}
+				// drawCallback: function(){
+				// 	init();
+				// }
 			});
-
-			$.ajax({
-				url: '{{ route('medicine.getCategories') }}',
-				data: {
-					select: ['id', 'name'],
-					where: ['admin_id', {{ auth()->user()->id }}]
-				},
-				success: rhus => {
-					rhus = JSON.parse(rhus);
-
-					rhuString = "";
-					rhus.forEach(rhu => {
-						rhuString += `
-							<option value="${rhu.id}">${rhu.name}</option>
-						`;
-					});
-
-					$('#user_id').append(rhuString);
-					$('#user_id').select2();
-
-					$('#user_id').on('change', e => {
-						category_id = e.target.value;
-						reload();
-					});
-				}
-			})
 		});
 
-		function create(selectedCategory = null){
+		function view(id){
+			$.ajax({
+				url: "{{ route('moxa.get') }}",
+				data: {
+					select: '*',
+					where: ['id', id],
+					load: ['user']
+				},
+				success: moxa => {
+					moxa = JSON.parse(moxa)[0];
+					showDetails(moxa);
+				}
+			})
+		}
+
+		function create(){
 			Swal.fire({
 				html: `
-	                ${input("name", "Name", null, 3, 9)}
 	                ${input("serial", "Serial", null, 3, 9)}
+	                ${input("name", "Name", null, 3, 9)}
 	                ${input("location", "Location", null, 3, 9)}
 	                ${input("floor", "Floor", null, 3, 9)}
 					<div class="row iRow">
@@ -186,6 +126,7 @@
 						url: "{{ route('transactionType.get') }}",
 						data: {
 							select: "*",
+							where: ['admin_id', {{ auth()->user()->id }}]
 						},
 						success: moxas => {
 							moxas = JSON.parse(moxas);
@@ -226,9 +167,8 @@
 						url: "{{ route('moxa.store') }}",
 						type: "POST",
 						data: {
-							category: selectedCategory,
-							name: $("[name='name']").val(),
 							serial: $("[name='serial']").val(),
+							name: $("[name='name']").val(),
 							location: $("[name='location']").val(),
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
@@ -243,116 +183,12 @@
 			});
 		}
 
-		function createCategory(){
-			Swal.fire({
-				html: `
-	                ${input("name", "Name", null, 3, 9)}
-				`,
-				width: '400px',
-				confirmButtonText: 'Add',
-				showCancelButton: true,
-				cancelButtonColor: errorColor,
-				cancelButtonText: 'Cancel',
-				preConfirm: () => {
-				    swal.showLoading();
-				    return new Promise(resolve => {
-				    	let bool = true;
-			            if($('.swal2-container input:placeholder-shown').length || $("[name='rhu_id']").val() == ""){
-			                Swal.showValidationMessage('Fill all fields');
-			            }
-			            else{
-			            	let bool = false;
-
-				            setTimeout(() => {resolve()}, 500);
-			            }
-
-			            bool ? setTimeout(() => {resolve()}, 500) : "";
-				    });
-				},
-			}).then(result => {
-				if(result.value){
-					$.ajax({
-						url: "{{ route('medicine.storeCategory') }}",
-						type: "POST",
-						data: {
-							name: $("[name='name']").val(),
-							_token: $('meta[name="csrf-token"]').attr('content')
-						},
-						success: () => {
-							ss("Success");
-							reload();
-						}
-					})
-				}
-			});
-		}
-
-		function editCategory(category){
-			Swal.fire({
-				html: `
-	                ${input("name", "Name", category, 3, 9)}
-				`,
-				width: '400px',
-				confirmButtonText: 'Update',
-				showCancelButton: true,
-				cancelButtonColor: errorColor,
-				cancelButtonText: 'Cancel',
-				preConfirm: () => {
-				    swal.showLoading();
-				    return new Promise(resolve => {
-				    	let bool = true;
-			            if($('.swal2-container input:placeholder-shown').length || $("[name='rhu_id']").val() == ""){
-			                Swal.showValidationMessage('Fill all fields');
-			            }
-			            else{
-			            	let bool = false;
-
-				            setTimeout(() => {resolve()}, 500);
-			            }
-
-			            bool ? setTimeout(() => {resolve()}, 500) : "";
-				    });
-				},
-			}).then(result => {
-				if(result.value){
-					$.ajax({
-						url: "{{ route('medicine.updateCategory') }}",
-						type: "POST",
-						data: {
-							where: ["name", category],
-							name: $("[name='name']").val(),
-							_token: $('meta[name="csrf-token"]').attr('content')
-						},
-						success: () => {
-							ss("Success");
-							reload();
-						}
-					})
-				}
-			});
-		}
-
-		function view(id){
-			$.ajax({
-				url: "{{ route('moxa.get') }}",
-				data: {
-					select: '*',
-					where: ['id', id],
-					load: ["category"]
-				},
-				success: medicine => {
-					medicine = JSON.parse(medicine)[0];
-					showDetails(medicine);
-				}
-			})
-		}
-
 		function showDetails(moxa){
 			Swal.fire({
 				html: `
-	                ${input("id", "", moxa.id, 3, 9, 'hidden')}
+	                ${input("id", "", moxa.user.id, 3, 9, 'hidden')}
+	                ${input("serial", "Name", moxa.serial, 3, 9)}
 	                ${input("name", "Name", moxa.name, 3, 9)}
-	                ${input("serial", "Serial", moxa.serial, 3, 9)}
 	                ${input("location", "Location", moxa.location, 3, 9)}
 	                ${input("floor", "Floor", moxa.floor, 3, 9)}
 					<div class="row iRow">
@@ -397,6 +233,9 @@
 						}
 					})
 				},
+                // showDenyButton: true,
+                // denyButtonColor: successColor,
+                // denyButtonText: 'Change Password',
 				preConfirm: () => {
 				    swal.showLoading();
 				    return new Promise(resolve => {
@@ -415,20 +254,29 @@
 			}).then(result => {
 				if(result.value){
 					swal.showLoading();
+					
+					let serial = $("[name='serial']").val();
+					let name = $("[name='name']").val();
+					let location = $("[name='location']").val();
+					let floor = $("[name='floor']").val();
+					let utility = $("[name='utility']").val();
+					let id = $("[name='id']").val();
+					
 					update({
 						url: "{{ route('moxa.update') }}",
 						data: {
-							id: moxa.id,
-							name: $("[name='name']").val(),
+							id: id,
 							serial: $("[name='serial']").val(),
+							name: $("[name='name']").val(),
 							location: $("[name='location']").val(),
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
 						},
-						message: "Success"
-					}, () => {
-						reload();
+						message: false
 					});
+				}
+				else if(result.isDenied){
+					changePassword($("[name='id']").val());
 				}
 			});
 		}
@@ -443,7 +291,7 @@
 						message: "Success"
 					}, () => {
 						reload();
-					});
+					})
 				}
 			});
 		}

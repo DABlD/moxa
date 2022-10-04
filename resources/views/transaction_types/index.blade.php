@@ -22,8 +22,8 @@
                     			<tr>
                     				<th>ID</th>
                     				<th>Type</th>
-                    				<th>Operator</th>
-                    				<th>Dashboard Visibility</th>
+                    				{{-- <th>Operator</th> --}}
+                    				{{-- <th>Dashboard Visibility</th> --}}
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -67,30 +67,30 @@
 				columns: [
 					{data: 'id'},
 					{data: 'type'},
-					{data: 'operator'},
-					{data: 'inDashboard'},
+					// {data: 'operator'},
+					// {data: 'inDashboard'},
 					{data: 'actions'},
 				],
         		pageLength: 25,
-        		columnDefs: [
-        			{
-        				targets: [2,3,4],
-        				className: "center"
-        			},
-        			{
-        				targets: 3,
-        				render: (value, display, row) => {
-        					let btn = value ? "success" : "danger";
-        					let slash = value ? "" : "-slash";
+        		// columnDefs: [
+        		// 	{
+        		// 		targets: [2],
+        		// 		className: "center"
+        		// 	},
+        		// 	{
+        		// 		targets: 2,
+        		// 		render: (value, display, row) => {
+        		// 			let btn = value ? "success" : "danger";
+        		// 			let slash = value ? "" : "-slash";
 
-        					return `
-        						<a class="btn btn-${btn} btn-sm" data-toggle="tooltip" title="Toggle" onclick="updateVisibility(${row.id},${value})">
-        						    <i class="fa-solid fa-eye${slash}"></i>
-        						</a>
-        					`;
-        				}
-        			}
-        		],
+        		// 			return `
+        		// 				<a class="btn btn-${btn} btn-sm" data-toggle="tooltip" title="Toggle" onclick="updateVisibility(${row.id},${value})">
+        		// 				    <i class="fa-solid fa-eye${slash}"></i>
+        		// 				</a>
+        		// 			`;
+        		// 		}
+        		// 	}
+        		// ],
 				// drawCallback: function(){
 				// 	init();
 				// }
@@ -115,29 +115,12 @@
 			Swal.fire({
 				html: `
 	                ${input("type", "Type", null, 3, 9)}
-	                <div class="row iRow">
-	                    <div class="col-md-3 iLabel">
-	                        Operator
-	                    </div>
-	                    <div class="col-md-9 iInput">
-	                        <select name="operator" class="form-control">
-	                        	<option value=""></option>
-	                        	<option value="+">+</option>
-	                        	<option value="-">-</option>
-	                        </select>
-	                    </div>
-	                </div>
 				`,
 				width: '600px',
 				confirmButtonText: 'Add',
 				showCancelButton: true,
 				cancelButtonColor: errorColor,
 				cancelButtonText: 'Cancel',
-				didOpen: () => {
-					$("[name='operator']").select2({
-						placeholder: "Select Operator"
-					});
-				},
 				preConfirm: () => {
 				    swal.showLoading();
 				    return new Promise(resolve => {
@@ -148,20 +131,6 @@
 			            }
 			            else{
 			            	let bool = false;
-            				$.ajax({
-            					url: "{{ route('transactionType.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["type", $("[name='type']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length && result[0].admin_id == {{ auth()->user()->id }}){
-            			    			Swal.showValidationMessage('Transaction Type Already Exists');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -175,7 +144,6 @@
 						type: "POST",
 						data: {
 							type: $("[name='type']").val(),
-							operator: $("[name='operator']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -192,31 +160,12 @@
 				html: `
 	                ${input("id", "", transactionType.id, 3, 9, 'hidden')}
 	                ${input("type", "Type", transactionType.type, 3, 9)}
-	                <div class="row iRow">
-	                    <div class="col-md-3 iLabel">
-	                        Operator
-	                    </div>
-	                    <div class="col-md-9 iInput">
-	                        <select name="operator" class="form-control">
-	                        	<option value=""></option>
-	                        	<option value="+">+</option>
-	                        	<option value="-">-</option>
-	                        </select>
-	                    </div>
-	                </div>
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
 				showCancelButton: true,
 				cancelButtonColor: errorColor,
 				cancelButtonText: 'Cancel',
-				didOpen: () => {
-					$("[name='operator']").select2({
-						placeholder: "Select Operator"
-					});
-
-					$("[name='operator']").val(transactionType.operator).trigger('change');
-				},
 				preConfirm: () => {
 				    swal.showLoading();
 				    return new Promise(resolve => {
@@ -227,20 +176,6 @@
 			            }
 			            else{
 			            	let bool = false;
-            				$.ajax({
-            					url: "{{ route('transactionType.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["type", $("[name='type']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length && transactionType.id != result[0].id){
-            			    			Swal.showValidationMessage('Transaction Type Already Exists');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -254,7 +189,6 @@
 						data: {
 							id: $("[name='id']").val(),
 							type: $("[name='type']").val(),
-							operator: $("[name='operator']").val(),
 						},
 						message: "Success"
 					},	() => {
@@ -264,20 +198,6 @@
 				else if(result.isDenied){
 					changePassword($("[name='id']").val());
 				}
-			});
-		}
-
-		function updateVisibility(id, inDashboard){
-			swal.showLoading();
-			update({
-				url: "{{ route('transactionType.update') }}",
-				data: {
-					id: id,
-					inDashboard: inDashboard ? 0 : 1
-				},
-				message: "Success"
-			},	() => {
-				reload();
 			});
 		}
 

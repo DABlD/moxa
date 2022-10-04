@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(BhcSeeder::class);
         // $this->call(CategorySeeder::class);
         
-        // $this->call(TransactionTypeSeeder::class);
-        // $this->call(ThemeSeeder::class);
+        $this->call(TransactionTypeSeeder::class);
+        $this->call(ThemeSeeder::class);
         // $this->call(AlertSeeder::class);
     }
 }

@@ -21,21 +21,21 @@ class UserSeeder extends Seeder
             'email' => 'davidmendozaofficial@gmail.com',
             'address' => 'Mars',
             'contact' => '09154590172',
-            'password' => '123456'
+            'password' => '654321'
         ]);
 
-        // for($i = 1; $i <= 3; $i++){
-            // $this->createAdmin($i);
-        // }
+        for($i = 1; $i <= 1; $i++){
+            $this->createAdmin($i);
+        }
     }
 
     private function createAdmin($i){
         $user = new User();
-        $user->username = "centrapharm$i";
-        $user->name = "CENTRAPHARM$i";
+        $user->username = "admin";
+        $user->name = "Admin";
         $user->role = 'Admin';
-        $user->email = "centrapharm$i@pharmacy.com";
-        $user->address = "CENTRAPHARM$i ADDRESS";
+        $user->email = "admin@admin.com";
+        $user->address = "Manila";
         $user->contact = "09" . rand(100000000, 999999999);
         $user->password = '123456';
         $user->save();

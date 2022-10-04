@@ -52,40 +52,40 @@
             Swal.fire('Loading Data');
             swal.showLoading();
 
-            $.ajax({
-                url: '{{ route("report.salesPerRhu") }}',
-                success: result =>{
-                    result = JSON.parse(result);
+            // $.ajax({
+            //     url: '',
+            //     success: result =>{
+            //         result = JSON.parse(result);
                     
-                    ctx = document.getElementById('sales').getContext('2d');
-                    myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: result.labels,
-                            datasets: result.dataset
-                        }
-                    });
-                    swal.close();
-                }
-            })
+            //         ctx = document.getElementById('sales').getContext('2d');
+            //         myChart = new Chart(ctx, {
+            //             type: 'line',
+            //             data: {
+            //                 labels: result.labels,
+            //                 datasets: result.dataset
+            //             }
+            //         });
+            //         swal.close();
+            //     }
+            // })
 
-            $.ajax({
-                url: '{{ route("report.deliveredRequests") }}',
-                success: result =>{
-                    result = JSON.parse(result);
+            // $.ajax({
+            //     url: '',
+            //     success: result =>{
+            //         result = JSON.parse(result);
                     
-                    ctx = document.getElementById('deliveredRequests').getContext('2d');
-                    myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: result.labels,
-                            datasets: result.dataset
-                        }
-                    });
+            //         ctx = document.getElementById('deliveredRequests').getContext('2d');
+            //         myChart = new Chart(ctx, {
+            //             type: 'line',
+            //             data: {
+            //                 labels: result.labels,
+            //                 datasets: result.dataset
+            //             }
+            //         });
 
-                    swal.close();
-                }
-            })
+            //         swal.close();
+            //     }
+            // })
         });
     </script>
 @endpush
