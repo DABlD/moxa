@@ -139,10 +139,16 @@
 
 		function getColumns(){
 			columns = [];
-			columns.push({
-				data: 'item',
-				title: 'Moxa'
-			});
+			columns.push(
+				{
+					data: 'item',
+					title: 'Moxa'
+				},
+				{
+					data: 'utility',
+					title: 'Type'
+				},
+			);
 
 			let temp = from;
 			while(temp <= to){

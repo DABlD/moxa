@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Reading};
+use App\Models\{User, Reading, Category, Moxa};
 use DB;
 
 class ReadingController extends Controller
@@ -89,6 +89,7 @@ class ReadingController extends Controller
                 array_merge(
                     array_merge(
                         ["item" => $medicine[0]->moxa->name], 
+                        ["utility" => $medicine[0]->moxa->utility], 
                         $tempDates
                     ),
                     ["total" => $grandtotal]
@@ -97,6 +98,109 @@ class ReadingController extends Controller
         }
 
         echo json_encode($array);
+    }
+
+    public function perBuilding(Request $req){
+        $from = now()->subDays(14)->startOfDay()->toDateTimeString();
+        $to = now()->endOfDay()->toDateTimeString();
+
+        $dates = $this->getDates($from, $to);
+        $data = Reading::select('readings.*', 'm.category_id')
+                        ->whereBetween('datetime', [$from, $to])
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        // ->where('user_id', '>', 1)
+
+        $data = $data->get();
+        
+        // $data->load('moxa');
+        $data = $data->groupBy('category_id');
+        $buildings = Category::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
+
+        $labels = [];
+        $temp = [];
+        foreach($data as $id => $a){
+            foreach($dates as $date){
+                $date = now()->parse($date)->toDateString();
+                $temp[$id][$date] = 0;
+            }
+        }
+
+        foreach($data as $id => $readings){
+            foreach($readings as $reading){
+                $temp[$id][now()->parse($reading->datetime)->toDateString()] += $reading->total;
+            }
+        }
+
+        $labels = [];
+        foreach($dates as $date){
+            array_push($labels, now()->parse($date)->format('M d'));
+        }
+
+        $dataset = [];
+        foreach($temp as $id => $data){
+            $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+            array_push($dataset, [
+                'label' => $buildings[$id],
+                'data' => array_values($data),
+                'borderColor' => $color,
+                'backgroundColor' => $color,
+                'hoverRadius' => 10
+            ]);
+        }
+
+        echo json_encode(['labels' => $labels, 'dataset' => $dataset]);
+    }
+
+    public function moxaPerBuilding(Request $req){
+        $from = now()->subDays(14)->startOfDay()->toDateTimeString();
+        $to = now()->endOfDay()->toDateTimeString();
+
+        $dates = $this->getDates($from, $to);
+        $data = Reading::select('readings.*', 'm.category_id')
+                        ->where('category_id', 'like', $req->building_id)
+                        ->whereBetween('datetime', [$from, $to])
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        // ->where('user_id', '>', 1)
+
+        $data = $data->get();
+        
+        // $data->load('moxa');
+        $data = $data->groupBy('moxa_id');
+        $buildings = Moxa::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
+
+        $labels = [];
+        $temp = [];
+        foreach($data as $id => $a){
+            foreach($dates as $date){
+                $date = now()->parse($date)->toDateString();
+                $temp[$id][$date] = 0;
+            }
+        }
+
+        foreach($data as $id => $readings){
+            foreach($readings as $reading){
+                $temp[$id][now()->parse($reading->datetime)->toDateString()] += $reading->total;
+            }
+        }
+
+        $labels = [];
+        foreach($dates as $date){
+            array_push($labels, now()->parse($date)->format('M d'));
+        }
+
+        $dataset = [];
+        foreach($temp as $id => $data){
+            $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+            array_push($dataset, [
+                'label' => $buildings[$id],
+                'data' => array_values($data),
+                'borderColor' => $color,
+                'backgroundColor' => $color,
+                'hoverRadius' => 10
+            ]);
+        }
+
+        echo json_encode(['labels' => $labels, 'dataset' => $dataset]);
     }
 
     private function getDates($from, $to){
