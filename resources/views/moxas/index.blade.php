@@ -21,6 +21,7 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
+                    				<th>Building</th>
                     				<th>Name</th>
                     				<th>Serial</th>
                     				<th>Location</th>
@@ -64,11 +65,13 @@
 					data: {
 						table: 'Moxa',
 						select: "*",
-						where: ['user_id', {{ auth()->user()->id }}]
+						where: ['user_id', {{ auth()->user()->id }}],
+						load: ['category']
 					}
 				},
 				columns: [
 					{data: 'id'},
+					{data: 'category.name', visible: false},
 					{data: 'serial'},
 					{data: 'name'},
 					{data: 'location'},
@@ -77,6 +80,35 @@
 					{data: 'actions'},
 				],
         		pageLength: 25,
+        		order: [[1, 'asc']],
+        		rowCallback: function( row, data, index ) {
+				    if (data['id'] == null) {
+				        $(row).hide();
+				    }
+				},
+		        drawCallback: function (settings) {
+		            let api = this.api();
+		            let rows = api.rows({ page: 'current' }).nodes();
+		            let last = null;
+		 
+		            api.column(1, { page: 'current' })
+		                .data()
+		                .each(function (building, i) {
+		                    if (last !== building) {
+		                        $(rows)
+		                            .eq(i)
+		                            .before(`
+		                            	<tr class="group">
+		                            		<td colspan="7">
+		                            			${building}
+		                            		</td>
+		                            	</tr>
+		                            `);
+		 
+		                        last = building;
+		                    }
+		                });
+				}
 				// drawCallback: function(){
 				// 	init();
 				// }
@@ -101,10 +133,16 @@
 		function create(){
 			Swal.fire({
 				html: `
-	                ${input("serial", "Serial", null, 3, 9)}
-	                ${input("name", "Name", null, 3, 9)}
-	                ${input("location", "Location", null, 3, 9)}
-	                ${input("floor", "Floor", null, 3, 9)}
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Building
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="category_id" class="form-control">
+					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
 					        Utility
@@ -115,6 +153,10 @@
 					        </select>
 					    </div>
 					</div>
+	                ${input("serial", "Serial", null, 3, 9)}
+	                ${input("name", "Name", null, 3, 9)}
+	                ${input("location", "Location", null, 3, 9)}
+	                ${input("floor", "Floor", null, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -128,19 +170,42 @@
 							select: "*",
 							where: ['admin_id', {{ auth()->user()->id }}]
 						},
-						success: moxas => {
-							moxas = JSON.parse(moxas);
-							moxaString = "";
+						success: utys => {
+							utys = JSON.parse(utys);
+							utyString = "";
 
-							moxas.forEach(moxa => {
-								moxaString += `
-									<option value="${moxa.type}">${moxa.type}</option>
+							utys.forEach(uty => {
+								utyString += `
+									<option value="${uty.type}">${uty.type}</option>
 								`;
 							});
 
-							$("[name='utility']").append(moxaString);
+							$("[name='utility']").append(utyString);
 							$("[name='utility']").select2({
-								placeholder: "Select Utility"
+								placeholder: "Select Utility",
+							});
+						}
+					})
+
+					$.ajax({
+						url: "{{ route('medicine.getCategories') }}",
+						data: {
+							select: "*",
+							where: ['admin_id', {{ auth()->user()->id }}]
+						},
+						success: buildings => {
+							buildings = JSON.parse(buildings);
+							buildingString = "";
+
+							buildings.forEach(building => {
+								buildingString += `
+									<option value="${building.id}">${building.name}</option>
+								`;
+							});
+
+							$("[name='category_id']").append(buildingString);
+							$("[name='category_id']").select2({
+								placeholder: "Select Building"
 							});
 						}
 					})
@@ -150,7 +215,7 @@
 				    return new Promise(resolve => {
 				    	let bool = true;
 
-			            if($('.swal2-container input:placeholder-shown').length){
+			            if($('.swal2-container input:placeholder-shown').length || $('.select2-selection__placeholder').length){
 			                Swal.showValidationMessage('Fill all fields');
 			            }
 			            else{
@@ -167,6 +232,7 @@
 						url: "{{ route('moxa.store') }}",
 						type: "POST",
 						data: {
+							category_id: $("[name='category_id']").val(),
 							serial: $("[name='serial']").val(),
 							name: $("[name='name']").val(),
 							location: $("[name='location']").val(),
@@ -186,11 +252,16 @@
 		function showDetails(moxa){
 			Swal.fire({
 				html: `
-	                ${input("id", "", moxa.user.id, 3, 9, 'hidden')}
-	                ${input("serial", "Name", moxa.serial, 3, 9)}
-	                ${input("name", "Name", moxa.name, 3, 9)}
-	                ${input("location", "Location", moxa.location, 3, 9)}
-	                ${input("floor", "Floor", moxa.floor, 3, 9)}
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Building
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="category_id" class="form-control">
+					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
 					        Utility
@@ -201,6 +272,11 @@
 					        </select>
 					    </div>
 					</div>
+	                ${input("id", "", moxa.user.id, 3, 9, 'hidden')}
+	                ${input("serial", "Name", moxa.serial, 3, 9)}
+	                ${input("name", "Name", moxa.name, 3, 9)}
+	                ${input("location", "Location", moxa.location, 3, 9)}
+	                ${input("floor", "Floor", moxa.floor, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -232,6 +308,31 @@
 							$("[name='utility']").val(moxa.utility).trigger('change');
 						}
 					})
+
+					$.ajax({
+						url: "{{ route('medicine.getCategories') }}",
+						data: {
+							select: "*",
+							where: ['admin_id', {{ auth()->user()->id }}]
+						},
+						success: buildings => {
+							buildings = JSON.parse(buildings);
+							buildingString = "";
+
+							buildings.forEach(building => {
+								buildingString += `
+									<option value="${building.id}">${building.name}</option>
+								`;
+							});
+
+							$("[name='category_id']").append(buildingString);
+							$("[name='category_id']").select2({
+								placeholder: "Select Building"
+							});
+
+							$("[name='category_id']").val(moxa.category_id).trigger('change');
+						}
+					})
 				},
                 // showDenyButton: true,
                 // denyButtonColor: successColor,
@@ -241,7 +342,7 @@
 				    return new Promise(resolve => {
 				    	let bool = true;
 
-			            if($('.swal2-container input:placeholder-shown').length){
+			            if($('.swal2-container input:placeholder-shown').length || $('.select2-selection__placeholder').length){
 			                Swal.showValidationMessage('Fill all fields');
 			            }
 			            else{
@@ -254,25 +355,20 @@
 			}).then(result => {
 				if(result.value){
 					swal.showLoading();
-					
-					let serial = $("[name='serial']").val();
-					let name = $("[name='name']").val();
-					let location = $("[name='location']").val();
-					let floor = $("[name='floor']").val();
-					let utility = $("[name='utility']").val();
-					let id = $("[name='id']").val();
-					
 					update({
 						url: "{{ route('moxa.update') }}",
 						data: {
-							id: id,
+							id: moxa.id,
+							category_id: $("[name='category_id']").val(),
 							serial: $("[name='serial']").val(),
 							name: $("[name='name']").val(),
 							location: $("[name='location']").val(),
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
 						},
-						message: false
+						message: "Success"
+					}, () => {
+						reload();
 					});
 				}
 				else if(result.isDenied){

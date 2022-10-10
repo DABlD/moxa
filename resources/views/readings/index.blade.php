@@ -44,6 +44,13 @@
 		table td{
 			text-align: center;
 		}
+
+		th{
+			padding-left: 9px !important;
+			padding-right: 9px !important;
+			font-size: 13px !important;
+			vertical-align: middle !important;
+		}
 	</style>
 @endpush
 
@@ -130,6 +137,7 @@
         		scrollX: true,
 				columns: columns,
         		pageLength: 25,
+        		ordering: false,
         		order: []
 			});
 			
@@ -142,7 +150,7 @@
 			columns.push(
 				{
 					data: 'item',
-					title: 'Moxa'
+					title: 'Device'
 				},
 				{
 					data: 'utility',
@@ -180,7 +188,7 @@
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Moxa
+					        Device
 					    </div>
 					    <div class="col-md-9 iInput">
 					        <select name="moxa_id" class="form-control">
@@ -189,7 +197,7 @@
 					    </div>
 					</div>
 	                ${input("datetime", "Date", null, 3, 9)}
-	                ${input("total", "Consumption", null, 3, 9, 'number')}
+	                ${input("total", "Payload", null, 3, 9, 'number')}
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -210,13 +218,13 @@
 
 							moxas.forEach(moxa => {
 								moxaString += `
-									<option value="${moxa.id}">${moxa.name} - ${moxa.serial} (${moxa.utility})</option>
+									<option value="${moxa.id}">${moxa.name} #${moxa.serial} (${moxa.utility})</option>
 								`;
 							});
 
 							$("[name='moxa_id']").append(moxaString);
 							$("[name='moxa_id']").select2({
-								placeholder: "Select Moxa"
+								placeholder: "Select Device"
 							});
 						}
 					})

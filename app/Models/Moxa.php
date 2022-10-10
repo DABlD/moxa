@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\MoxaAttribute;
-use App\Models\{User, Category};
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\{User, Category, Site};
 
 class Moxa extends Model
 {
-    use MoxaAttribute;
+    use MoxaAttribute, SoftDeletes;
 
     protected $fillable = [
         'id','user_id',
@@ -17,7 +18,7 @@ class Moxa extends Model
     ];
 
     protected $dates = [
-        'created_at', 'updated_at'
+        'created_at', 'updated_at', 'deleted_at'
     ];
 
     public function user(){
@@ -30,5 +31,9 @@ class Moxa extends Model
 
     public function category(){
         return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+    public function site(){
+        return $this->hasOne(Site::class, 'id', 'site_id');
     }
 }

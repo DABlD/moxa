@@ -15,9 +15,9 @@ class ThemeSeeder extends Seeder
     public function run()
     {
         $array = [
-            ["app_name", "MOXA"],
-            ["logo_img", 'images/sedi_banner.png'],
-            ["login_banner_img", "images/sedi_logo.png"],
+            ["app_name", "AMR"],
+            ["logo_img", 'images/dlt.png'],
+            ["login_banner_img", "images/dlt.png"],
             ["login_bg_img", null],
             ["sidebar_bg_color", "#343a40"],
             ["sidebar_font_color", "#c2c7d0"],

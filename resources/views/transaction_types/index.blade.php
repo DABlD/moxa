@@ -22,7 +22,7 @@
                     			<tr>
                     				<th>ID</th>
                     				<th>Type</th>
-                    				{{-- <th>Operator</th> --}}
+                    				<th>Unit</th>
                     				{{-- <th>Dashboard Visibility</th> --}}
                     				<th>Actions</th>
                     			</tr>
@@ -62,12 +62,13 @@
 					data: {
 						table: 'transaction_types',
 						select: "*",
+						where: ['admin_id', {{ auth()->user()->id }}]
 					}
 				},
 				columns: [
 					{data: 'id'},
 					{data: 'type'},
-					// {data: 'operator'},
+					{data: 'operator'},
 					// {data: 'inDashboard'},
 					{data: 'actions'},
 				],
@@ -115,6 +116,7 @@
 			Swal.fire({
 				html: `
 	                ${input("type", "Type", null, 3, 9)}
+	                ${input("operator", "Unit", null, 3, 9)}
 				`,
 				width: '600px',
 				confirmButtonText: 'Add',
@@ -143,6 +145,7 @@
 						url: "{{ route('transactionType.store') }}",
 						type: "POST",
 						data: {
+							operator: $("[name='operator']").val(),
 							type: $("[name='type']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
@@ -160,6 +163,7 @@
 				html: `
 	                ${input("id", "", transactionType.id, 3, 9, 'hidden')}
 	                ${input("type", "Type", transactionType.type, 3, 9)}
+	                ${input("operator", "Unit", transactionType.operator, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -189,6 +193,7 @@
 						data: {
 							id: $("[name='id']").val(),
 							type: $("[name='type']").val(),
+							operator: $("[name='operator']").val(),
 						},
 						message: "Success"
 					},	() => {

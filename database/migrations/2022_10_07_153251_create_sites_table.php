@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTransactionTypesTable extends Migration
+class CreateSitesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateTransactionTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_types', function (Blueprint $table) {
+        Schema::create('sites', function (Blueprint $table) {
             $table->id();
-
             $table->integer('admin_id')->unsigned();
-            $table->string('type');
-            $table->string("operator")->nullable();
-            $table->boolean('inDashboard')->default(false);
-            $table->boolean('canDelete')->default(true);
-
+            $table->string('name');
+            $table->string('site_location');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -34,6 +30,6 @@ class CreateTransactionTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_types');
+        Schema::dropIfExists('sites');
     }
 }

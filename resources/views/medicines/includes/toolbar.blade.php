@@ -11,12 +11,12 @@
 <div class="row">
     <div class="col-md-3">
         <div class="row iRow">
-            <div class="col-md-5 iLabel" style="margin: auto;">
+            <div class="col-md-4 iLabel" style="margin: auto;">
                 Filter By
             </div>
-            <div class="col-md-7 iInput">
+            <div class="col-md-8 iInput">
                 <select id="user_id" class="form-control">
-                    <option value="%%">Select Building / All</option>
+                    <option value="%%">Select Site / All</option>
                 </select>
             </div>
         </div>

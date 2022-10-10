@@ -168,7 +168,30 @@ Route::group([
             }
         );
 
-        // RHU ROUTES -> MOXA
+        // RHU ROUTES
+        $cname = "site";
+        Route::group([
+                'as' => "$cname.",
+                'prefix' => "$cname/"
+            ], function () use($cname){
+
+                Route::get("/", ucfirst($cname) . "Controller@index")
+                    ->defaults("sidebar", 1)
+                    ->defaults("icon", "fas fa-map-location")
+                    ->defaults("name", "Site")
+                    ->defaults("roles", array("Admin"))
+                    ->defaults("group", "Settings")
+                    ->name($cname)
+                    ->defaults("href", "/$cname");
+
+                Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
+                Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
+                Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
+            }
+        );
+
+        // MOXA
         $cname = "moxa";
         Route::group([
                 'as' => "$cname.",
@@ -215,28 +238,6 @@ Route::group([
         //     }
         // );
 
-        // APPROVER ROUTES
-        // $cname = "approver";
-        // Route::group([
-        //         'as' => "$cname.",
-        //         'prefix' => "$cname/"
-        //     ], function () use($cname){
-        //         Route::get("/", ucfirst($cname) . "Controller@index")
-        //             ->defaults("sidebar", 1)
-        //             ->defaults("icon", "fa-solid fa-user-group")
-        //             ->defaults("name", "Approver")
-        //             ->defaults("roles", array("Admin"))
-        //             ->defaults("group", "Settings")
-        //             ->name($cname)
-        //             ->defaults("href", "/$cname");
-
-        //         Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
-        //         Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
-        //         Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
-        //         Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
-        //     }
-        // );
-
         // SKU ROUTES
         $cname = "medicine";
         Route::group([
@@ -246,8 +247,8 @@ Route::group([
 
                 Route::get("/", ucfirst($cname) . "Controller@index")
                     ->defaults("sidebar", 1)
-                    ->defaults("icon", "fa-solid fa-microchip")
-                    ->defaults("name", "MOXA")
+                    ->defaults("icon", "fa-solid fa-building")
+                    ->defaults("name", "Building")
                     ->defaults("roles", array("Admin"))
                     ->defaults("group", "Settings")
                     ->name($cname)
@@ -266,6 +267,28 @@ Route::group([
                 Route::post("deleteCategory/", ucfirst($cname) . "Controller@deleteCategory")->name('deleteCategory');
 
                 Route::get("assign/", ucfirst($cname) . "Controller@assign")->name('assign');
+            }
+        );
+
+        // APPROVER ROUTES -> DEVICES
+        $cname = "moxa";
+        Route::group([
+                'as' => "$cname.",
+                'prefix' => "$cname/"
+            ], function () use($cname){
+                Route::get("/", ucfirst($cname) . "Controller@index")
+                    ->defaults("sidebar", 1)
+                    ->defaults("icon", "fa-solid fa-microchip")
+                    ->defaults("name", "Device")
+                    ->defaults("roles", array("Admin"))
+                    ->defaults("group", "Settings")
+                    ->name($cname)
+                    ->defaults("href", "/$cname");
+
+                Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
+                Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
+                Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
             }
         );
 
@@ -501,6 +524,7 @@ Route::group([
                 Route::get("admin", ucfirst($cname) . "Controller@admin")->name('admin');
                 Route::get("rhu", ucfirst($cname) . "Controller@rhu")->name('rhu');
                 Route::get("moxa", ucfirst($cname) . "Controller@moxa")->name('moxa');
+                Route::get("category", ucfirst($cname) . "Controller@category")->name('category');
                 Route::get("bhc", ucfirst($cname) . "Controller@bhc")->name('bhc');
                 Route::get("medicine", ucfirst($cname) . "Controller@medicine")->name('medicine');
                 Route::get("medicine2", ucfirst($cname) . "Controller@medicine2")->name('medicine2');
@@ -509,7 +533,7 @@ Route::group([
                 Route::get("requests", ucfirst($cname) . "Controller@requests")->name('requests');
                 Route::get("receive", ucfirst($cname) . "Controller@receive")->name('receive');
                 Route::get("rx", ucfirst($cname) . "Controller@rx")->name('rx');
-                Route::get("location", ucfirst($cname) . "Controller@location")->name('location');
+                Route::get("site", ucfirst($cname) . "Controller@site")->name('site');
                 Route::get("data", ucfirst($cname) . "Controller@data")->name('data');
             }
         );

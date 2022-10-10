@@ -13,7 +13,7 @@
                             List
                         </h3>
 
-                        @include('locations.includes.toolbar')
+                        @include('sites.includes.toolbar')
                     </div>
 
                     <div class="card-body table-responsive">
@@ -21,8 +21,8 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
-                    				<th>Location</th>
-                    				<th>Contact</th>
+                    				<th>Name</th>
+                    				<th>Site Location</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -53,18 +53,18 @@
 		$(document).ready(()=> {
 			var table = $('#table').DataTable({
 				ajax: {
-					url: "{{ route('datatable.location') }}",
+					url: "{{ route('datatable.site') }}",
                 	dataType: "json",
                 	dataSrc: "",
 					data: {
-						table: 'location',
+						table: 'sites',
 						select: "*",
 					}
 				},
 				columns: [
 					{data: 'id'},
-					{data: 'location'},
-					{data: 'contact'},
+					{data: 'name'},
+					{data: 'site_location'},
 					{data: 'actions'}
 				],
         		pageLength: 25,
@@ -77,8 +77,8 @@
 		function create(){
 			Swal.fire({
 				html: `
-	                ${input("location", "Location", null, 3, 9)}
-	                ${input("contact", "Contact", null, 3, 9)}
+	                ${input("name", "Name", null, 3, 9)}
+	                ${input("site_location", "Site Location", null, 3, 9)}
 				`,
 				confirmButtonText: 'Add',
 				showCancelButton: true,
@@ -95,20 +95,6 @@
 			            else{
 			            	let bool = false;
 			            	// Insert ajax validation
-            				$.ajax({
-            					url: "{{ route('location.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["location", $("[name='location']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length){
-            			    			Swal.showValidationMessage('Location already exists');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -118,11 +104,11 @@
 				if(result.value){
 					swal.showLoading();
 					$.ajax({
-						url: "{{ route('location.store') }}",
+						url: "{{ route('site.store') }}",
 						type: "POST",
 						data: {
-							location: $("[name='location']").val(),
-							contact: $("[name='contact']").val(),
+							name: $("[name='name']").val(),
+							site_location: $("[name='site_location']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -136,24 +122,24 @@
 
 		function view(id){
 			$.ajax({
-				url: "{{ route('location.get') }}",
+				url: "{{ route('site.get') }}",
 				data: {
 					select: '*',
 					where: ['id', id],
 				},
-				success: location => {
-					location = JSON.parse(location)[0];
-					showDetails(location);
+				success: site => {
+					site = JSON.parse(site)[0];
+					showDetails(site);
 				}
 			})
 		}
 
-		function showDetails(location){
+		function showDetails(site){
 			Swal.fire({
 				html: `
-	                ${input("id", "", location.id, 3, 9, 'hidden')}
-	                ${input("location", "Location", location.location, 3, 9)}
-	                ${input("contact", "Contact", location.contact, 3, 9)}
+	                ${input("id", "", site.id, 3, 9, 'hidden')}
+	                ${input("name", "Name", site.name, 3, 9)}
+	                ${input("site_location", "Site Location", site.site_location, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -170,20 +156,6 @@
 			            }
 			            else{
 			            	let bool = false;
-            				$.ajax({
-            					url: "{{ route('location.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["location", $("[name='location']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length && result[0].id != location.id){
-            			    			Swal.showValidationMessage('Location already exists');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -193,16 +165,31 @@
 				if(result.value){
 					swal.showLoading();
 					update({
-						url: "{{ route('location.update') }}",
+						url: "{{ route('site.update') }}",
 						data: {
 							id: $("[name='id']").val(),
-							location: $("[name='location']").val(),
-							contact: $("[name='contact']").val(),
+							name: $("[name='name']").val(),
+							site_location: $("[name='site_location']").val(),
 						},
 						message: "Success"
 					},	() => {
 						reload();
 					});
+				}
+			});
+		}
+
+		function del(id){
+			sc("Confirmation", "Are you sure you want to delete?", result => {
+				if(result.value){
+					swal.showLoading();
+					update({
+						url: "{{ route('site.delete') }}",
+						data: {id: id},
+						message: "Success"
+					}, () => {
+						reload();
+					})
 				}
 			});
 		}

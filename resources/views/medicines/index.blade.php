@@ -23,11 +23,8 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
-                    				<th>Category</th>
+                    				<th>Site</th>
                     				<th>Name</th>
-                    				<th>Location</th>
-                    				<th>Floor</th>
-                    				<th>Utility</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -54,28 +51,25 @@
 	<script src="{{ asset('js/select2.min.js') }}"></script>
 
 	<script>
-		var category_id = "%%";
+		var site_id = "%%";
 
 		$(document).ready(()=> {
 			var table = $('#table').DataTable({
 				ajax: {
-					url: "{{ route('datatable.moxa') }}",
+					url: "{{ route('datatable.category') }}",
                 	dataType: "json",
                 	dataSrc:'',
 					data: f => {
-						f.select = "*";
-						f.where = ['user_id', {{ auth()->user()->id }}];
-						f.load = ['category']
-						f.category_id = category_id;
+						f.select = ["*"];
+						f.where = ['admin_id', {{ auth()->user()->id }}];
+						f.load = ['site'];
+						f.site_id = site_id;
 					}
 				},
 				columns: [
 					{data: 'id'},
-					{data: 'category.name', visible: false},
+					{data: 'site.name', visible: false},
 					{data: 'name'},
-					{data: 'location'},
-					{data: 'floor'},
-					{data: 'utility'},
 					{data: 'actions'}
 				],
         		order: [[1, 'asc']],
@@ -98,7 +92,7 @@
 		                            .eq(i)
 		                            .before(`
 		                            	<tr class="group">
-		                            		<td colspan="5">
+		                            		<td colspan="3">
 		                            			${medicine}
 		                            		</td>
 		                            	</tr>
@@ -107,51 +101,30 @@
 		                        last = medicine;
 		                    }
 		                });
-
-
-					let groups = $('tr.group td');
-
-					if(groups.length){
-						groups.each((index, row) => {
-							let category = row.innerText;
-							$(row).after(`
-								<td>
-									@if(auth()->user()->role == "Admin")
-									<a class='btn btn-primary btn-sm' data-toggle='tooltip' title='Add Item' onclick='create("${category}")'>
-										<i class='fas fa-plus fa-2xl'></i>
-									</a>
-									<a class='btn btn-warning btn-sm' data-toggle='tooltip' title='Edit Category' onclick='editCategory("${category}")'>
-										<i class='fas fa-pencil'></i>
-									</a>
-									@endif
-								</td>
-							`);
-						});
-					}
 				}
 			});
 
 			$.ajax({
-				url: '{{ route('medicine.getCategories') }}',
+				url: '{{ route('site.get') }}',
 				data: {
 					select: ['id', 'name'],
 					where: ['admin_id', {{ auth()->user()->id }}]
 				},
-				success: rhus => {
-					rhus = JSON.parse(rhus);
+				success: sites => {
+					sites = JSON.parse(sites);
 
-					rhuString = "";
-					rhus.forEach(rhu => {
-						rhuString += `
-							<option value="${rhu.id}">${rhu.name}</option>
+					siteString = "";
+					sites.forEach(site => {
+						siteString += `
+							<option value="${site.id}">${site.name}</option>
 						`;
 					});
 
-					$('#user_id').append(rhuString);
+					$('#user_id').append(siteString);
 					$('#user_id').select2();
 
 					$('#user_id').on('change', e => {
-						category_id = e.target.value;
+						site_id = e.target.value;
 						reload();
 					});
 				}
@@ -186,6 +159,7 @@
 						url: "{{ route('transactionType.get') }}",
 						data: {
 							select: "*",
+							where: ['admin_id', {{ auth()->user()->id }}]
 						},
 						success: moxas => {
 							moxas = JSON.parse(moxas);
@@ -246,6 +220,16 @@
 		function createCategory(){
 			Swal.fire({
 				html: `
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Site
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="site_id" class="form-control">
+					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
 	                ${input("name", "Name", null, 3, 9)}
 				`,
 				width: '400px',
@@ -253,11 +237,34 @@
 				showCancelButton: true,
 				cancelButtonColor: errorColor,
 				cancelButtonText: 'Cancel',
+				didOpen: () => {
+					$.ajax({
+						url: "{{ route('site.get') }}",
+						data: {
+							select: "*",
+						},
+						success: sites => {
+							sites = JSON.parse(sites);
+							siteString = "";
+
+							sites.forEach(site => {
+								siteString += `
+									<option value="${site.id}">${site.name}</option>
+								`;
+							});
+
+							$("[name='site_id']").append(siteString);
+							$("[name='site_id']").select2({
+								placeholder: "Select Site"
+							});
+						}
+					})
+				},
 				preConfirm: () => {
 				    swal.showLoading();
 				    return new Promise(resolve => {
 				    	let bool = true;
-			            if($('.swal2-container input:placeholder-shown').length || $("[name='rhu_id']").val() == ""){
+			            if($('.swal2-container input:placeholder-shown').length || $("[name='site_id']").val() == ""){
 			                Swal.showValidationMessage('Fill all fields');
 			            }
 			            else{
@@ -275,6 +282,7 @@
 						url: "{{ route('medicine.storeCategory') }}",
 						type: "POST",
 						data: {
+							site_id: $("[name='site_id']").val(),
 							name: $("[name='name']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},

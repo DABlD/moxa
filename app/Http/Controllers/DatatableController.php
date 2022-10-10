@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Request as Req, Rx, Location, Data, Moxa};
+use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Data, Moxa, Site};
 use DB;
 
 class DatatableController extends Controller
@@ -113,6 +113,41 @@ class DatatableController extends Controller
 
         if($req->category_id == "%%"){
             $array = $this->addCategories($array)->values();
+        }
+
+        echo json_encode($array->toArray());
+    }
+
+    public function category(Request $req){
+        $array = Category::select($req->select);
+
+        // IF HAS SORT PARAMETER $ORDER
+        if($req->order){
+            $array = $array->orderBy($req->order[0], $req->order[1]);
+        }
+
+        // IF HAS WHERE
+        if($req->where){
+            $array = $array->where($req->where[0], $req->where[1]);
+        }
+
+        $array = $array->where('site_id', 'like', $req->site_id);
+        $array = $array->get();
+
+        // IF HAS GROUP
+        if($req->group){
+            $array = $array->groupBy($req->group);
+        }
+
+        // IF HAS LOAD
+        if($array->count() && $req->load){
+            foreach($req->load as $table){
+                $array->load($table);
+            }
+        }
+
+        foreach($array as $item){
+            $item->actions = $item->actions;
         }
 
         echo json_encode($array->toArray());
@@ -260,6 +295,7 @@ class DatatableController extends Controller
 
     private function addCategories($array){
         $categories = Category::select('categories.*');
+        dd($array);
 
         if(auth()->user()->role == "Admin"){
             $categories = $categories->where('admin_id', auth()->user()->id);
@@ -276,6 +312,7 @@ class DatatableController extends Controller
             $temp = new Moxa();
             $temp->id = null;
             $temp->category = (object)["name" => $category->name];
+            $temp->site = (object)["name" => ""];
             $temp->name = null;
             $temp->location = null;
             $temp->floor = null;
@@ -486,8 +523,8 @@ class DatatableController extends Controller
         echo json_encode($array->toArray());
     }
 
-    public function location(Request $req){
-        $array = Location::select($req->select);
+    public function site(Request $req){
+        $array = Site::select($req->select);
         $array = $array->where('admin_id', auth()->user()->id);
 
         // IF HAS SORT PARAMETER $ORDER

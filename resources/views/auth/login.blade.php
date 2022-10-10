@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{ "SEDI | " . "Login" }}</title>
+	<title>{{ "AMR | " . "Login" }}</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -29,7 +29,7 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<div class="login100-pic js-tilt" data-tilt>
-					<img src="{{ asset($theme['login_banner_img'] ?? "images/sedi_logo.png") }}" width="500" height="300" alt="IMG">
+					<img src="{{ asset($theme['login_banner_img'] ?? "images/dlt.png") }}" width="500" height="300" alt="IMG">
 				</div>
 
 				<form class="login100-form validate-form" method="POST" action="{{ route('login'); }}">

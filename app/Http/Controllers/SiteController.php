@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Moxa, Category};
+use App\Models\Site;
 use DB;
 
-class MoxaController extends Controller
+class SiteController extends Controller
 {
     public function __construct(){
-        $this->table = "moxas";
+        $this->table = "sites";
     }
 
     public function index(){
         return $this->_view('index', [
-            'title' => 'Moxa'
+            'title' => 'Site'
         ]);
     }
 
     public function get(Request $req){
-        $array = Moxa::select($req->select);
+        $array = Site::select($req->select);
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
@@ -49,15 +49,13 @@ class MoxaController extends Controller
     }
 
     public function store(Request $req){
-        $moxa = new Moxa();
-        $moxa->category_id = $req->category_id;
-        $moxa->user_id = auth()->user()->id;
-        $moxa->serial = $req->serial;
-        $moxa->name = $req->name;
-        $moxa->location = $req->location;
-        $moxa->floor = $req->floor;
-        $moxa->utility = $req->utility;
-        $moxa->save();
+        $data = new Site();
+        
+        $data->admin_id = auth()->user()->id;
+        $data->name = $req->name;
+        $data->site_location = $req->site_location;
+
+        $data->save();
     }
 
     public function update(Request $req){
@@ -72,10 +70,10 @@ class MoxaController extends Controller
     }
 
     public function delete(Request $req){
-        Moxa::find($req->id)->delete();
+        Site::find($req->id)->delete();
     }
 
     private function _view($view, $data = array()){
-        return view('moxas' . "." . $view, $data);
+        return view("sites" . "." . $view, $data);
     }
 }

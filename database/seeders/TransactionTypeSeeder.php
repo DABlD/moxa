@@ -15,10 +15,10 @@ class TransactionTypeSeeder extends Seeder
     public function run()
     {
         $array = [
-            ["Power", null, 0, 0],
-            ["Water", null, 0, 0],
-            ["Electricity", null, 0, 0],
-            ["Air", null, 0, 0]
+            ["Power", "kw", 0, 1],
+            ["Water", "cfs", 0, 1],
+            ["Air", "psi", 0, 1],
+            ["Gas", "m3", 0, 1]
         ];
 
         for($i = 1; $i <= 2; $i++){
