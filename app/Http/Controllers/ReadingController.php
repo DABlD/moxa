@@ -101,6 +101,80 @@ class ReadingController extends Controller
     }
 
     public function perBuilding(Request $req){
+        // +1 IN FROM DATE TO GET INITIAL
+        $from = now()->subDays(14)->startOfDay()->toDateTimeString();
+        $to = now()->endOfDay()->toDateTimeString();
+
+        $dates = $this->getDates($from, $to);
+        $data = Reading::select('readings.*', 'm.category_id')
+                        ->where('category_id', 'like', $req->building_id)
+                        ->whereBetween('datetime', [$from, $to])
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        // ->where('user_id', '>', 1)
+
+        $data = $data->get();
+        
+        // $data->load('moxa');
+        $data = $data->groupBy('category_id');
+        $buildings = Category::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
+
+        $initDate = null;
+        $labels = [];
+        $temp = [];
+        foreach($data as $id => $a){
+            foreach($dates as $index => $date){ 
+                if($index){
+                    $date = now()->parse($date)->toDateString();
+                    $temp[$id][$date] = 0;
+                }
+                else{
+                    $initDate = $date;
+                }
+            }
+        }
+
+        $temp3 = [];
+        foreach($data as $id => $readings){
+            $readings = $readings->sortBy('datetime');
+            $start = 0;
+            foreach($readings as $reading){
+                if($reading->datetime->toDateTimeString() == $initDate){
+                    $start = $reading->total;
+                    $temp3[$id] = [];
+                    array_push($temp3[$id], ["date" => $reading->datetime, "payload" => $reading->total]);
+                }
+                else{
+                    $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total - $start;
+                    array_push($temp3[$id], ["date" => $reading->datetime, "payload" => $reading->total]);
+                    $start = $reading->total;
+                }
+            }
+        }
+
+        $labels = [];
+        foreach($dates as $date){
+            array_push($labels, now()->parse($date)->format('M d'));
+        }
+
+        $dataset = [];
+        foreach($temp as $id => $data){
+            $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+            array_push($dataset, [
+                'label' => $buildings[$id],
+                'data' => array_values($data),
+                'borderColor' => $color,
+                'backgroundColor' => $color,
+                'hoverRadius' => 10,
+                'values' => $temp3[$id],
+                'bid' => $id
+            ]);
+        }
+
+        // dd(['labels' => $labels, 'dataset' => $dataset]);
+        echo json_encode(['labels' => $labels, 'dataset' => $dataset]);
+    }
+
+    public function perBuilding2(Request $req){
         $from = now()->subDays(14)->startOfDay()->toDateTimeString();
         $to = now()->endOfDay()->toDateTimeString();
 

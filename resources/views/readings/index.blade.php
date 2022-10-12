@@ -62,7 +62,7 @@
 	<script>
 		var columns = [];
 		var building = "%%";
-		var from = moment().subtract(15, 'days').format(dateFormat);
+		var from = moment().subtract(14, 'days').format(dateFormat);
 		var to = dateNow();
 
 		let settings = {
@@ -211,6 +211,7 @@
 						url: "{{ route('moxa.get') }}",
 						data: {
 							select: "*",
+							load: ["category"]
 						},
 						success: moxas => {
 							moxas = JSON.parse(moxas);
@@ -218,7 +219,7 @@
 
 							moxas.forEach(moxa => {
 								moxaString += `
-									<option value="${moxa.id}">${moxa.name} #${moxa.serial} (${moxa.utility})</option>
+									<option value="${moxa.id}">${moxa.name} #${moxa.serial} (${moxa.utility}) (${moxa.category.name})</option>
 								`;
 							});
 

@@ -125,6 +125,8 @@ Route::group([
                 Route::get("getReading/", ucfirst($cname) . "Controller@getReading")->name('getReading');
                 Route::get("perBuilding/", ucfirst($cname) . "Controller@perBuilding")->name('perBuilding');
                 Route::get("moxaPerBuilding/", ucfirst($cname) . "Controller@moxaPerBuilding")->name('moxaPerBuilding');
+                Route::get("perBuilding2/", ucfirst($cname) . "Controller@perBuilding2")->name('perBuilding2');
+                Route::get("moxaPerBuilding2/", ucfirst($cname) . "Controller@moxaPerBuilding2")->name('moxaPerBuilding2');
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
