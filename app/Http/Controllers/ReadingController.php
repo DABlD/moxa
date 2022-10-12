@@ -102,8 +102,8 @@ class ReadingController extends Controller
 
     public function perBuilding(Request $req){
         // +1 IN FROM DATE TO GET INITIAL
-        $from = now()->subDays(14)->startOfDay()->toDateTimeString();
-        $to = now()->endOfDay()->toDateTimeString();
+        $from = $req->from;
+        $to = $req->to;
 
         $dates = $this->getDates($from, $to);
         $data = Reading::select('readings.*', 'm.category_id')

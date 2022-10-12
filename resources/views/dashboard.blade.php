@@ -7,13 +7,15 @@
             <section class="col-lg-12 connectedSortable">
 
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-chart-line mr-1"></i>
-                            Building Consumption for the last 15 days
-                        </h3>
+                    <div class="card-header row">
+                        <div class="col-md-6">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-line mr-1"></i>
+                                Device Consumption for the last 15 days
+                            </h3>
+                        </div>
 
-                        <div style="float: right !important;">
+                        <div class="col-md-2">
                             Filter By: &nbsp;
                             <select id="building_id" style="width: 200px;">
                                 <option value="%%">Select Building / All</option>
@@ -21,6 +23,12 @@
                                     <option value="{{ $building->id }}">{{ $building->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-md-2">
+                            From:<input type="text" id="from">
+                        </div>
+                        <div class="col-md-2">
+                            To:<input type="text" id="to">
                         </div>
                     </div>
 
@@ -82,6 +90,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/flatpickr.min.css') }}">
     <style>
         #table{
             border-bottom: 1px solid;
@@ -96,16 +105,33 @@
 @push('scripts')
     <script src="{{ asset('js/chart.min.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
+    <script src="{{ asset('js/flatpickr.min.js') }}"></script>
 
     <script>
         var ctx, myChart, ctx2, myChart2;
         var building_id = "%%";
+        var from = moment().subtract(14, 'days').format("YYYY-MM-DD");
+        var to = moment().add(1, "day").format("YYYY-MM-DD");
 
         $(document).ready(() => {
             Swal.fire('Loading Data');
             swal.showLoading();
 
-            chart1(building_id);
+            $("#from").flatpickr({
+                altInput: true,
+                altFormat: "F j, Y",
+                dateFormat: "Y-m-d",
+                defaultDate: from
+            });
+
+            $("#to").flatpickr({
+                altInput: true,
+                altFormat: "F j, Y",
+                dateFormat: "Y-m-d",
+                defaultDate: to
+            });
+
+            chart1();
             // chart2(building_id);
         });
 
@@ -113,14 +139,33 @@
         $('#building_id').change(e => {
             myChart.destroy();
             building_id = e.target.value;
-            chart1(building_id);
+            chart1();
         });
 
-        function chart1(bid){
+        $('#from').change(e => {
+            if(e.target.value != ""){
+                myChart.destroy();
+                from = $('#from').val();
+                chart1();
+            }
+        });
+
+        $('#to').change(e => {
+            if(e.target.value != ""){
+                myChart.destroy();
+                to = $('#to').val();
+                chart1();
+            }
+        });
+
+        function chart1(){
             $.ajax({
                 url: '{{ route('reading.perBuilding') }}',
                 data: {
-                    building_id: bid
+                    building_id: building_id
+                    ,
+                    from: from,
+                    to: to
                 },
                 success: result =>{
                     result = JSON.parse(result);
@@ -141,9 +186,9 @@
                         }
                     });
 
-                    if(bid != "%%" && result.dataset.length > 0){
+                    if(building_id != "%%" && result.dataset.length > 0){
                         let values = result.dataset.filter(data => {
-                            return data.bid == bid;
+                            return data.bid == building_id;
                         });
                         values = values[0].values;
 
