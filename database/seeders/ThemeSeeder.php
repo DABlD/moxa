@@ -16,8 +16,8 @@ class ThemeSeeder extends Seeder
     {
         $array = [
             ["app_name", "AMR"],
-            ["logo_img", 'images/dlt.png'],
-            ["login_banner_img", "images/dlt.png"],
+            ["logo_img", 'images/images/moxa_logo1.png'],
+            ["login_banner_img", "images/images/moxa_logo1.png"],
             ["login_bg_img", null],
             ["sidebar_bg_color", "#343a40"],
             ["sidebar_font_color", "#c2c7d0"],
