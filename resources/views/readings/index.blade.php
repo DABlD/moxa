@@ -205,7 +205,12 @@
 				cancelButtonColor: errorColor,
 				cancelButtonText: 'Cancel',
 				didOpen: () => {
-					$("[name='datetime']").flatpickr(settings);
+					$("[name='datetime']").flatpickr({
+						altInput: true,
+						altFormat: "F j, Y H:i K",
+						dateFormat: "Y-m-d H:i:ss",
+						enableTime: true,
+					});
 
 					$.ajax({
 						url: "{{ route('moxa.get') }}",

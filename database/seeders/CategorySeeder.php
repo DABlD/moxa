@@ -14,18 +14,25 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        for($i = 2; $i <= 4; $i++){
-            $size = rand(1,5);
-            for($j = 1; $j <= $size; $j++){
-                $this->addCategory($i, $j);
-            }
+        $array = [
+            [1, "Metropoint"],
+            [1, "Empire Mall"],
+            [2, "Green Mall"],
+            [2, "Robinson Manila"],
+            [3, "SM Manila"],
+            [3, "Evia"]
+        ];
+
+        foreach($array as $entry){
+            $this->addCategory($entry[0], $entry[1]);
         }
     }
 
-    public function addCategory($i, $j){
+    public function addCategory($id, $location){
         $category = new Category();
-        $category->admin_id = $i;
-        $category->name = "Category $j";
+        $category->admin_id = 2;
+        $category->site_id = $id;
+        $category->name = $location;
         $category->save();
     }
 }
