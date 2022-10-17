@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Request as Req, Data, Alert, Category};
+use App\Models\{Request as Req, Data, Alert, Moxa};
 use Auth;
 
 class DashboardController extends Controller
@@ -16,11 +16,11 @@ class DashboardController extends Controller
             return redirect()->route('admin.admin')->send();
         }
 
-        $buildings = Category::all();
+        $moxas = Moxa::all();
 
         return $this->_view('dashboard', [
             'title'         => 'Dashboard',
-            'buildings'         => $buildings
+            'moxas'         => $moxas
         ]);
     }
 

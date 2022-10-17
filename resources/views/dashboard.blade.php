@@ -4,84 +4,68 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
+
             <section class="col-lg-12 connectedSortable">
-
-                <div class="card">
-                    <div class="card-header row">
-                        <div class="col-md-6">
-                            <h3 class="card-title">
-                                <i class="fas fa-chart-line mr-1"></i>
-                                Device Consumption for the last 15 days
-                            </h3>
-                        </div>
-
-                        <div class="col-md-2">
-                            Filter By: &nbsp;
-                            <select id="building_id" style="width: 200px;">
-                                <option value="%%">Select Building / All</option>
-                                @foreach($buildings as $building)
-                                    <option value="{{ $building->id }}">{{ $building->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            From:<input type="text" id="from">
-                        </div>
-                        <div class="col-md-2">
-                            To:<input type="text" id="to">
-                        </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        Filter By:
+                        <select id="fby" class="form-control">
+                            <option value="Daily">Daily</option>
+                            <option value="Hourly">Hourly</option>
+                        </select>
                     </div>
-
-                    <div class="card-body">
-                        <canvas id="sales" width="100%"></canvas>
+                    <div class="col-md-2">
+                        From:<input type="text" id="from">
                     </div>
-
-                    <div class="card-footer">
-                        <table id="table" class="table table-hover table-">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Start</th>
-                                    <th>Payload</th>
-                                    <th>End</th>
-                                    <th>Payload</th>
-                                    <th>Consumption</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">No Data</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="col-md-2">
+                        To:<input type="text" id="to">
                     </div>
                 </div>
+            </section>
 
-                {{-- <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-chart-line mr-1"></i>
-                            Moxa Per Building Consumption for the last 15 days
-                        </h3>
+            @foreach($moxas as $moxa)
+                <section class="col-lg-6 connectedSortable">
+                    <div class="card" data-id="{{ $moxa->id }}">
+                        <div class="card-header row">
+                            <div class="col-md-6">
+                                <h3 class="card-title">
+                                    <i class="fas fa-chart-line mr-1"></i>
+                                    {{ $moxa->name }} #{{ $moxa->serial }} ({{ $moxa->utility }})
+                                </h3>
+                            </div>
 
-                        <div style="float: right !important;">
-                            Filter By: &nbsp;
-                            <select id="building_id" style="width: 200px;">
-                                <option value="%%">Select Building / All</option>
-                                @foreach($buildings as $building)
-                                    <option value="{{ $building->id }}">{{ $building->name }}</option>
-                                @endforeach
-                            </select>
+                            <div class="col-md-2">
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <canvas id="sales{{ $moxa->id }}" width="100%"></canvas>
+                        </div>
+
+                        <div class="card-footer">
+                            <table id="table{{ $moxa->id }}" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Reading Date</th>
+                                        <th>Start</th>
+                                        <th>Start<br>Reading</th>
+                                        <th>End</th>
+                                        <th>End<br>Reading</th>
+                                        <th>Consumption</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" style="text-align: center;">No Data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <div class="card-body">
-                        <canvas id="deliveredRequests" width="100%"></canvas>
-                    </div>
-                </div> --}}
-
-            </section>
+                </section>
+            @endforeach
         </div>
     </div>
 </section>
@@ -99,6 +83,21 @@
         #table th, #table td{
             text-align: center !important;
         }
+
+        td{
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+            text-align: center !important;
+        }
+
+        td, th{
+            font-size: 12px !important;
+        }
+
+        th{
+            vertical-align: middle !important;
+            text-align: center;
+        }
     </style>
 @endpush
 
@@ -108,10 +107,14 @@
     <script src="{{ asset('js/flatpickr.min.js') }}"></script>
 
     <script>
-        var ctx, myChart, ctx2, myChart2;
-        var building_id = "%%";
         var from = moment().subtract(14, 'days').format("YYYY-MM-DD");
         var to = moment().add(1, "day").format("YYYY-MM-DD");
+        var fby = "Daily";
+
+        @foreach($moxas as $moxa)
+            var ctx{{ $moxa->id }};
+            var myChart{{ $moxa->id }};
+        @endforeach
 
         $(document).ready(() => {
             Swal.fire('Loading Data');
@@ -131,47 +134,57 @@
                 defaultDate: to
             });
 
-            chart1();
-            // chart2(building_id);
-        });
-
-        $('#building_id').select2();
-        $('#building_id').change(e => {
-            myChart.destroy();
-            building_id = e.target.value;
-            chart1();
+            refreshCharts();
         });
 
         $('#from').change(e => {
             if(e.target.value != ""){
-                myChart.destroy();
+                @foreach($moxas as $moxa)
+                    myChart{{ $moxa->id }}.destroy();
+                @endforeach
                 from = $('#from').val();
-                chart1();
+                refreshCharts();
             }
         });
 
         $('#to').change(e => {
             if(e.target.value != ""){
-                myChart.destroy();
+                @foreach($moxas as $moxa)
+                    myChart{{ $moxa->id }}.destroy();
+                @endforeach
                 to = $('#to').val();
-                chart1();
+                refreshCharts();
             }
         });
 
-        function chart1(){
+        $('#fby').change(e => {
+            @foreach($moxas as $moxa)
+                myChart{{ $moxa->id }}.destroy();
+            @endforeach
+            fby = $('#fby').val();
+            refreshCharts();
+        });
+
+        function refreshCharts(){
+            @foreach($moxas as $moxa)
+                createChart({{ $moxa->id }});
+            @endforeach
+        }
+
+        function createChart(id){
             $.ajax({
                 url: '{{ route('reading.perBuilding') }}',
                 data: {
-                    building_id: building_id
-                    ,
+                    moxa_id: id,
                     from: from,
-                    to: to
+                    to: to,
+                    fby: fby
                 },
                 success: result =>{
                     result = JSON.parse(result);
                     
-                    ctx = document.getElementById('sales').getContext('2d');
-                    myChart = new Chart(ctx, {
+                    window[`ctx${id}`] = document.getElementById(`sales${id}`).getContext('2d');
+                    window[`myChart${id}`] = new Chart(window[`ctx${id}`], {
                         type: 'line',
                         data: {
                             labels: result.labels,
@@ -180,61 +193,38 @@
                         options: {
                             scales: {
                                 y: {
-                                    suggestedMax: result.dataset[0] ? (Math.max.apply(null,result.dataset[0].data) * 1.20) : 0
+                                    suggestedMax: result.dataset[0] ? (Math.max.apply(null,result.dataset[0].data) * 1.10) : 0
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false,
                                 }
                             }
                         }
                     });
 
-                    if(building_id != "%%" && result.dataset.length > 0){
-                        let values = result.dataset.filter(data => {
-                            return data.bid == building_id;
-                        });
-                        values = values[0].values;
-
+                    if(result.dataset.length > 0){
+                        let values = result.dataset[0].values;
                         let string = "";
-                        for(i = 0; i < values.length - 1; i++){
+                        // MMM DD, YYYY
+
+                        for(i = 0; i < values.length - 2; i++){
+                            let consumption = values[i+1].payload - values[i].payload;
                             string += `
                                 <tr>
                                     <td>${i+1}</td>
-                                    <td>${moment(values[i].date).format('MMM DD, YYYY')}</td>
+                                    <td>${moment(values[i].created_at).format("MMM DD, YYYY hh:mm A")}</td>
+                                    <td>${moment(values[i].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${values[i].payload}</td>
-                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY')}</td>
+                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${values[i+1].payload}</td>
-                                    <td>${values[i+1].payload - values[i].payload}</td>
+                                    <td>${consumption > 0 ? consumption : 0}</td>
                                 </tr>
                             `;
                         }
-                        $('#table tbody').html(string);
+                        $(`#table${id} tbody`).html(string);
                     }
-                    else{
-                        $('#table tbody').html(`
-                            <td colspan="6" style="text-align: center;">No Data</td>
-                        `);
-                    }
-
-                    swal.close();
-                }
-            })
-        }
-
-        function chart2(bid){
-            $.ajax({
-                url: '{{ route('reading.moxaPerBuilding') }}',
-                data: {
-                    building_id: bid
-                },
-                success: result =>{
-                    result = JSON.parse(result);
-                    
-                    ctx2 = document.getElementById('deliveredRequests').getContext('2d');
-                    myChart2 = new Chart(ctx2, {
-                        type: 'line',
-                        data: {
-                            labels: result.labels,
-                            datasets: result.dataset
-                        }
-                    });
 
                     swal.close();
                 }
