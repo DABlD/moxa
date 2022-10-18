@@ -8,6 +8,13 @@
             <section class="col-lg-12 connectedSortable">
                 <div class="row">
                     <div class="col-md-2">
+                        Type:
+                        <select id="type" class="form-control">
+                            <option value="consumption">Consumption</option>
+                            <option value="demand">Demand</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         Filter By:
                         <select id="fby" class="form-control">
                             <option value="Daily">Daily</option>
@@ -20,7 +27,7 @@
                     <div class="col-md-2">
                         To:<input type="text" id="to">
                     </div>
-                    <div class="col-md-4"></div>
+                    <div class="col-md-2"></div>
                     <div class="col-md-2" style="text-align: right;">
                         <a class="btn btn-success" onclick="exportReading()">
                             <i class="fas fa-file-excel"></i>
@@ -116,6 +123,7 @@
         var from = moment().subtract(14, 'days').format("YYYY-MM-DD");
         var to = moment().add(1, "day").format("YYYY-MM-DD");
         var fby = "Daily";
+        var type = "consumption";
 
         @foreach($moxas as $moxa)
             var ctx{{ $moxa->id }};
@@ -171,6 +179,14 @@
             refreshCharts();
         });
 
+        $('#type').change(e => {
+            @foreach($moxas as $moxa)
+                myChart{{ $moxa->id }}.destroy();
+            @endforeach
+            type = $('#type').val();
+            refreshCharts();
+        });
+
         function refreshCharts(){
             @foreach($moxas as $moxa)
                 createChart({{ $moxa->id }});
@@ -184,7 +200,8 @@
                     moxa_id: id,
                     from: from,
                     to: to,
-                    fby: fby
+                    fby: fby,
+                    type: type
                 },
                 success: result =>{
                     result = JSON.parse(result);

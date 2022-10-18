@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Reading, Category, Moxa};
+use App\Models\{User, Reading, Category, Moxa, TransactionType};
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Report;
 use DB;
@@ -106,9 +106,10 @@ class ReadingController extends Controller
         // +1 IN FROM DATE TO GET INITIAL
         $from = now()->parse($req->from)->sub(1, 'day')->toDateString();
         $to = $req->to;
+        $type = $req->type;
 
         $dates = $this->getDates($from, $to);
-        $data = Reading::select('readings.*', 'm.category_id')
+        $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
                         ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
@@ -120,6 +121,7 @@ class ReadingController extends Controller
         $data = $data->groupBy('moxa_id');
         $moxas = Moxa::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
         $labels = [];
+        $tt = [];
 
         if($req->fby == "Daily"){
             $initDate = null;
@@ -142,12 +144,24 @@ class ReadingController extends Controller
             $dt = [];
 
             foreach($data as $id => $readings){
+                if($type == "demand"){
+                    $tt[$id] = TransactionType::where('admin_id', auth()->user()->id)->where('type', $readings->first()->utility)->first();
+                }
+
                 $readings = $readings->sortBy('datetime');  
                 foreach($readings as $reading){
+                    $multiplier = 0;
+
+                    if($type == "demand"){
+                        $multiplier = $reading->total * ($tt[$id]->demand / 100);
+                    }
+
                     if($reading->datetime->startOfDay()->toDateTimeString() == $initDate){
-                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total;
-                        $start[$id] = $reading->total;
+                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total + $multiplier;
+                        $start[$id] = $reading->total + $multiplier;
                         $temp3[$id] = [];
+
+
                         array_push($temp3[$id], [
                             "date" => $reading->datetime, 
                             "payload" => $reading->total,
@@ -155,7 +169,7 @@ class ReadingController extends Controller
                         ]);
                     }
                     else{
-                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total;
+                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total + $multiplier;
                         $cat[$id][now()->parse($reading->datetime)->toDateString()] = $reading->created_at;
                         $dt[$id][now()->parse($reading->datetime)->toDateString()] = $reading->datetime->toDateTimeString();
                         // array_push($temp3[$id], ["date" => $reading->datetime, "payload" => $reading->total]);
@@ -226,26 +240,37 @@ class ReadingController extends Controller
             }
 
             $prev = 0;
+
+            if($type == "demand"){
+                $tt = TransactionType::where('admin_id', auth()->user()->id)->where('type', $data->first()->utility)->first();
+            }
             foreach($data as $key => $reading){
+
+                $multiplier = 0;
                 $date = date("Y-m-d H:00:00",strtotime($reading->datetime . " + 1hour "));
+
+                if($type == "demand"){
+                    $multiplier = $reading->total * ($tt->demand / 100);
+                }
+
                 if(now()->parse($date)->toDateString() >= $req->from){
                     if($key == 0){
-                        $temp[$date] = $reading->total;
+                        $temp[$date] = $reading->total + $multiplier;
                     }
                     else{
-                        $temp[$date] = $reading->total - $prev;
+                        $temp[$date] = $reading->total - $prev + $multiplier;
                     }
 
                     $temp3 = [
                         "date" => $date, 
-                        "payload" => $reading->total,
+                        "payload" => $reading->total + $multiplier,
                         "created_at" => $reading->created_at->toDateTimeString() ?? now()->toDateTimeString(),
                     ];
 
                     array_push($temp2, $temp3);
                 }
 
-                $prev = $reading->total;
+                $prev = $reading->total + $multiplier;
             }
 
             $dataset = [];
