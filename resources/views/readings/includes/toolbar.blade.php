@@ -6,7 +6,7 @@
             </div>
             <div class="col-md-8 iInput">
                 <select id="outlet" name="outlet" class="form-control">
-                    <option value="%%">Select Building / All</option>
+                    <option value="%%">Select Device / All</option>
                 </select>
             </div>
         </div>

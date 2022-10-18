@@ -21,14 +21,6 @@
                         <br>
                     	<table id="table" class="table table-hover">
                     		<thead>
-                    			<tr>
-                    				<th>ID</th>
-                    				<th>Device</th>
-                    				<th>Utility</th>
-                    				<th>Payload</th>
-                    				<th>Datetime</th>
-                    				<th>Reading Date</th>
-                    			</tr>
                     		</thead>
 
                     		<tbody>
@@ -49,8 +41,15 @@
 	<link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
 	{{-- <link rel="stylesheet" href="{{ asset('css/datatables-jquery.min.css') }}"> --}}
 	<style>
-		td, th{
+		table td{
 			text-align: center;
+		}
+
+		th{
+			padding-left: 9px !important;
+			padding-right: 9px !important;
+			font-size: 13px !important;
+			vertical-align: middle !important;
 		}
 	</style>
 @endpush
@@ -61,6 +60,7 @@
 	{{-- <script src="{{ asset('js/datatables-jquery.min.js') }}"></script> --}}
 
 	<script>
+		var columns = [];
 		var building = "%%";
 		var from = moment().subtract(14, 'days').format(dateFormat);
 		var to = dateNow();
@@ -91,25 +91,26 @@
 			});
 
 			$.ajax({
-				url: "{{ route('moxa.get') }}",
+				url: "{{ route('medicine.getCategories') }}",
 				data: {
 					select: "*",
 				},
-				success: moxas => {
-					moxas = JSON.parse(moxas);
-					moxaString = "";
+				success: categorys => {
+					categorys = JSON.parse(categorys);
+					categoryString = "";
 
-					moxas.forEach(moxa => {
-						moxaString += `
-							<option value="${moxa.id}">${moxa.name}</option>
+					categorys.forEach(category => {
+						categoryString += `
+							<option value="${category.id}">${category.name}</option>
 						`;
 					});
 
-					$("[name='outlet']").append(moxaString);
+					$("[name='outlet']").append(categoryString);
 					$("[name='outlet']").select2({
-						placeholder: "Select Device / All"
+						placeholder: "Select Building / All"
 					});
 					$("[name='outlet']").change(e => {
+						console.log(e.target.value);
 						building = e.target.value;
 						filter();
 					});
@@ -121,48 +122,64 @@
 		});
 
 		function createTable(){
+			getColumns();
 			table = $('#table').DataTable({
 				ajax: {
-					url: "{{ route('datatable.reading') }}",
+					url: "{{ route('reading.getReading') }}",
                 	dataType: "json",
                 	dataSrc: "",
 					data: f => {
-						f.where = ['moxa_id', building];
+						f.building = building;
 						f.from = from;
 						f.to = to;
-						f.load = ['moxa']
-						f.select = ['*']
 					}
 				},
-				columns: [
-					{ data: 'id' },
-					{ data: 'moxa.name' },
-					{ data: 'moxa.utility' },
-					{ data: 'total' },
-					{ data: 'datetime' },
-					{ data: 'created_at' },
-				],
-				columnDefs: [
-					{
-						targets: [4,5],
-						render: date => {
-							return moment(date).format("MMM DD, YYYY hh:mm A");
-						}
-					}
-				],
-        		// scrollX: true,
+        		scrollX: true,
+				columns: columns,
         		pageLength: 25,
-        		// ordering: false,
-        		order: [0, 'desc']
+        		ordering: false,
+        		order: []
 			});
 			
 			$('#table_filter').remove();
 			$('#table').css('width', '100%');
 		}
 
+		function getColumns(){
+			columns = [];
+			columns.push(
+				{
+					data: 'item',
+					title: 'Device'
+				},
+				{
+					data: 'utility',
+					title: 'Type'
+				},
+			);
+
+			let temp = from;
+			while(temp <= to){
+				let temp2 = moment(temp).format("MMM DD");
+				let temp3 = moment(temp).format("MMM DD (ddd)");
+
+				columns.push({
+					data: temp2,
+					title: temp3
+				});
+
+				temp = moment(temp).add('1', 'day').format(dateFormat);
+			}
+
+			columns.push({
+				data: 'total',
+				title: 'Total'
+			});
+		}
+
 		function filter(){
 			$('#table').DataTable().clear().destroy();
-			// $('#table thead').html('');
+			$('#table thead').html('');
 			createTable();
 		}
 

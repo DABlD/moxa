@@ -533,6 +533,7 @@ Route::group([
                 Route::get("medicine2", ucfirst($cname) . "Controller@medicine2")->name('medicine2');
                 Route::get("transactionType", ucfirst($cname) . "Controller@transactionType")->name('transactionType');
                 Route::get("approver", ucfirst($cname) . "Controller@approver")->name('approver');
+                Route::get("reading", ucfirst($cname) . "Controller@reading")->name('reading');
                 Route::get("requests", ucfirst($cname) . "Controller@requests")->name('requests');
                 Route::get("receive", ucfirst($cname) . "Controller@receive")->name('receive');
                 Route::get("rx", ucfirst($cname) . "Controller@rx")->name('rx');
