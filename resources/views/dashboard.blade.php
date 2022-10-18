@@ -20,6 +20,12 @@
                     <div class="col-md-2">
                         To:<input type="text" id="to">
                     </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-2" style="text-align: right;">
+                        <a class="btn btn-success" onclick="exportReading()">
+                            <i class="fas fa-file-excel"></i>
+                        </a>
+                    </div>
                 </div>
             </section>
 
@@ -229,6 +235,16 @@
                     swal.close();
                 }
             })
+        }
+
+        function exportReading(){
+            let data = {
+                from: from,
+                to: to,
+                fby: fby,
+            };
+
+            window.open("/reading/exportPerBuilding?" + $.param(data), "_blank");
         }
     </script>
 @endpush
