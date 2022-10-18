@@ -23,7 +23,7 @@
                     				<th>ID</th>
                     				<th>Type</th>
                     				<th>Unit</th>
-                    				{{-- <th>Dashboard Visibility</th> --}}
+                    				<th>Demand Multiplier</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -69,29 +69,18 @@
 					{data: 'id'},
 					{data: 'type'},
 					{data: 'operator'},
-					// {data: 'inDashboard'},
+					{data: 'demand'},
 					{data: 'actions'},
 				],
         		pageLength: 25,
-        		// columnDefs: [
-        		// 	{
-        		// 		targets: [2],
-        		// 		className: "center"
-        		// 	},
-        		// 	{
-        		// 		targets: 2,
-        		// 		render: (value, display, row) => {
-        		// 			let btn = value ? "success" : "danger";
-        		// 			let slash = value ? "" : "-slash";
-
-        		// 			return `
-        		// 				<a class="btn btn-${btn} btn-sm" data-toggle="tooltip" title="Toggle" onclick="updateVisibility(${row.id},${value})">
-        		// 				    <i class="fa-solid fa-eye${slash}"></i>
-        		// 				</a>
-        		// 			`;
-        		// 		}
-        		// 	}
-        		// ],
+        		columnDefs: [
+        			{
+        				targets: [3],
+        				render: demand => {
+        					return demand + "%";
+        				}
+        			},
+        		],
 				// drawCallback: function(){
 				// 	init();
 				// }
@@ -117,6 +106,7 @@
 				html: `
 	                ${input("type", "Type", null, 3, 9)}
 	                ${input("operator", "Unit", null, 3, 9)}
+	                ${input("demand", "Demand Multiplier", null, 3, 9)}
 				`,
 				width: '600px',
 				confirmButtonText: 'Add',
@@ -147,6 +137,7 @@
 						data: {
 							operator: $("[name='operator']").val(),
 							type: $("[name='type']").val(),
+							demand: $("[name='demand']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -164,6 +155,7 @@
 	                ${input("id", "", transactionType.id, 3, 9, 'hidden')}
 	                ${input("type", "Type", transactionType.type, 3, 9)}
 	                ${input("operator", "Unit", transactionType.operator, 3, 9)}
+	                ${input("demand", "Demand Multiplier", transactionType.demand, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -194,6 +186,7 @@
 							id: $("[name='id']").val(),
 							type: $("[name='type']").val(),
 							operator: $("[name='operator']").val(),
+							demand: $("[name='demand']").val(),
 						},
 						message: "Success"
 					},	() => {

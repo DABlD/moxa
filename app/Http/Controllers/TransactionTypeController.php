@@ -63,6 +63,7 @@ class TransactionTypeController extends Controller
         $entry->admin_id = auth()->user()->id;
         $entry->type = $req->type;
         $entry->operator = $req->operator;
+        $entry->demand = $req->demand;
         $entry->save();
     }
 
