@@ -53,6 +53,9 @@
                                         <a class="btn btn-success" {!! $moxa->inDashboard ? "style='display: none;' " : "" !!} id="shw{{ $moxa->id }}" onclick="show(this)">
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        <a class="btn btn-info" onclick="fullscreen(this)">
+                                            <i class="fas fa-maximize"></i>
+                                        </a>
                                     </div>
                                 </h3>
                             </div>
@@ -125,6 +128,7 @@
     <script src="{{ asset('js/chart.min.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/flatpickr.min.js') }}"></script>
+    <script src="{{ asset('js/fullscreen.min.js') }}"></script>
 
     <script>
         var from = moment().subtract(14, 'days').format("YYYY-MM-DD");
@@ -226,6 +230,19 @@
                             labels: result.labels,
                             datasets: result.dataset
                         },
+                        plugins: [
+                            {
+                                id: 'custom_canvas_background_color',
+                                beforeDraw: (chart) => {
+                                    const {ctx} = chart;
+                                    ctx.save();
+                                    ctx.globalCompositeOperation = 'destination-over';
+                                    ctx.fillStyle = 'white';
+                                    ctx.fillRect(0, 0, chart.width, chart.height);
+                                    ctx.restore();
+                                }   
+                            }
+                        ],
                         options: {
                             scales: {
                                 y: {
@@ -240,7 +257,6 @@
                         }
                     });
 
-                    console.log(result.dataset);
                     if(result.dataset.length > 0){
                         let values = result.dataset[0].values;
                         let string = "";
@@ -293,6 +309,10 @@
             let pDiv = $(btn).parent().parent().parent().parent().parent();
             pDiv.find('.card-body').show();
             pDiv.find('.card-footer').show();
+        }
+
+        function fullscreen(btn){
+            $(btn).parent().parent().parent().parent().parent().find('.card-body').fullScreen(true);
         }
     </script>
 @endpush
