@@ -25,8 +25,7 @@ Route::get('/', function(){
 Route::group([
         'prefix' => "api/"
     ], function (){
-        Route::post('testendpoint', 'TestController@index');
-        Route::post('rx/store', 'RxController@receive');
+        Route::post('rx/store', 'ApiController@receive');
     }
 );
 
