@@ -314,5 +314,13 @@
         function fullscreen(btn){
             $(btn).parent().parent().parent().parent().parent().find('.card-body').fullScreen(true);
         }
+
+        function autoRefreshChart(){
+            refreshCharts();
+            setTimeout(() => {
+                autoRefreshChart();
+            }, 10000);
+        }
+        autoRefreshChart();
     </script>
 @endpush
