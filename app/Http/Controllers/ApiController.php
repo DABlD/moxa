@@ -24,7 +24,7 @@ class ApiController extends Controller
         }
         
         return response()->json([
-            'data' => $test,
+            'data' => $reading,
             'message' => 'Success'
         ], JsonResponse::HTTP_OK);
     }
