@@ -22,6 +22,7 @@ class Report implements WithMultipleSheets
         $sheets = [];
         $ids = array_keys($this->labels);
 
+        // dd($this->labels, $this->dataset, $ids);
         foreach($ids as $key => $id){
             array_push($sheets, new DeviceReport($this->labels[$id], $this->dataset[$key]));
         }

@@ -25,7 +25,8 @@
                         From:<input type="text" id="from">
                     </div>
                     <div class="col-md-2">
-                        To:<input type="text" id="to">
+                        <span class="to">To:</span>
+                        <input class="to" type="text" id="to">
                     </div>
                     <div class="col-md-2"></div>
                     <div class="col-md-2" style="text-align: right;">
@@ -176,6 +177,12 @@
                 myChart{{ $moxa->id }}.destroy();
             @endforeach
             fby = $('#fby').val();
+            if(fby == "Hourly"){
+                $('.to').hide();
+            }
+            else{
+                $('.to').show();
+            }
             refreshCharts();
         });
 
@@ -227,6 +234,7 @@
                         }
                     });
 
+                    console.log(result.dataset);
                     if(result.dataset.length > 0){
                         let values = result.dataset[0].values;
                         let string = "";
@@ -259,6 +267,7 @@
                 from: from,
                 to: to,
                 fby: fby,
+                type: type
             };
 
             window.open("/reading/exportPerBuilding?" + $.param(data), "_blank");
