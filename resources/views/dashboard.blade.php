@@ -41,14 +41,20 @@
                 <section class="col-lg-6 connectedSortable">
                     <div class="card" data-id="{{ $moxa->id }}">
                         <div class="card-header row">
-                            <div class="col-md-6">
-                                <h3 class="card-title">
+                            <div class="col-md-12">
+                                <h3 class="card-title" style="width: 100%;">
                                     <i class="fas fa-chart-line mr-1"></i>
                                     {{ $moxa->name }} #{{ $moxa->serial }} ({{ $moxa->utility }})
-                                </h3>
-                            </div>
 
-                            <div class="col-md-2">
+                                    <div style="float: right;">
+                                        <a class="btn btn-danger" id="rmv{{ $moxa->id }}" onclick="hide(this)">
+                                            <i class="fas fa-eye-slash"></i>
+                                        </a>
+                                        <a class="btn btn-success" style="display: none;" id="shw{{ $moxa->id }}" onclick="show(this)">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </h3>
                             </div>
                         </div>
 
@@ -271,6 +277,22 @@
             };
 
             window.open("/reading/exportPerBuilding?" + $.param(data), "_blank");
+        }
+
+        function hide(btn){
+            $(btn).parent().find('.btn-success').show();
+            $(btn).hide();
+            let pDiv = $(btn).parent().parent().parent().parent().parent();
+            pDiv.find('.card-body').hide();
+            pDiv.find('.card-footer').hide();
+        }
+
+        function show(btn){
+            $(btn).parent().find('.btn-danger').show();
+            $(btn).hide();
+            let pDiv = $(btn).parent().parent().parent().parent().parent();
+            pDiv.find('.card-body').show();
+            pDiv.find('.card-footer').show();
         }
     </script>
 @endpush
