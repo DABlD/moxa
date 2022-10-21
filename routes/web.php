@@ -25,7 +25,7 @@ Route::get('/', function(){
 Route::group([
         'prefix' => "api/"
     ], function (){
-        Route::post('reading/store', 'ApiController@receive');
+        Route::post('reading/device', 'ApiController@receive');
     }
 );
 
