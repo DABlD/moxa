@@ -2,7 +2,20 @@
     <div class="col-md-3">
         <div class="row iRow">
             <div class="col-md-4 iLabel" style="margin: auto;">
-                Filter By
+                Site Filter
+            </div>
+            <div class="col-md-8 iInput">
+                <select id="bldg" name="bldg" class="form-control">
+                    <option value="%%">Select Building / All</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="row iRow">
+            <div class="col-md-4 iLabel" style="margin: auto;">
+                Device Filter
             </div>
             <div class="col-md-8 iInput">
                 <select id="outlet" name="outlet" class="form-control">
@@ -12,7 +25,7 @@
         </div>
     </div>
 
-    <div class="col-md-6"></div>
+    <div class="col-md-3"></div>
     <div class="col-md-3">
 
         <div class="row iRow float-right">

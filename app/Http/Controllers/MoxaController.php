@@ -31,6 +31,11 @@ class MoxaController extends Controller
             $array = $array->where($req->where[0], $req->where[1]);
         }
 
+        // IF HAS LIKE
+        if($req->like){
+            $array = $array->where($req->like[0], 'LIKE' ,$req->like[1]);
+        }
+
         $array = $array->get();
 
         // IF HAS LOAD

@@ -62,6 +62,7 @@
 
 	<script>
 		var building = "%%";
+		var trueBuilding = "%%";
 		var from = moment().subtract(14, 'days').format(dateFormat);
 		var to = dateNow();
 
@@ -91,9 +92,48 @@
 			});
 
 			$.ajax({
+				url: "{{ route('medicine.getCategories') }}",
+				data: {
+					select: "*",
+				},
+				success: categoriess => {
+					categoriess = JSON.parse(categoriess);
+					categoriesString = "";
+
+					categoriess.forEach(categories => {
+						categoriesString += `
+							<option value="${categories.id}">${categories.name}</option>
+						`;
+					});
+
+					$("[name='bldg']").append(categoriesString);
+					$("[name='bldg']").select2({
+						placeholder: "Select Building / All"
+					});
+					$("[name='bldg']").change(e => {
+						trueBuilding = e.target.value;
+						building = "%%";
+						getDevices();
+						$("[name='outlet']").html(`
+								<option value="%%">Select Device / All</option>
+							`);
+						filter();
+					});
+
+					getDevices();
+				}
+			});
+
+			// CREATE TABLE
+			createTable();
+		});
+
+		function getDevices(){
+			$.ajax({
 				url: "{{ route('moxa.get') }}",
 				data: {
 					select: "*",
+					like: ['category_id', trueBuilding]
 				},
 				success: moxas => {
 					moxas = JSON.parse(moxas);
@@ -115,10 +155,7 @@
 					});
 				}
 			});
-
-			// CREATE TABLE
-			createTable();
-		});
+		}
 
 		function createTable(){
 			table = $('#table').DataTable({
@@ -128,10 +165,11 @@
                 	dataSrc: "",
 					data: f => {
 						f.where = ['moxa_id', building];
+						f.where2 = ['m.category_id', trueBuilding];
 						f.from = from;
 						f.to = to;
 						f.load = ['moxa']
-						f.select = ['*']
+						f.select = ['readings.*']
 					}
 				},
 				columns: [
@@ -150,6 +188,29 @@
 						}
 					}
 				],
+		        drawCallback: function (settings) {
+		            let api = this.api();
+		            let rows = api.rows({ page: 'current' }).nodes();
+		            let last = null;
+		 
+		            api.column(1, { page: 'current' })
+		                .data()
+		                .each(function (building, i) {
+		                    if (last !== building) {
+		                        $(rows)
+		                            .eq(i)
+		                            .before(`
+		                            	<tr class="group">
+		                            		<td colspan="8" style="text-align: left !important;">
+		                            			${building}
+		                            		</td>
+		                            	</tr>
+		                            `);
+		 
+		                        last = building;
+		                    }
+		                });
+				},
         		// scrollX: true,
         		pageLength: 25,
         		// ordering: false,

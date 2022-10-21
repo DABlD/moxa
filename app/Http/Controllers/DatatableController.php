@@ -524,8 +524,8 @@ class DatatableController extends Controller
     }
 
     public function reading(Request $req){
-        DB::enableQueryLog();
         $array = Reading::select($req->select);
+        $array->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
@@ -537,6 +537,10 @@ class DatatableController extends Controller
 
         if($req->where){
             $array = $array->where($req->where[0], 'like', $req->where[1]);
+        }
+
+        if($req->where2){
+            $array = $array->where($req->where2[0], 'like', $req->where2[1]);
         }
 
         $array = $array->get();
