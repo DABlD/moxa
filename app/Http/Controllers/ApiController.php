@@ -8,7 +8,7 @@ use Exception;
 
 class ApiController extends Controller
 {
-    public function index(Request $req)
+    public function receive(Request $req)
     {
         try{
             $reading = new Reading();
