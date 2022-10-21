@@ -250,7 +250,7 @@
                                     <td>${values[i].payload}</td>
                                     <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${values[i+1].payload}</td>
-                                    <td>${consumption > 0 ? consumption : 0}</td>
+                                    <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(4) : 0}</td>
                                 </tr>
                             `;
                         }
