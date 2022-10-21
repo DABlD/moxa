@@ -27,6 +27,7 @@
                     				<th>Location</th>
                     				<th>Floor</th>
                     				<th>Utility</th>
+                    				<th>In Dashboard</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -77,7 +78,22 @@
 					{data: 'location'},
 					{data: 'floor'},
 					{data: 'utility'},
+					{data: 'inDashboard'},
 					{data: 'actions'},
+				],
+				columnDefs: [
+        			{
+        				targets: 7,
+        				render: (value, display, row) => {
+        					let btn = value ? "success" : "danger";
+        					let slash = value ? "" : "-slash";
+        					return `
+        						<a class="btn btn-${btn} btn-sm" data-toggle="tooltip" title="Toggle" onclick="updateVisibility(${row.id},${value})">
+        						    <i class="fa-solid fa-eye${slash}"></i>
+        						</a>
+        					`;
+        				}
+        			}
 				],
         		pageLength: 25,
         		order: [[1, 'asc']],
@@ -99,7 +115,7 @@
 		                            .eq(i)
 		                            .before(`
 		                            	<tr class="group">
-		                            		<td colspan="7">
+		                            		<td colspan="8">
 		                            			${building}
 		                            		</td>
 		                            	</tr>
@@ -389,6 +405,20 @@
 						reload();
 					})
 				}
+			});
+		}
+
+		function updateVisibility(id, inDashboard){
+			swal.showLoading();
+			update({
+				url: "{{ route('moxa.update') }}",
+				data: {
+					id: id,
+					inDashboard: inDashboard ? 0 : 1
+				},
+				message: "Success"
+			},	() => {
+				reload();
 			});
 		}
 	</script>
