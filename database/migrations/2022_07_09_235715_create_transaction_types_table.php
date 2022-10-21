@@ -19,7 +19,7 @@ class CreateTransactionTypesTable extends Migration
             $table->integer('admin_id')->unsigned();
             $table->string('type');
             $table->string("operator")->nullable();
-            $table->number("demand")->default(0)->nullable();
+            $table->integer("demand")->default(0)->nullable();
             $table->boolean('inDashboard')->default(false);
             $table->boolean('canDelete')->default(true);
 
