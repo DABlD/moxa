@@ -14,7 +14,7 @@ class Moxa extends Model
     protected $fillable = [
         'id','user_id',
         'name','location','floor','utility',
-        'category_id', 'serial'
+        'category_id', 'serial', 'inDashboard'
     ];
 
     protected $dates = [

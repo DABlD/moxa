@@ -47,10 +47,10 @@
                                     {{ $moxa->name }} #{{ $moxa->serial }} ({{ $moxa->utility }})
 
                                     <div style="float: right;">
-                                        <a class="btn btn-danger" id="rmv{{ $moxa->id }}" onclick="hide(this)">
+                                        <a class="btn btn-danger" {!! $moxa->inDashboard ? "" : "style='display: none;' " !!} id="rmv{{ $moxa->id }}" onclick="hide(this)">
                                             <i class="fas fa-eye-slash"></i>
                                         </a>
-                                        <a class="btn btn-success" style="display: none;" id="shw{{ $moxa->id }}" onclick="show(this)">
+                                        <a class="btn btn-success" {!! $moxa->inDashboard ? "style='display: none;' " : "" !!} id="shw{{ $moxa->id }}" onclick="show(this)">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>
@@ -58,11 +58,11 @@
                             </div>
                         </div>
 
-                        <div class="card-body">
+                        <div class="card-body" {!! $moxa->inDashboard ? "" : "style='display: none;' " !!}>
                             <canvas id="sales{{ $moxa->id }}" width="100%"></canvas>
                         </div>
 
-                        <div class="card-footer">
+                        <div class="card-footer" {!! $moxa->inDashboard ? "" : "style='display: none;' " !!}>
                             <table id="table{{ $moxa->id }}" class="table table-hover">
                                 <thead>
                                     <tr>

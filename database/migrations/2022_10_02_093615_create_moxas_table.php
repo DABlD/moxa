@@ -24,6 +24,8 @@ class CreateMoxasTable extends Migration
             $table->string('floor')->nullable();
             $table->string('utility')->nullable();
 
+            $table->boolean('inDashboard')->default(true);
+
             $table->timestamps();
             $table->softDeletes();
 
