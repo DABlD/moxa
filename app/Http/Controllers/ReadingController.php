@@ -177,9 +177,10 @@ class ReadingController extends Controller
                 }
             }
 
+            // dd($temp);
             foreach($temp as $id => $readings){
                 foreach($readings as $key => $reading){
-                    $temp[$id][$key] = $reading - $start[$id];
+                    $temp[$id][$key] = $reading - ($start[$id] ?? 0);
                     if($temp[$id][$key] < 0){
                         $temp[$id][$key] = 0;
                     }
