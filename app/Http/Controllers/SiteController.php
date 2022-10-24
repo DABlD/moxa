@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Site;
+use App\Models\{Site, User};
 use DB;
 
 class SiteController extends Controller
@@ -49,8 +49,19 @@ class SiteController extends Controller
     }
 
     public function store(Request $req){
+        $user = new User();
+        $user->name = $req->name;
+
+        $user->username = $req->username;
+        $user->password = $req->password;
+        $user->admin_id = auth()->user()->id;
+        $user->role = "RHU";
+
+        $user->save();
+        $user->login_link = "?u=" . $user->id;
+        $user->save();
+
         $data = new Site();
-        
         $data->admin_id = auth()->user()->id;
         $data->name = $req->name;
         $data->site_location = $req->site_location;
