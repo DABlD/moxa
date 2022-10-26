@@ -111,8 +111,15 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id')
-                        ->get()->groupBy('moxa_id');
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+
+        if(auth()->user()->role == "RHU"){
+            $data = $data->join('categories as c', 'c.id', '=', 'm.id');
+            $data = $data->join('sites as s', 's.id', '=', 'c.site_id');
+            $data = $data->where('s.user_id', auth()->user()->id);
+        }
+
+        $data = $data->get()->groupBy('moxa_id');
         
         $moxa = Moxa::where('id', $req->moxa_id)->first();
 
@@ -221,7 +228,8 @@ class ReadingController extends Controller
             }
         }
 
-        $multiplier = TransactionType::where('admin_id', auth()->user()->id)->where('type', $moxa->utility)->first()->demand;
+        $aid = auth()->user()->admin_id ?? auth()->user()->id;
+        $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
 
         // FILL EMPTY DATES
         foreach($labels as $label){
@@ -274,8 +282,14 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         // ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id')
-                        ->get()->groupBy('moxa_id');
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+
+        if(auth()->user()->role == "RHU"){
+            $data = $data->join('categories as c', 'c.id', '=', 'm.id');
+            $data = $data->where('c.site_id', auth()->user()->id);
+        }
+
+        $data = $data->get()->groupBy('moxa_id');
         
         $moxas = Moxa::whereIn('id', array_keys($data->toArray()))->select('name', 'utility', 'id')->get()->groupBy('id');
 
@@ -387,7 +401,8 @@ class ReadingController extends Controller
         // FILL EMPTY DATES
         foreach($labels as $label){
             foreach($temp as $i => $temp2){
-                $multiplier = TransactionType::where('admin_id', auth()->user()->id)->where('type', $moxas[$i]->first()->utility)->first()->demand;
+                $aid = auth()->user()->admin_id ?? auth()->user()->id;
+                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
 
                 if(!isset($temp2[$label])){
                     $temp[$i][$label] = 0;
@@ -398,7 +413,9 @@ class ReadingController extends Controller
             }
 
             foreach($values as $id => $temp2){
-                $multiplier = TransactionType::where('admin_id', auth()->user()->id)->where('type', $moxas[$i]->first()->utility)->first()->demand;
+                $aid = auth()->user()->admin_id ?? auth()->user()->id;
+                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
+
                 if(!isset($temp2[$label])){
                     $values[$i][$label] = [
                         "date" => $label,

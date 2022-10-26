@@ -16,7 +16,18 @@ class DashboardController extends Controller
             return redirect()->route('admin.admin')->send();
         }
 
-        $moxas = Moxa::all();
+        $moxas = null;
+
+        if(auth()->user()->role == "Admin"){
+            $moxas = Moxa::all();
+        }
+        else{
+            $moxas = Moxa::select('moxas.*')
+                        ->join('categories as c', 'c.id', '=', 'moxas.id')
+                        ->join('sites as s', 's.id', '=', 'c.site_id')
+                        ->where('s.user_id', auth()->user()->id)
+                        ->get();
+        }
 
         return $this->_view('dashboard', [
             'title'         => 'Dashboard',
