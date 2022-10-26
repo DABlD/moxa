@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Moxa, Category};
+use App\Models\{User, Device, Category};
 use DB;
 
-class MoxaController extends Controller
+class DeviceController extends Controller
 {
     public function __construct(){
-        $this->table = "moxas";
+        $this->table = "devices";
     }
 
     public function index(){
         return $this->_view('index', [
-            'title' => 'Moxa'
+            'title' => 'Devices'
         ]);
     }
 
     public function get(Request $req){
-        $array = Moxa::select($req->select);
+        $array = Device::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('categories as c', 'c.id', '=', 'moxas.id');
+            $array = $array->join('categories as c', 'c.id', '=', 'devices.id');
             $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }
@@ -60,7 +60,7 @@ class MoxaController extends Controller
     }
 
     public function store(Request $req){
-        $moxa = new Moxa();
+        $moxa = new Device();
         $moxa->category_id = $req->category_id;
         $moxa->user_id = auth()->user()->id;
         $moxa->serial = $req->serial;
@@ -83,7 +83,7 @@ class MoxaController extends Controller
     }
 
     public function delete(Request $req){
-        Moxa::find($req->id)->delete();
+        Device::find($req->id)->delete();
     }
 
     private function _view($view, $data = array()){

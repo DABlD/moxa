@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Moxa;
+use App\Models\Device;
 
 class MoxaSeeder extends Seeder
 {
@@ -23,7 +23,7 @@ class MoxaSeeder extends Seeder
     }
 
     public function create($i, $j, $k){
-        $data = new Moxa();
+        $data = new Device();
         $data->category_id = $i;
         $data->user_id = 2;
         $data->serial = "D" . $k . "S";

@@ -193,8 +193,8 @@ Route::group([
             }
         );
 
-        // MOXA
-        $cname = "moxa";
+        // DEVICE
+        $cname = "device";
         Route::group([
                 'as' => "$cname.",
                 'prefix' => "$cname/"
@@ -273,7 +273,7 @@ Route::group([
         );
 
         // APPROVER ROUTES -> DEVICES
-        $cname = "moxa";
+        $cname = "device";
         Route::group([
                 'as' => "$cname.",
                 'prefix' => "$cname/"

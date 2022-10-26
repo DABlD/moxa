@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Request as Req, Data, Alert, Moxa};
+use App\Models\{Request as Req, Data, Alert, Device};
 use Auth;
 
 class DashboardController extends Controller
@@ -19,11 +19,11 @@ class DashboardController extends Controller
         $moxas = null;
 
         if(auth()->user()->role == "Admin"){
-            $moxas = Moxa::all();
+            $moxas = Device::all();
         }
         else{
-            $moxas = Moxa::select('moxas.*')
-                        ->join('categories as c', 'c.id', '=', 'moxas.id')
+            $moxas = Device::select('devices.*')
+                        ->join('categories as c', 'c.id', '=', 'devices.id')
                         ->join('sites as s', 's.id', '=', 'c.site_id')
                         ->where('s.user_id', auth()->user()->id)
                         ->get();

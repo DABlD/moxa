@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Reading, Category, Moxa, TransactionType};
+use App\Models\{User, Reading, Category, Device, TransactionType};
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Report;
 use DB;
@@ -57,13 +57,13 @@ class ReadingController extends Controller
         // category id is building id
         $temp = Reading::select('readings.*')
             ->where('m.category_id', 'like', $req->building)
-            ->join('moxas as m', 'm.id', '=', 'readings.moxa_id')
+            ->join('devices as m', 'm.id', '=', 'readings.moxa_id')
             ->whereBetween('datetime', [$from, $to]);
 
         $temp = $temp->get();
 
         // $temp->load('reorder.medicine');
-        $temp->load('moxa');
+        $temp->load('device');
         $temp = $temp->groupBy('moxa_id');
 
         $from = $req->from;
@@ -90,8 +90,8 @@ class ReadingController extends Controller
             array_push($array, 
                 array_merge(
                     array_merge(
-                        ["item" => $medicine[0]->moxa->name], 
-                        ["utility" => $medicine[0]->moxa->utility], 
+                        ["item" => $medicine[0]->device->name], 
+                        ["utility" => $medicine[0]->device->utility], 
                         $tempDates
                     ),
                     ["total" => $grandtotal]
@@ -111,7 +111,7 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
             $data = $data->join('categories as c', 'c.id', '=', 'm.id');
@@ -121,7 +121,7 @@ class ReadingController extends Controller
 
         $data = $data->get()->groupBy('moxa_id');
         
-        $moxa = Moxa::where('id', $req->moxa_id)->first();
+        $moxa = Device::where('id', $req->moxa_id)->first();
 
         $dataset = [];
         $labels = [];
@@ -282,7 +282,7 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         // ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
             $data = $data->join('categories as c', 'c.id', '=', 'm.id');
@@ -292,11 +292,11 @@ class ReadingController extends Controller
 
         $data = $data->get()->groupBy('moxa_id');
         
-        $moxas = Moxa::whereIn('moxas.id', array_keys($data->toArray()))
-                            ->select('moxas.name', 'moxas.utility', 'moxas.id');
+        $moxas = Device::whereIn('devices.id', array_keys($data->toArray()))
+                            ->select('devices.name', 'devices.utility', 'devices.id');
 
         if(auth()->user()->role == "RHU"){
-            $moxas = $moxas->join('categories as c', 'c.id', '=', 'moxas.id');
+            $moxas = $moxas->join('categories as c', 'c.id', '=', 'devices.id');
             $moxas = $moxas->join('sites as s', 's.id', '=', 'c.site_id');
             $moxas = $moxas->where('s.user_id', auth()->user()->id);
         }
@@ -467,7 +467,7 @@ class ReadingController extends Controller
         $dates = $this->getDates($from, $to);
         $data = Reading::select('readings.*', 'm.category_id')
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
                         // ->where('user_id', '>', 1)
 
         $data = $data->get();
@@ -519,7 +519,7 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id')
                         ->where('category_id', 'like', $req->building_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+                        ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
                         // ->where('user_id', '>', 1)
 
         $data = $data->get();

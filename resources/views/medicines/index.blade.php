@@ -197,7 +197,7 @@
 				if(result.value){
 					swal.showLoading();
 					$.ajax({
-						url: "{{ route('moxa.store') }}",
+						url: "{{ route('device.store') }}",
 						type: "POST",
 						data: {
 							category: selectedCategory,
@@ -342,7 +342,7 @@
 
 		function view(id){
 			$.ajax({
-				url: "{{ route('moxa.get') }}",
+				url: "{{ route('device.get') }}",
 				data: {
 					select: '*',
 					where: ['id', id],
@@ -424,7 +424,7 @@
 				if(result.value){
 					swal.showLoading();
 					update({
-						url: "{{ route('moxa.update') }}",
+						url: "{{ route('device.update') }}",
 						data: {
 							id: moxa.id,
 							name: $("[name='name']").val(),
@@ -446,7 +446,7 @@
 				if(result.value){
 					swal.showLoading();
 					update({
-						url: "{{ route('moxa.delete') }}",
+						url: "{{ route('device.delete') }}",
 						data: {id: id},
 						message: "Success"
 					}, () => {

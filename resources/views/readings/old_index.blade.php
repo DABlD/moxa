@@ -213,7 +213,7 @@
 					});
 
 					$.ajax({
-						url: "{{ route('moxa.get') }}",
+						url: "{{ route('device.get') }}",
 						data: {
 							select: "*",
 							load: ["category"]

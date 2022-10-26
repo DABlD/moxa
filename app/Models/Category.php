@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\{Site, Moxa};
+use App\Models\{Site, Device};
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\CategoryAttribute;
 
@@ -24,7 +24,7 @@ class Category extends Model
     }
 
     // category_id = building_id
-    public function moxas(){
-        return $this->hasMany(Moxa::class, 'category_id', 'id');
+    public function devices(){
+        return $this->hasMany(Device::class, 'category_id', 'id');
     }
 }

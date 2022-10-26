@@ -7,7 +7,7 @@ use App\Traits\MoxaAttribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\{User, Category, Site};
 
-class Moxa extends Model
+class Device extends Model
 {
     use MoxaAttribute, SoftDeletes;
 

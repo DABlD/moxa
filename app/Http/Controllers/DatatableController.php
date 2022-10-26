@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Data, Moxa, Site, Reading};
+use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Data, Device, Site, Reading};
 use DB;
 
 class DatatableController extends Controller
@@ -76,10 +76,10 @@ class DatatableController extends Controller
     }
 
     public function moxa(Request $req){
-        $array = Moxa::select($req->select);
+        $array = Device::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('categories as c', 'c.id', '=', 'moxas.category_id');
+            $array = $array->join('categories as c', 'c.id', '=', 'devices.category_id');
             $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }
@@ -323,7 +323,7 @@ class DatatableController extends Controller
 
         foreach($categories as $category){
 
-            $temp = new Moxa();
+            $temp = new Device();
             $temp->id = null;
             $temp->category = (object)["name" => $category->name];
             $temp->site = (object)["name" => ""];
@@ -539,7 +539,7 @@ class DatatableController extends Controller
 
     public function reading(Request $req){
         $array = Reading::select($req->select);
-        $array->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+        $array->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
             $array = $array->join('categories as c', 'c.id', '=', 'm.id');

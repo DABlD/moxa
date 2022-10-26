@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\ReadingAttribute;
-use App\Models\{Moxa};
+use App\Models\{Device};
 
 class Reading extends Model
 {
@@ -18,7 +18,7 @@ class Reading extends Model
         'created_at', 'updated_at', 'datetime'
     ];
 
-    public function moxa(){
-        return $this->hasOne(Moxa::class, 'id', 'moxa_id');
+    public function device(){
+        return $this->hasOne(Device::class, 'id', 'moxa_id');
     }
 }

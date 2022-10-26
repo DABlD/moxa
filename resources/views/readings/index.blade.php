@@ -130,9 +130,9 @@
 
 		function getDevices(){
 			$.ajax({
-				url: "{{ route('moxa.get') }}",
+				url: "{{ route('device.get') }}",
 				data: {
-					select: "moxas.*",
+					select: "devices.*",
 					like: ['category_id', trueBuilding]
 				},
 				success: moxas => {
@@ -168,14 +168,14 @@
 						f.where2 = ['m.category_id', trueBuilding];
 						f.from = from;
 						f.to = to;
-						f.load = ['moxa']
+						f.load = ['device']
 						f.select = ['readings.*']
 					}
 				},
 				columns: [
 					{ data: 'id' },
-					{ data: 'moxa.name' },
-					{ data: 'moxa.utility' },
+					{ data: 'device.name' },
+					{ data: 'device.utility' },
 					{ data: 'total' },
 					{ data: 'datetime' },
 					{ data: 'created_at' },
@@ -257,7 +257,7 @@
 					});
 
 					$.ajax({
-						url: "{{ route('moxa.get') }}",
+						url: "{{ route('device.get') }}",
 						data: {
 							select: "*",
 							load: ["category"]
