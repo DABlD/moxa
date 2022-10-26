@@ -29,7 +29,7 @@ class SiteSeeder extends Seeder
             $user->login_link = "?u=" . $user->id;
             $user->save();
 
-            $this->create($i, $loc[$i], $user);
+            $this->create($i, $location[$i - 1], $user);
         }
     }
 
