@@ -286,12 +286,22 @@ class ReadingController extends Controller
 
         if(auth()->user()->role == "RHU"){
             $data = $data->join('categories as c', 'c.id', '=', 'm.id');
-            $data = $data->where('c.site_id', auth()->user()->id);
+            $data = $data->join('sites as s', 's.id', '=', 'c.site_id');
+            $data = $data->where('s.user_id', auth()->user()->id);
         }
 
         $data = $data->get()->groupBy('moxa_id');
         
-        $moxas = Moxa::whereIn('id', array_keys($data->toArray()))->select('name', 'utility', 'id')->get()->groupBy('id');
+        $moxas = Moxa::whereIn('moxas.id', array_keys($data->toArray()))
+                            ->select('moxas.name', 'moxas.utility', 'moxas.id');
+
+        if(auth()->user()->role == "RHU"){
+            $moxas = $moxas->join('categories as c', 'c.id', '=', 'moxas.id');
+            $moxas = $moxas->join('sites as s', 's.id', '=', 'c.site_id');
+            $moxas = $moxas->where('s.user_id', auth()->user()->id);
+        }
+
+        $moxas = $moxas->get()->groupBy('id');
 
         $dataset = [];
         $labels = [];
@@ -402,7 +412,8 @@ class ReadingController extends Controller
         foreach($labels as $label){
             foreach($temp as $i => $temp2){
                 $aid = auth()->user()->admin_id ?? auth()->user()->id;
-                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
+                $uty = $moxas[$i]->first()->utility;
+                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $uty)->first()->demand;
 
                 if(!isset($temp2[$label])){
                     $temp[$i][$label] = 0;
@@ -414,7 +425,8 @@ class ReadingController extends Controller
 
             foreach($values as $id => $temp2){
                 $aid = auth()->user()->admin_id ?? auth()->user()->id;
-                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
+                $uty = $moxas[$i]->first()->utility;
+                $multiplier = TransactionType::where('admin_id', $aid)->where('type', $uty)->first()->demand;
 
                 if(!isset($temp2[$label])){
                     $values[$i][$label] = [
