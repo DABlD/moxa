@@ -20,11 +20,11 @@ class Report implements WithMultipleSheets
 
     public function sheets(): array{
         $sheets = [];
-        $ids = array_keys($this->labels);
+        $ids = array_keys($this->dataset);
 
         // dd($this->labels, $this->dataset, $ids);
-        foreach($ids as $key => $id){
-            array_push($sheets, new DeviceReport($this->labels[$id], $this->dataset[$key]));
+        foreach($ids as $id){
+            array_push($sheets, new DeviceReport($this->labels, $this->dataset[$id]));
         }
 
         return $sheets;

@@ -52,6 +52,10 @@
 		<td>CONSUMPTION</td>
 	</tr>
 
+	@php
+		$dataset['data'] = array_values($dataset['data']);
+		$dataset['values'] = array_values($dataset['values']);
+	@endphp
 	@for($key = 1; $key < sizeof($dataset['data']); $key++)
 		@php
 			if(isset($dataset['values'][$key])){
@@ -90,7 +94,7 @@
 			<td></td>
 
 			<td>{{ $labels[$key-1] }}</td>
-			<td>{{ $dataset['data'][$key-1] }}</td>
+			<td>{{ $dataset['data'][$key-1] != "" ? $dataset['data'][$key-1] : "-" }}</td>
 		</tr>
 	@endfor
 </table>
