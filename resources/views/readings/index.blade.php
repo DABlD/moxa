@@ -94,7 +94,7 @@
 			$.ajax({
 				url: "{{ route('medicine.getCategories') }}",
 				data: {
-					select: "*",
+					select: "categories.*",
 				},
 				success: categoriess => {
 					categoriess = JSON.parse(categoriess);
@@ -132,7 +132,7 @@
 			$.ajax({
 				url: "{{ route('moxa.get') }}",
 				data: {
-					select: "*",
+					select: "moxas.*",
 					like: ['category_id', trueBuilding]
 				},
 				success: moxas => {

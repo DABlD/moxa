@@ -21,6 +21,12 @@ class MoxaController extends Controller
     public function get(Request $req){
         $array = Moxa::select($req->select);
 
+        if(auth()->user()->role == "RHU"){
+            $array = $array->join('categories as c', 'c.id', '=', 'moxas.id');
+            $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
+            $array = $array->where('s.user_id', auth()->user()->id);
+        }
+
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
             $array = $array->orderBy($req->order[0], $req->order[1]);

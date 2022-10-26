@@ -57,6 +57,11 @@ class MedicineController extends Controller
     public function getCategories(Request $req){
         $array = Category::select($req->select);
 
+        if(auth()->user()->role == "RHU"){
+            $array = $array->join('sites as s', 's.id', '=', 'categories.site_id');
+            $array = $array->where('s.user_id', auth()->user()->id);
+        }
+
         // IF JOIN
         if($req->join){
             $array = $array->join('rhus as r', 'r.admin_id', '=', 'categories.admin_id');

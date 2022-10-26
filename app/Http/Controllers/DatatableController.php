@@ -78,6 +78,12 @@ class DatatableController extends Controller
     public function moxa(Request $req){
         $array = Moxa::select($req->select);
 
+        if(auth()->user()->role == "RHU"){
+            $array = $array->join('categories as c', 'c.id', '=', 'moxas.category_id');
+            $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
+            $array = $array->where('s.user_id', auth()->user()->id);
+        }
+
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
             $array = $array->orderBy($req->order[0], $req->order[1]);
@@ -120,6 +126,14 @@ class DatatableController extends Controller
 
     public function category(Request $req){
         $array = Category::select($req->select);
+
+        if(auth()->user()->role == "RHU"){
+            $array = $array->join('sites as s', 's.id', '=', 'categories.site_id');
+            $array = $array->where('s.user_id', auth()->user()->id);
+        }
+        else{
+            $array = $array->where('admin_id', auth()->user()->id);
+        }
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
@@ -526,6 +540,12 @@ class DatatableController extends Controller
     public function reading(Request $req){
         $array = Reading::select($req->select);
         $array->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
+
+        if(auth()->user()->role == "RHU"){
+            $array = $array->join('categories as c', 'c.id', '=', 'm.id');
+            $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
+            $array = $array->where('s.user_id', auth()->user()->id);
+        }
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){

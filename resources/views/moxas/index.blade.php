@@ -65,8 +65,7 @@
                 	dataSrc: "",
 					data: {
 						table: 'Moxa',
-						select: "*",
-						where: ['user_id', {{ auth()->user()->id }}],
+						select: "moxas.*",
 						load: ['category']
 					}
 				},

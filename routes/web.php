@@ -116,7 +116,7 @@ Route::group([
                     ->defaults("sidebar", 1)
                     ->defaults("icon", "fa-light fa-pen-to-square")
                     ->defaults("name", "Reading")
-                    ->defaults("roles", array("Admin"))
+                    ->defaults("roles", array("Admin", 'RHU'))
                     ->name($cname)
                     ->defaults("href", "/$cname");
 
@@ -251,7 +251,7 @@ Route::group([
                     ->defaults("sidebar", 1)
                     ->defaults("icon", "fa-solid fa-building")
                     ->defaults("name", "Building")
-                    ->defaults("roles", array("Admin"))
+                    ->defaults("roles", array("Admin", "RHU"))
                     ->defaults("group", "Settings")
                     ->name($cname)
                     ->defaults("href", "/$cname");
@@ -282,7 +282,7 @@ Route::group([
                     ->defaults("sidebar", 1)
                     ->defaults("icon", "fa-solid fa-microchip")
                     ->defaults("name", "Device")
-                    ->defaults("roles", array("Admin"))
+                    ->defaults("roles", array("Admin", "RHU"))
                     ->defaults("group", "Settings")
                     ->name($cname)
                     ->defaults("href", "/$cname");

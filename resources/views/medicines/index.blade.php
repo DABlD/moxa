@@ -51,6 +51,7 @@
 	<script src="{{ asset('js/select2.min.js') }}"></script>
 
 	<script>
+		$('.m-0, .breadcrumb-item.active').html('Buildings');
 		var site_id = "%%";
 
 		$(document).ready(()=> {
@@ -60,8 +61,7 @@
                 	dataType: "json",
                 	dataSrc:'',
 					data: f => {
-						f.select = ["*"];
-						f.where = ['admin_id', {{ auth()->user()->id }}];
+						f.select = ["categories.*"];
 						f.load = ['site'];
 						f.site_id = site_id;
 					}

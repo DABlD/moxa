@@ -2,7 +2,7 @@
     <div class="col-md-3">
         <div class="row iRow">
             <div class="col-md-4 iLabel" style="margin: auto;">
-                Site Filter
+                Building Filter
             </div>
             <div class="col-md-8 iInput">
                 <select id="bldg" name="bldg" class="form-control">
