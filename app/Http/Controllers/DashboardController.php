@@ -23,7 +23,7 @@ class DashboardController extends Controller
         }
         else{
             $moxas = Device::select('devices.*')
-                        ->join('categories as c', 'c.id', '=', 'devices.id')
+                        ->join('buildings as c', 'c.id', '=', 'devices.id')
                         ->join('sites as s', 's.id', '=', 'c.site_id')
                         ->where('s.user_id', auth()->user()->id)
                         ->get();

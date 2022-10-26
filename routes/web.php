@@ -241,7 +241,7 @@ Route::group([
         // );
 
         // SKU ROUTES
-        $cname = "medicine";
+        $cname = "building";
         Route::group([
                 'as' => "$cname.",
                 'prefix' => "$cname/"

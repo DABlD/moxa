@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Rhu, Bhc, Medicine, Category, TransactionType, Data, Device, Site, Reading};
+use App\Models\{User, Building, TransactionType, Device, Site, Reading};
 use DB;
 
 class DatatableController extends Controller
@@ -79,7 +79,7 @@ class DatatableController extends Controller
         $array = Device::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('categories as c', 'c.id', '=', 'devices.category_id');
+            $array = $array->join('buildings as c', 'c.id', '=', 'devices.category_id');
             $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }
@@ -125,10 +125,10 @@ class DatatableController extends Controller
     }
 
     public function category(Request $req){
-        $array = Category::select($req->select);
+        $array = Building::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('sites as s', 's.id', '=', 'categories.site_id');
+            $array = $array->join('sites as s', 's.id', '=', 'buildings.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }
         else{
@@ -308,14 +308,14 @@ class DatatableController extends Controller
     }
 
     private function addCategories($array){
-        $categories = Category::select('categories.*');
+        $categories = Building::select('buildings.*');
         dd($array);
 
         if(auth()->user()->role == "Admin"){
             $categories = $categories->where('admin_id', auth()->user()->id);
         }
         elseif(auth()->user()->role == "RHU"){
-            $categories = $categories->join('rhus as r', 'r.admin_id', '=', 'categories.admin_id');
+            $categories = $categories->join('rhus as r', 'r.admin_id', '=', 'buildings.admin_id');
             $categories = $categories->where('r.user_id', auth()->user()->id);
         }
 
@@ -542,7 +542,7 @@ class DatatableController extends Controller
         $array->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('categories as c', 'c.id', '=', 'm.id');
+            $array = $array->join('buildings as c', 'c.id', '=', 'm.id');
             $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }

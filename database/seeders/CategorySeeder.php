@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Category;
+use App\Models\Building;
 
 class CategorySeeder extends Seeder
 {
@@ -29,7 +29,7 @@ class CategorySeeder extends Seeder
     }
 
     public function addCategory($id, $location){
-        $category = new Category();
+        $category = new Building();
         $category->admin_id = 2;
         $category->site_id = $id;
         $category->name = $location;

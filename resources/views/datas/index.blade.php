@@ -434,9 +434,9 @@
 
 		function initCategories(){
 			$.ajax({
-				url: "{{ route('medicine.getCategories') }}",
+				url: "{{ route('building.getCategories') }}",
 				data: {
-					select: "categories.*",
+					select: "buildings.*",
 					@if(auth()->user()->role == "Admin")
 						where: ['admin_id', {{ auth()->user()->id }}]
 					@else(auth()->user()->role == "RHU")
@@ -548,7 +548,7 @@
 
 		function add(id){
 			$.ajax({
-				url: "{{ route('medicine.getReorder') }}",
+				url: "{{ route('building.getReorder') }}",
 				data: {
 					select: "medicines.*",
 					where: ["r.id", id]

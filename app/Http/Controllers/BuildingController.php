@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Category, Medicine, Reorder};
+use App\Models\{Building, Medicine, Reorder};
 use Image;
 use DB;
 
-class MedicineController extends Controller
+class BuildingController extends Controller
 {
     public function __construct(){
         $this->table = "medicines";
@@ -55,16 +55,16 @@ class MedicineController extends Controller
     }
 
     public function getCategories(Request $req){
-        $array = Category::select($req->select);
+        $array = Building::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('sites as s', 's.id', '=', 'categories.site_id');
+            $array = $array->join('sites as s', 's.id', '=', 'buildings.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }
 
         // IF JOIN
         if($req->join){
-            $array = $array->join('rhus as r', 'r.admin_id', '=', 'categories.admin_id');
+            $array = $array->join('rhus as r', 'r.admin_id', '=', 'buildings.admin_id');
         }
 
         // IF HAS SORT PARAMETER $ORDER
@@ -190,7 +190,7 @@ class MedicineController extends Controller
     }
 
     public function updateCategory(Request $req){
-        $query = DB::table("categories");
+        $query = DB::table("buildings");
 
         if($req->where){
             $query = $query->where($req->where[0], $req->where[1])->update($req->except(['id', '_token', 'where']));

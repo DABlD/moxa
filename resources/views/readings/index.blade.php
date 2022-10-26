@@ -92,9 +92,9 @@
 			});
 
 			$.ajax({
-				url: "{{ route('medicine.getCategories') }}",
+				url: "{{ route('building.getCategories') }}",
 				data: {
-					select: "categories.*",
+					select: "buildings.*",
 				},
 				success: categoriess => {
 					categoriess = JSON.parse(categoriess);
@@ -260,7 +260,7 @@
 						url: "{{ route('device.get') }}",
 						data: {
 							select: "*",
-							load: ["category"]
+							load: ["building"]
 						},
 						success: moxas => {
 							moxas = JSON.parse(moxas);

@@ -61,7 +61,7 @@
                 	dataType: "json",
                 	dataSrc:'',
 					data: f => {
-						f.select = ["categories.*"];
+						f.select = ["buildings.*"];
 						f.load = ['site'];
 						f.site_id = site_id;
 					}
@@ -279,7 +279,7 @@
 			}).then(result => {
 				if(result.value){
 					$.ajax({
-						url: "{{ route('medicine.storeCategory') }}",
+						url: "{{ route('building.storeCategory') }}",
 						type: "POST",
 						data: {
 							site_id: $("[name='site_id']").val(),
@@ -324,7 +324,7 @@
 			}).then(result => {
 				if(result.value){
 					$.ajax({
-						url: "{{ route('medicine.updateCategory') }}",
+						url: "{{ route('building.updateCategory') }}",
 						type: "POST",
 						data: {
 							where: ["name", category],

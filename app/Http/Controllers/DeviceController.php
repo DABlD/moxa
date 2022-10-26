@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Device, Category};
+use App\Models\{User, Device, Building};
 use DB;
 
 class DeviceController extends Controller
@@ -22,7 +22,7 @@ class DeviceController extends Controller
         $array = Device::select($req->select);
 
         if(auth()->user()->role == "RHU"){
-            $array = $array->join('categories as c', 'c.id', '=', 'devices.id');
+            $array = $array->join('buildings as c', 'c.id', '=', 'devices.id');
             $array = $array->join('sites as s', 's.id', '=', 'c.site_id');
             $array = $array->where('s.user_id', auth()->user()->id);
         }

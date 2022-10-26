@@ -66,12 +66,12 @@
 					data: {
 						table: 'Device',
 						select: "devices.*",
-						load: ['category']
+						load: ['building']
 					}
 				},
 				columns: [
 					{data: 'id'},
-					{data: 'category.name', visible: false},
+					{data: 'building.name', visible: false},
 					{data: 'serial'},
 					{data: 'name'},
 					{data: 'location'},
@@ -203,7 +203,7 @@
 					})
 
 					$.ajax({
-						url: "{{ route('medicine.getCategories') }}",
+						url: "{{ route('building.getCategories') }}",
 						data: {
 							select: "*",
 							where: ['admin_id', {{ auth()->user()->id }}]
@@ -325,7 +325,7 @@
 					})
 
 					$.ajax({
-						url: "{{ route('medicine.getCategories') }}",
+						url: "{{ route('building.getCategories') }}",
 						data: {
 							select: "*",
 							where: ['admin_id', {{ auth()->user()->id }}]

@@ -7,7 +7,7 @@ use App\Models\{Site, Device};
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\CategoryAttribute;
 
-class Category extends Model
+class Building extends Model
 {
     use SoftDeletes;
 

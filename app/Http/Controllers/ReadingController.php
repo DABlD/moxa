@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Reading, Category, Device, TransactionType};
+use App\Models\{User, Reading, Building, Device, TransactionType};
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Report;
 use DB;
@@ -114,7 +114,7 @@ class ReadingController extends Controller
                         ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
-            $data = $data->join('categories as c', 'c.id', '=', 'm.id');
+            $data = $data->join('buildings as c', 'c.id', '=', 'm.id');
             $data = $data->join('sites as s', 's.id', '=', 'c.site_id');
             $data = $data->where('s.user_id', auth()->user()->id);
         }
@@ -285,7 +285,7 @@ class ReadingController extends Controller
                         ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
-            $data = $data->join('categories as c', 'c.id', '=', 'm.id');
+            $data = $data->join('buildings as c', 'c.id', '=', 'm.id');
             $data = $data->join('sites as s', 's.id', '=', 'c.site_id');
             $data = $data->where('s.user_id', auth()->user()->id);
         }
@@ -296,7 +296,7 @@ class ReadingController extends Controller
                             ->select('devices.name', 'devices.utility', 'devices.id');
 
         if(auth()->user()->role == "RHU"){
-            $moxas = $moxas->join('categories as c', 'c.id', '=', 'devices.id');
+            $moxas = $moxas->join('buildings as c', 'c.id', '=', 'devices.id');
             $moxas = $moxas->join('sites as s', 's.id', '=', 'c.site_id');
             $moxas = $moxas->where('s.user_id', auth()->user()->id);
         }
@@ -474,7 +474,7 @@ class ReadingController extends Controller
         
         // $data->load('moxa');
         $data = $data->groupBy('category_id');
-        $buildings = Category::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
+        $buildings = Building::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
 
         $labels = [];
         $temp = [];
