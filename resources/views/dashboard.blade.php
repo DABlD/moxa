@@ -258,20 +258,23 @@
                     });
 
                     if(result.dataset.length > 0){
-                        let values = result.dataset[0].values;
+                        let values = Object.values(result.dataset[0].values);
                         let string = "";
                         // MMM DD, YYYY
-
                         for(i = 0; i < values.length - 2; i++){
                             let consumption = values[i+1].payload - values[i].payload;
+                            let cat = values[i].created_at ? moment(values[i].created_at).format("MMM DD, YYYY hh:mm A") : '---';
+                            let sr = values[i].payload ? (Math.round(values[i].payload) / 100).toFixed(4) : '---';
+                            let er = values[i+1].payload ? (Math.round(values[i+1].payload) / 100).toFixed(4) : '---';
+
                             string += `
                                 <tr>
                                     <td>${i+1}</td>
-                                    <td>${moment(values[i].created_at).format("MMM DD, YYYY hh:mm A")}</td>
+                                    <td>${cat}</td>
                                     <td>${moment(values[i].date).format('MMM DD, YYYY hh:mm A')}</td>
-                                    <td>${values[i].payload}</td>
+                                    <td>${sr}</td>
                                     <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
-                                    <td>${values[i+1].payload}</td>
+                                    <td>${er}</td>
                                     <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(4) : 0}</td>
                                 </tr>
                             `;
@@ -316,11 +319,11 @@
         }
 
         function autoRefreshChart(){
-            refreshCharts();
             setTimeout(() => {
-                autoRefreshChart();
+                // refreshCharts();
+                // autoRefreshChart();
             }, 10000);
         }
-        autoRefreshChart();
+        // autoRefreshChart();
     </script>
 @endpush

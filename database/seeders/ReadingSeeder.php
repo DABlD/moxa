@@ -25,12 +25,12 @@ class ReadingSeeder extends Seeder
     }
 
     private function create($i, $j, $total){
-        $datetime = now()->sub(14,'days');
+        $datetime = now()->sub(15,'days');
 
         $data = new Reading();
         $data->moxa_id = $i;
         $data->total = $total;
-        $data->datetime = now()->sub(14, 'days')->add($j * 60, 'minutes');
+        $data->datetime = now()->sub(15, 'days')->add($j * 60, 'minutes');
         $data->save();
     }
 }

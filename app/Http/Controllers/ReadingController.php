@@ -108,186 +108,169 @@ class ReadingController extends Controller
         $to = $req->to;
         $type = $req->type;
 
-        $dates = $this->getDates($from, $to);
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
-                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id');
-                        // ->where('user_id', '>', 1)
-
-        $data = $data->get();
+                        ->join('moxas as m', 'm.id', '=', 'readings.moxa_id')
+                        ->get()->groupBy('moxa_id');
         
-        // $data->load('moxa');
-        $data = $data->groupBy('moxa_id');
-        $moxas = Moxa::whereIn('id', array_keys($data->toArray()))->pluck('name', 'id');
+        $moxa = Moxa::where('id', $req->moxa_id)->first();
+
+        $dataset = [];
         $labels = [];
-        $tt = [];
+        $temp = [];
+        $values = [];
 
         if($req->fby == "Daily"){
-            $initDate = null;
-            $temp = [];
-            foreach($data as $id => $a){
-                foreach($dates as $index => $date){ 
-                    if($index){
-                        $date = now()->parse($date)->toDateString();
-                        $temp[$id][$date] = 0;
-                    }
-                    else{
-                        $initDate = $date;
-                    }
-                }
+            // FILL LABELS
+            $temp2 = $req->from;
+            while($temp2 <= $to){
+                array_push($labels, $temp2);
+                $temp2 = now()->parse($temp2)->addDay()->toDateString();
             }
 
-            $temp3 = [];
-            $start = [];
-            $cat = [];
-            $dt = [];
-
+            // DATA LOOP
             foreach($data as $id => $readings){
-                if($type == "demand"){
-                    $tt[$id] = TransactionType::where('admin_id', auth()->user()->id)->where('type', $readings->first()->utility)->first();
+                $temp2 = $req->from;
+                $ctr = 0;
+                while($temp2 <= $to){
+                    $temp[$id][$temp2] = 0;
+                    $temp2 = now()->parse($temp2)->addDay()->toDateString();
+                    $ctr++;
                 }
 
-                $readings = $readings->sortBy('datetime');  
+                $temp[$id] = [];
+                $values[$id] = [];
+
+                $readings = $readings->sortBy('datetime');
+                $start = 0;
+                $startDate = $req->from;
+
                 foreach($readings as $reading){
-                    $multiplier = 0;
+                    $temp3 = now()->parse($reading->datetime)->toDateString();
 
-                    if($type == "demand"){
-                        $multiplier = $reading->total * ($tt[$id]->demand / 100);
-                    }
-
-                    if($reading->datetime->startOfDay()->toDateTimeString() == $initDate){
-                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total + $multiplier;
-                        $start[$id] = $reading->total + $multiplier;
-                        $temp3[$id] = [];
-
-
-                        array_push($temp3[$id], [
-                            "date" => $reading->datetime, 
-                            "payload" => $reading->total,
-                            "created_at" => $reading->created_at
-                        ]);
+                    if($temp3 >= $startDate){
+                        $temp[$id][$temp3] = $reading->total - $start;
+                        $startDate = now()->parse($startDate)->addDay()->toDateString();
                     }
                     else{
-                        $temp[$id][now()->parse($reading->datetime)->toDateString()] = $reading->total + $multiplier;
-                        $cat[$id][now()->parse($reading->datetime)->toDateString()] = $reading->created_at;
-                        $dt[$id][now()->parse($reading->datetime)->toDateString()] = $reading->datetime->toDateTimeString();
-                        // array_push($temp3[$id], ["date" => $reading->datetime, "payload" => $reading->total]);
+                        $start = $reading->total;
                     }
+
+                    $values[$id][$temp3] = [
+                        "date" => $temp3,
+                        "payload" => $reading->total,
+                        "created_at" => $reading->created_at
+                    ];
                 }
-            }
-
-            // dd($temp);
-            foreach($temp as $id => $readings){
-                foreach($readings as $key => $reading){
-                    $temp[$id][$key] = $reading - ($start[$id] ?? 0);
-                    if($temp[$id][$key] < 0){
-                        $temp[$id][$key] = 0;
-                    }
-                    $start[$id] = $reading;
-
-                    array_push($temp3[$id], [
-                        "date" => $dt[$id][$key] ?? now()->toDateTimeString(), 
-                        "payload" => $reading,
-                        "created_at" => $cat[$id][$key] ?? now()->toDateTimeString(),
-                    ]);
-                }
-            }
-
-            $labels = [];
-            foreach($dates as $key => $date){
-                if($key > 0){
-                    array_push($labels, now()->parse($date)->format('M d'));
-                }
-            }
-            $dataset = [];
-            foreach($temp as $id => $data){
-                ksort($data);
-                $data = array_values($data);
-                array_shift($data);
-
-                $temp3[$id] = collect($temp3[$id])->sortBy('date')->toArray();
-                
-                $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-                array_push($dataset, [
-                    'label' => $moxas[$id],
-                    'data' => $data,
-                    'borderColor' => $color,
-                    'backgroundColor' => $color,
-                    'hoverRadius' => 10,
-                    'values' => $temp3[$id],
-                    'bid' => $id
-                ]);
             }
         }
         else{
-            $data = $data->first();
-            $from = now()->parse($from)->startOfDay()->toDateTimeString();
-            $to = now()->parse($from)->addDay()->endOfDay()->toDateTimeString();
-
-            $ctr = 0;
-            $temp = [];
-            $temp2 = [];
-            while($from <= $to){
-                $cur = $from;
-                $from = now()->parse($from)->add(1, 'hour')->toDateTimeString();
-                
-                if($from >= $req->from){
-                    array_push($labels, $from);
-                    $temp[$from] = 0;
-                }
-
-                $ctr++;
+            // FILL LABELS
+            $temp2 = now()->parse($req->from)->startOfDay()->addHour()->toDateTimeString();
+            $to = now()->parse($req->from)->addDay()->startOfDay()->toDateTimeString();
+            while($temp2 <= $to){
+                array_push($labels, $temp2);
+                $temp2 = now()->parse($temp2)->add(1, 'hour')->toDateTimeString();
             }
 
-            $prev = 0;
+            // DATA LOOP
+            foreach($data as $id => $readings){
+                $temp2 = now()->parse($req->from)->startOfDay()->addHour()->toDateTimeString();
+                $to = now()->parse($req->from)->addDay()->startOfDay()->toDateTimeString();
+                $ctr = 0;
 
-            if($type == "demand"){
-                $tt = TransactionType::where('admin_id', auth()->user()->id)->where('type', $data->first()->utility)->first();
-            }
+                $readings = $readings->filter(function($value, $key) use($to){
+                    return $value->datetime <= $to;
+                });
 
-            $to = now()->parse($to)->addDay()->startOfDay()->toDateTimeString();
-            foreach($data as $key => $reading){
-
-                $multiplier = 0;
-                $date = date("Y-m-d H:00:00",strtotime($reading->datetime . " + 1hour "));
-
-                if($type == "demand"){
-                    $multiplier = $reading->total * ($tt->demand / 100);
+                while($temp2 <= $to){
+                    $temp[$id][$temp2] = 0;
+                    $temp2 = now()->parse($temp2)->add(1, 'hour')->toDateTimeString();
+                    $ctr++;
                 }
 
-                if(now()->parse($date)->toDateString() >= $req->from && now()->parse($date)->toDateTimeString() <= $to){
-                    if($key == 0){
-                        $temp[$date] = $reading->total + $multiplier;
+                $temp[$id] = [];
+                $values[$id] = [];
+
+                $readings = $readings->sortBy('datetime');
+                $start = 0;
+                $startDate = now()->parse($req->from)->startOfDay()->addHour()->toDateTimeString();
+
+                foreach($readings as $reading){
+                    $temp3 = date("Y-m-d H:00:00",strtotime($reading->datetime . " + 1hour "));
+
+                    if($temp3 >= $startDate){
+                        $temp[$id][$temp3] = $reading->total - $start;
+                        $start = $reading->total;
                     }
                     else{
-                        $temp[$date] = $reading->total - $prev + $multiplier;
+                        $start = $reading->total;
                     }
 
-                    $temp3 = [
-                        "date" => $date, 
-                        "payload" => $reading->total + $multiplier,
-                        "created_at" => $reading->created_at->toDateTimeString() ?? now()->toDateTimeString(),
-                    ];
-
-                    array_push($temp2, $temp3);
+                    if($temp3 >= $startDate){
+                        $temp3 = date("Y-m-d H:00:00",strtotime($temp3. " + 1hour "));
+                        $values[$id][$temp3] = [
+                            "date" => $temp3,
+                            "payload" => $reading->total,
+                            "created_at" => $reading->created_at
+                        ];
+                        $startDate = now()->parse($startDate)->addHour()->toDateTimeString();
+                    }
                 }
+            }
+        }
 
-                $prev = $reading->total + $multiplier;
+        $multiplier = TransactionType::where('admin_id', auth()->user()->id)->where('type', $moxa->utility)->first()->demand;
+
+        // FILL EMPTY DATES
+        foreach($labels as $label){
+            foreach($temp as $i => $temp2){
+                if(!isset($temp2[$label])){
+                    $temp[$i][$label] = 0;
+                }
+                elseif($multiplier > 0 && $req->type == "demand"){
+                    $temp[$i][$label] += ($temp[$i][$label] * ($multiplier / 100));
+                }
             }
 
-            $dataset = [];
+            foreach($values as $id => $temp2){
+                if(!isset($temp2[$label])){
+                    $values[$i][$label] = [
+                        "date" => $label,
+                        "payload" => null,
+                        "created_at" => null
+                    ];
+                }
+                elseif($multiplier > 0 && $req->type == "demand"){
+                    $values[$i][$label]['payload'] += ($values[$i][$label]['payload'] * ($values[$i][$label]['payload'] / 100));
+                    $temp[$i][$label] += ($temp[$i][$label] * ($multiplier / 100));
+                }
+            }
+        }
+
+        foreach($temp as $i => $data){
             $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
             array_push($dataset, [
-                'label' => $moxas[$req->moxa_id],
-                'data' => array_values($temp),
+                'label' => $moxa->name,
+                'data' => $data,
                 'borderColor' => $color,
                 'backgroundColor' => $color,
                 'hoverRadius' => 10,
-                'values' => $temp2,
-                'bid' => $req->moxa_id
+                'values' => $values[$i],
+                'bid' => $moxa->id
             ]);
         }
+
+        // array_push($dataset, [
+        //     'label' => $moxas[$id],
+        //     'data' => $data,
+        //     'borderColor' => $color,
+        //     'backgroundColor' => $color,
+        //     'hoverRadius' => 10,
+        //     'values' => $temp3[$id],
+        //     'bid' => $id
+        // ]);
 
         // dd(['labels' => $labels, 'dataset' => $dataset]);
         echo json_encode(['labels' => $labels, 'dataset' => $dataset]);
