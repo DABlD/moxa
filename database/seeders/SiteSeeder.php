@@ -36,6 +36,7 @@ class SiteSeeder extends Seeder
     }
 
     private function create($i, $location){
+        $i += 1;
         $data = new Site();
         $data->admin_id = "2";
         $data->name = "Site $i";
