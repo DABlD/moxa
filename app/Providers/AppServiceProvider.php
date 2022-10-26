@@ -28,14 +28,7 @@ class AppServiceProvider extends ServiceProvider
             $theme = DB::table('themes');
 
             if(isset(auth()->user()->role)){
-                if(auth()->user()->role == "Admin"){
-                    $theme = $theme->where('admin_id', auth()->user()->id);
-                }
-                elseif(auth()->user()->role == "RHU"){
-                    $theme = $theme->join('rhus as r', 'r.admin_id', '=', 'themes.admin_id');
-                    $theme = $theme->where('r.user_id', auth()->user()->id);
-                }
-
+                $theme = $theme->where('admin_id', auth()->user()->admin_id);
                 $view->with('theme', $theme->pluck('value', 'name'));
             }
             elseif(isset($_GET['u'])){
