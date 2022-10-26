@@ -12,7 +12,7 @@ class Site extends Model
     use SiteAttribute, SoftDeletes;
 
     protected $fillable = [
-        'name', 'site_location', 'admin_id'
+        'name', 'site_location', 'admin_id', 'user_id'
     ];
 
     protected $dates = [

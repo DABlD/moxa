@@ -28,17 +28,15 @@ class SiteSeeder extends Seeder
             $user->save();
             $user->login_link = "?u=" . $user->id;
             $user->save();
-        }
 
-        foreach($location as $key => $loc){
-            $this->create($key, $loc);
+            $this->create($i, $loc[$i], $user);
         }
     }
 
-    private function create($i, $location){
-        $i += 1;
+    private function create($i, $location, $user){
         $data = new Site();
-        $data->admin_id = "2";
+        $data->admin_id = $user->admin_id;
+        $data->user_id = $user->id;
         $data->name = "Site $i";
         $data->site_location = $location;
         $data->save();

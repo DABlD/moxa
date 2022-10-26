@@ -63,6 +63,7 @@ class SiteController extends Controller
 
         $data = new Site();
         $data->admin_id = auth()->user()->id;
+        $data->user_id = $user->id;
         $data->name = $req->name;
         $data->site_location = $req->site_location;
 
