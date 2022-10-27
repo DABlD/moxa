@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\{Category};
+use App\Models\{Category, User};
 use App\Traits\SiteAttribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,5 +21,9 @@ class Site extends Model
 
     public function buildings(){
         return $this->hasMany(Category::class, 'site_id', 'id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

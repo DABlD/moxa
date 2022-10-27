@@ -152,6 +152,7 @@
 				data: {
 					select: '*',
 					where: ['id', id],
+					load: ['user']
 				},
 				success: site => {
 					site = JSON.parse(site)[0];
@@ -167,7 +168,7 @@
 	                ${input("name", "Name", site.name, 3, 9)}
 	                ${input("site_location", "Site Location", site.site_location, 3, 9)}
 	                </br>
-	                ${input("username", "Username", rhu.user.username, 3, 9, 'text', 'autocomplete="new-password"')}
+	                ${input("username", "Username", site.user.username, 3, 9, 'text', 'autocomplete="new-password"')}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -195,27 +196,10 @@
 			            		},
 			            		success: result => {
 			            			result = JSON.parse(result);
-			            			if(result.length && result[0].id != rhu.user.id){
+			            			if(result.length && result[0].id != site.user.id){
 			                			Swal.showValidationMessage('Username already exists');
 			                			setTimeout(() => {resolve()}, 500);
 			            			}
-			            			else{
-			            				$.ajax({
-			            					url: "{{ route('user.get') }}",
-			            					data: {
-			            						select: "id",
-			            						where: ["email", $("[name='email']").val()]
-			            					},
-			            					success: result => {
-			            						result = JSON.parse(result);
-			            						if(result.length && result[0].id != rhu.user.id){
-			            			    			Swal.showValidationMessage('Email already used');
-				            						setTimeout(() => {resolve()}, 500);
-			            						}
-			            					}
-			            				});
-			            			}
-
 			            		}
 			            	});
 			            }
@@ -230,7 +214,7 @@
 					update({
 						url: "{{ route('user.update') }}",
 						data: {
-							id: id,
+							id: site.user.id,
 							username: $("[name='username']").val(),
 						},
 						message: false
