@@ -216,7 +216,7 @@ class BuildingController extends Controller
     }
 
     public function deleteCategory(Request $req){
-        Category::find($req->id)->delete();
+        Building::find($req->id)->delete();
     }
 
     public function assign(Request $req){

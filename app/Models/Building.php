@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\{Site, Device};
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CategoryAttribute;
+use App\Traits\BuildingAttribute;
 
 class Building extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BuildingAttribute;
 
     protected $fillable = [
         'name', 'admin_id', 'site_id'

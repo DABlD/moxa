@@ -446,7 +446,7 @@
 				if(result.value){
 					swal.showLoading();
 					update({
-						url: "{{ route('device.delete') }}",
+						url: "{{ route('building.deleteCategory') }}",
 						data: {id: id},
 						message: "Success"
 					}, () => {
