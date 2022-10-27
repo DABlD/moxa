@@ -263,9 +263,10 @@
                         // MMM DD, YYYY
                         for(i = 0; i < values.length - 2; i++){
                             let consumption = values[i+1].payload - values[i].payload;
+                            console.log(values[i+1].payload, values[i].payload, consumption);
                             let cat = values[i].created_at ? moment(values[i].created_at).format("MMM DD, YYYY hh:mm A") : '---';
-                            let sr = values[i].payload ? (Math.round(values[i].payload) / 100).toFixed(4) : '---';
-                            let er = values[i+1].payload ? (Math.round(values[i+1].payload) / 100).toFixed(4) : '---';
+                            let sr = values[i].payload ? (Math.round(values[i].payload * 100) / 100).toFixed(4) : '---';
+                            let er = values[i+1].payload ? (Math.round(values[i+1].payload * 100) / 100).toFixed(4) : '---';
 
                             string += `
                                 <tr>
