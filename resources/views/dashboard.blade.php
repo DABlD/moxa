@@ -73,7 +73,7 @@
                                         <th>Reading Date</th>
                                         <th>Start</th>
                                         <th>Previous<br>Reading</th>
-                                        <th>End<br>Reading</th>
+                                        <th>Current<br>Reading</th>
                                         <th>End</th>
                                         <th>Consumption</th>
                                         <th class="amount">Amount</th>
