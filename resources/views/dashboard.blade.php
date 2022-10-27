@@ -76,6 +76,7 @@
                                         <th>End</th>
                                         <th>End<br>Reading</th>
                                         <th>Consumption</th>
+                                        <th class="amount">Amount</th>
                                     </tr>
                                 </thead>
 
@@ -201,6 +202,16 @@
                 myChart{{ $moxa->id }}.destroy();
             @endforeach
             type = $('#type').val();
+            if(type == "demand"){
+                setTimeout(() => {
+                    $('.amount').hide();
+                }, 1000)
+            }
+            else{
+                setTimeout(() => {
+                    $('.amount').show();
+                }, 1000)
+            }
             refreshCharts();
         });
 
@@ -260,13 +271,13 @@
                     if(result.dataset.length > 0){
                         let values = Object.values(result.dataset[0].values);
                         let string = "";
+                        let rate = result.dataset[0].rate;
                         // MMM DD, YYYY
                         for(i = 0; i < values.length - 2; i++){
                             let consumption = values[i+1].payload - values[i].payload;
-                            console.log(values[i+1].payload, values[i].payload, consumption);
                             let cat = values[i].created_at ? moment(values[i].created_at).format("MMM DD, YYYY hh:mm A") : '---';
-                            let sr = values[i].payload ? (Math.round(values[i].payload * 100) / 100).toFixed(4) : '---';
-                            let er = values[i+1].payload ? (Math.round(values[i+1].payload * 100) / 100).toFixed(4) : '---';
+                            let sr = values[i].payload ? (Math.round(values[i].payload * 100) / 100).toFixed(2) : '---';
+                            let er = values[i+1].payload ? (Math.round(values[i+1].payload * 100) / 100).toFixed(2) : '---';
 
                             string += `
                                 <tr>
@@ -276,7 +287,8 @@
                                     <td>${sr}</td>
                                     <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${er}</td>
-                                    <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(4) : 0}</td>
+                                    <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(2) : 0}</td>
+                                    <td class="amount">${consumption > 0 ? (Math.round(consumption * rate * 100) / 100).toFixed(2) : 0 }</td>
                                 </tr>
                             `;
                         }

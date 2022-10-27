@@ -24,6 +24,7 @@
                     				<th>Type</th>
                     				<th>Unit</th>
                     				<th>Demand Multiplier</th>
+                    				<th>Rate</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -70,6 +71,7 @@
 					{data: 'type'},
 					{data: 'operator'},
 					{data: 'demand'},
+					{data: 'rate'},
 					{data: 'actions'},
 				],
         		pageLength: 25,
@@ -107,6 +109,7 @@
 	                ${input("type", "Type", null, 3, 9)}
 	                ${input("operator", "Unit", null, 3, 9)}
 	                ${input("demand", "Demand Multiplier", null, 3, 9)}
+	                ${input("rate", "Rate", null, 3, 9)}
 				`,
 				width: '600px',
 				confirmButtonText: 'Add',
@@ -138,6 +141,7 @@
 							operator: $("[name='operator']").val(),
 							type: $("[name='type']").val(),
 							demand: $("[name='demand']").val(),
+							rate: $("[name='rate']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -156,6 +160,7 @@
 	                ${input("type", "Type", transactionType.type, 3, 9)}
 	                ${input("operator", "Unit", transactionType.operator, 3, 9)}
 	                ${input("demand", "Demand Multiplier", transactionType.demand, 3, 9)}
+	                ${input("rate", "Rate", transactionType.rate, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -187,6 +192,7 @@
 							type: $("[name='type']").val(),
 							operator: $("[name='operator']").val(),
 							demand: $("[name='demand']").val(),
+							rate: $("[name='rate']").val(),
 						},
 						message: "Success"
 					},	() => {

@@ -34,8 +34,12 @@
 		<td>End</td>
 		<td>End Reading</td>
 		<td>Consumption</td>
+		<td>
+			@if($dataset['type'] == "consumption")
+				Amount
+			@endif
+		</td>
 
-		<td></td>
 		<td></td>
 		<td></td>
 		<td></td>
@@ -78,8 +82,12 @@
 			<td>{{ isset($dataset['values'][$key]) ? $dataset['values'][$key]['date'] : "-" }}</td>
 			<td>{{ isset($dataset['values'][$key]) ? $dataset['values'][$key]['payload'] : "-" }}</td>
 			<td>{{ $consumption > 0 ? $consumption : false }}</td>
+			<td>
+				@if($dataset['type'] == "consumption")
+					{{ $consumption > 0 ? $consumption * $dataset['rate'] : false }}
+				@endif
+			</td>
 
-			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>

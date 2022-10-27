@@ -10,7 +10,7 @@ class TransactionType extends Model
     use TransactionTypeAttribute, SoftDeletes;
 
     protected $fillable = [
-        'type', 'operator', 'inDashboard', 'canDelete', 'admin_id', 'demand'
+        'type', 'operator', 'inDashboard', 'canDelete', 'admin_id', 'demand', 'rate'
     ];
 
     protected $dates = [

@@ -64,6 +64,7 @@ class TransactionTypeController extends Controller
         $entry->type = $req->type;
         $entry->operator = $req->operator;
         $entry->demand = $req->demand;
+        $entry->rate = $req->rate;
         $entry->save();
     }
 

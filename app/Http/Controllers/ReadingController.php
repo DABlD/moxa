@@ -229,7 +229,8 @@ class ReadingController extends Controller
         }
 
         $aid = auth()->user()->admin_id ?? auth()->user()->id;
-        $multiplier = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first()->demand;
+        $tt = TransactionType::where('admin_id', $aid)->where('type', $moxa->utility)->first();
+        $multiplier = $tt->demand;
 
         // FILL EMPTY DATES
         foreach($labels as $label){
@@ -266,6 +267,7 @@ class ReadingController extends Controller
                 'backgroundColor' => $color,
                 'hoverRadius' => 10,
                 'values' => $values[$i],
+                'rate' => $tt->rate,
                 'bid' => $moxa->id
             ]);
         }
@@ -282,6 +284,7 @@ class ReadingController extends Controller
         $data = Reading::select('readings.*', 'm.category_id', 'm.utility')
                         // ->where('m.id', 'like', $req->moxa_id)
                         ->whereBetween('datetime', [$from, $to])
+                        ->whereNull('m.deleted_at')
                         ->join('devices as m', 'm.id', '=', 'readings.moxa_id');
 
         if(auth()->user()->role == "RHU"){
@@ -443,7 +446,11 @@ class ReadingController extends Controller
         }
 
         foreach($temp as $i => $data){
+            $aid = auth()->user()->admin_id ?? auth()->user()->id;
+            $uty = $moxas[$i]->first()->utility;
+            $rate = TransactionType::where('admin_id', $aid)->where('type', $uty)->first()->rate;
             $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+
             $dataset[$i] = [
                 'label' => $moxas[$i]->first()->name,
                 'data' => $data,
@@ -451,6 +458,8 @@ class ReadingController extends Controller
                 'backgroundColor' => $color,
                 'hoverRadius' => 10,
                 'values' => $values[$i],
+                'type' => $req->type,
+                'rate' => $rate,
                 'bid' => $i
             ];
         }
