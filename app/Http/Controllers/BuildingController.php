@@ -159,7 +159,7 @@ class BuildingController extends Controller
     }
 
     public function storeCategory(Request $req){
-        $entry = new Category();
+        $entry = new Building();
         $entry->admin_id = auth()->user()->id;
         $entry->site_id = $req->site_id;
         $entry->name = $req->name;
