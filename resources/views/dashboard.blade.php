@@ -72,9 +72,9 @@
                                         <th>#</th>
                                         <th>Reading Date</th>
                                         <th>Start</th>
-                                        <th>Start<br>Reading</th>
-                                        <th>End</th>
+                                        <th>Previous<br>Reading</th>
                                         <th>End<br>Reading</th>
+                                        <th>End</th>
                                         <th>Consumption</th>
                                         <th class="amount">Amount</th>
                                     </tr>
@@ -285,8 +285,8 @@
                                     <td>${cat}</td>
                                     <td>${moment(values[i].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${sr}</td>
-                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${er}</td>
+                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
                                     <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(2) : 0}</td>
                                     <td class="amount">${consumption > 0 ? (Math.round(consumption * rate * 100) / 100).toFixed(2) : 0 }</td>
                                 </tr>
