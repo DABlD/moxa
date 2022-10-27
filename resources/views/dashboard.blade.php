@@ -279,14 +279,16 @@
                             let sr = values[i].payload ? (Math.round(values[i].payload * 100) / 100).toFixed(2) : '---';
                             let er = values[i+1].payload ? (Math.round(values[i+1].payload * 100) / 100).toFixed(2) : '---';
 
+                            let hour = fby == "Daily" ? "" : " hh:mm A";
+
                             string += `
                                 <tr>
                                     <td>${i+1}</td>
                                     <td>${cat}</td>
-                                    <td>${moment(values[i].date).format('MMM DD, YYYY hh:mm A')}</td>
+                                    <td>${moment(values[i].date).format('MMM DD, YYYY' + hour)}</td>
                                     <td>${sr}</td>
                                     <td>${er}</td>
-                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY hh:mm A')}</td>
+                                    <td>${moment(values[i+1].date).format('MMM DD, YYYY' + hour)}</td>
                                     <td>${consumption > 0 ? (Math.round(consumption * 100) / 100).toFixed(2) : 0}</td>
                                     <td class="amount">${consumption > 0 ? (Math.round(consumption * rate * 100) / 100).toFixed(2) : 0 }</td>
                                 </tr>
