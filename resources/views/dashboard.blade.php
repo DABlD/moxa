@@ -279,6 +279,10 @@
                             let sr = values[i].payload ? (Math.round(values[i].payload * 100) / 100).toFixed(2) : '---';
                             let er = values[i+1].payload ? (Math.round(values[i+1].payload * 100) / 100).toFixed(2) : '---';
 
+                            if(sr == "---" && er == "---"){
+                                continue;
+                            }
+
                             let hour = fby == "Daily" ? "" : " hh:mm A";
 
                             string += `
