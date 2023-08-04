@@ -1,8 +1,11 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ url("/") }}" class="brand-link">
         <center>
-            {{-- <img src="{{ asset("images/moxa_loga2.jpg") }}" alt="AMR" class="brand-image elevation-3" style="opacity: .8; width: 140px;"> --}}
-            <span class="brand-text font-weight-bolder" style="font-weight: bold; color: #3b84d3;">SMART - AMR</span>
+            @if(asset($theme['logo_img']))
+                <img src="{{ asset($theme['logo_img']) }}" alt="AMR" class="brand-image elevation-3">
+            @else
+                <span class="brand-text font-weight-bolder" style="font-weight: bold; color: #3b84d3;">SMART - AMR</span>
+            @endif
         </center>
     </a>
 
