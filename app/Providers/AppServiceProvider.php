@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use DB;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,12 +29,20 @@ class AppServiceProvider extends ServiceProvider
             $theme = DB::table('themes');
 
             if(isset(auth()->user()->role)){
-                $theme = $theme->where('admin_id', auth()->user()->admin_id ?? auth()->user()->id);
-                $view->with('theme', $theme->pluck('value', 'name'));
+                $theme = $theme->where('admin_id', auth()->user()->admin_id ?? auth()->user()->id)->pluck('value', 'name');
+                if(!$theme->count()){
+                    $user = User::find($_GET['u']);
+                    $theme = DB::table('themes')->where('admin_id', $user->admin_id)->pluck('value', 'name');
+                }
+                $view->with('theme', $theme);
             }
             elseif(isset($_GET['u'])){
-                $theme = $theme->where('admin_id', $_GET['u']);
-                $view->with('theme', $theme->pluck('value', 'name'));
+                $theme = $theme->where('admin_id', $_GET['u'])->pluck('value', 'name');
+                if(!$theme->count()){
+                    $user = User::find($_GET['u']);
+                    $theme = DB::table('themes')->where('admin_id', $user->admin_id)->pluck('value', 'name');
+                }
+                $view->with('theme', $theme);
             }
         });
     }
