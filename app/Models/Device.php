@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\MoxaAttribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\{User, Building, Site};
+use App\Models\{User, Building, Site, TransactionType};
 
 class Device extends Model
 {
@@ -35,5 +35,9 @@ class Device extends Model
 
     public function site(){
         return $this->hasOne(Site::class, 'id', 'site_id');
+    }
+
+    public function category(){
+        return $this->hasOne(TransactionType::class, 'id', 'category_id');
     }
 }

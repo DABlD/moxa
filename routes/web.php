@@ -25,7 +25,12 @@ Route::get('/', function(){
 Route::group([
         'prefix' => "api/"
     ], function (){
-        Route::post('reading/device', 'ApiController@receive');
+        // AUTH
+        Route::post('/tokens/create', 'ApiController@getToken');
+        Route::middleware('auth:sanctum')->post('/tokens/revoke', 'ApiController@revokeToken');
+
+        Route::middleware('auth:sanctum')->post('reading/device', 'ApiController@receive');
+        Route::middleware('auth:sanctum')->post('reading/getDevices', 'ApiController@getDevices');
     }
 );
 

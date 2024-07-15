@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\{Request, JsonResponse};
-use App\Models\Reading;
+use App\Models\{Reading, User, Device};
 use Exception;
+
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class ApiController extends Controller
 {
@@ -27,5 +30,45 @@ class ApiController extends Controller
             'data' => $reading,
             'message' => 'Success'
         ], JsonResponse::HTTP_OK);
+    }
+
+    public function getToken(Request $request){
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+            'device_name' => 'required',
+        ]);
+
+        $user = User::where('username', $request->username)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'username' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+     
+        return $user->createToken($request->device_name)->plainTextToken;
+    }
+
+    public function revokeToken(Request $request){
+        $request->user()->currentAccessToken()->delete();
+
+        return ["message" => "Success"];
+    }
+
+    public function getDevices(Request $req){
+        $devices = Device::select('*');
+
+        if(isset(($req->user_id))){
+            $devices->where('user_id', $req->user_id);
+        }
+
+        $devices = $devices->get();
+        $devices->load('category');
+
+        return response()->json([
+            'data' => $devices,
+            'message' => "Success"
+        ]);
     }
 }
