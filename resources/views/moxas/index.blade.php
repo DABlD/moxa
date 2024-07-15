@@ -22,10 +22,10 @@
                     			<tr>
                     				<th>ID</th>
                     				<th>Building</th>
-                    				<th>Name</th>
+                    				<th>Subscriber</th>
                     				<th>Serial</th>
                     				<th>Location</th>
-                    				<th>Floor</th>
+                    				<th>Unit Number</th>
                     				<th>Utility</th>
                     				<th>In Dashboard</th>
                     				<th>Actions</th>
@@ -169,9 +169,9 @@
 					    </div>
 					</div>
 	                ${input("serial", "Serial", null, 3, 9)}
-	                ${input("name", "Name", null, 3, 9)}
+	                ${input("name", "Subscriber", null, 3, 9)}
 	                ${input("location", "Location", null, 3, 9)}
-	                ${input("floor", "Floor", null, 3, 9)}
+	                ${input("floor", "Unit #", null, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -288,10 +288,10 @@
 					    </div>
 					</div>
 	                ${input("id", "", moxa.user.id, 3, 9, 'hidden')}
-	                ${input("serial", "Name", moxa.serial, 3, 9)}
-	                ${input("name", "Name", moxa.name, 3, 9)}
+	                ${input("serial", "Serial #", moxa.serial, 3, 9)}
+	                ${input("name", "Subscriber", moxa.name, 3, 9)}
 	                ${input("location", "Location", moxa.location, 3, 9)}
-	                ${input("floor", "Floor", moxa.floor, 3, 9)}
+	                ${input("floor", "Unit #", moxa.floor, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
