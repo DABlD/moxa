@@ -13,7 +13,7 @@
                             List
                         </h3>
 
-                        @include('approvers.includes.toolbar')
+                        @include('subscribers.includes.toolbar')
                     </div>
 
                     <div class="card-body table-responsive">
@@ -21,10 +21,10 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
-                    				<th>Username</th>
                     				<th>Name</th>
                     				<th>Email</th>
                     				<th>Contact</th>
+                    				<th>Address</th>
                     				<th>Actions</th>
                     			</tr>
                     		</thead>
@@ -55,21 +55,21 @@
 		$(document).ready(()=> {
 			var table = $('#table').DataTable({
 				ajax: {
-					url: "{{ route('datatable.approver') }}",
+					url: "{{ route('datatable.subscriber') }}",
                 	dataType: "json",
                 	dataSrc: "",
 					data: {
 						table: 'Users',
 						select: "*",
-						where: ["Role", "Approver"]
+						where: ["Role", "Subscriber"]
 					}
 				},
 				columns: [
 					{data: 'id'},
-					{data: 'username'},
 					{data: 'name'},
 					{data: 'email'},
 					{data: 'contact'},
+					{data: 'address'},
 					{data: 'actions'},
 				],
         		pageLength: 25,
@@ -86,9 +86,9 @@
 					select: '*',
 					where: ['id', id],
 				},
-				success: approver => {
-					approver = JSON.parse(approver)[0];
-					showDetails(approver);
+				success: subscriber => {
+					subscriber = JSON.parse(subscriber)[0];
+					showDetails(subscriber);
 				}
 			})
 		}
@@ -99,10 +99,7 @@
 	                ${input("name", "Name", null, 3, 9)}
 					${input("email", "Email", null, 3, 9, 'email')}
 	                ${input("contact", "Contact #", null, 3, 9)}
-	                <br>
-	                ${input("username", "Username", null, 3, 9)}
-	                ${input("password", "Password", null, 3, 9, 'password')}
-	                ${input("password_confirmation", "Confirm Password", null, 3, 9, 'password')}
+	                ${input("address", "Address", null, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -116,45 +113,6 @@
 
 			            if($('.swal2-container input:placeholder-shown').length){
 			                Swal.showValidationMessage('Fill all fields');
-			            }
-			            else if($("[name='password']").val().length < 8){
-			                Swal.showValidationMessage('Password must at least be 8 characters');
-			            }
-			            else if($("[name='password']").val() != $("[name='password_confirmation']").val()){
-			                Swal.showValidationMessage('Password do not match');
-			            }
-			            else{
-			            	let bool = false;
-            				$.ajax({
-            					url: "{{ route('user.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["email", $("[name='email']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length){
-            			    			Swal.showValidationMessage('Email already used');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-            						else{
-			            				$.ajax({
-			            					url: "{{ route('user.get') }}",
-			            					data: {
-			            						select: "id",
-			            						where: ["username", $("[name='username']").val()]
-			            					},
-			            					success: result => {
-			            						result = JSON.parse(result);
-			            						if(result.length){
-			            			    			Swal.showValidationMessage('Username already used');
-				            						setTimeout(() => {resolve()}, 500);
-			            						}
-			            					}
-			            				});
-            						}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -170,9 +128,8 @@
 							name: $("[name='name']").val(),
 							email: $("[name='email']").val(),
 							contact: $("[name='contact']").val(),
-							role: "Approver",
-							username: $("[name='username']").val(),
-							password: $("[name='password']").val(),
+							address: $("[name='address']").val(),
+							role: "Subscriber",
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -191,8 +148,7 @@
 	                ${input("name", "Name", approver.name, 3, 9)}
 					${input("email", "Email", approver.email, 3, 9, 'email')}
 	                ${input("contact", "Contact #", approver.contact, 3, 9)}
-	                <br>
-	                ${input("username", "Username", approver.username, 3, 9)}
+	                ${input("address", "Address", approver.address, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -206,39 +162,6 @@
 
 			            if($('.swal2-container input:placeholder-shown').length){
 			                Swal.showValidationMessage('Fill all fields');
-			            }
-			            else{
-			            	let bool = false;
-            				$.ajax({
-            					url: "{{ route('user.get') }}",
-            					data: {
-            						select: "id",
-            						where: ["email", $("[name='email']").val()]
-            					},
-            					success: result => {
-            						result = JSON.parse(result);
-            						if(result.length && result[0].id != approver.id){
-            			    			Swal.showValidationMessage('Email already used');
-	            						setTimeout(() => {resolve()}, 500);
-            						}
-			            			else{
-			            				$.ajax({
-			            					url: "{{ route('user.get') }}",
-			            					data: {
-			            						select: "id",
-			            						where: ["username", $("[name='username']").val()]
-			            					},
-			            					success: result => {
-			            						result = JSON.parse(result);
-			            						if(result.length && result[0].id != approver.user.id){
-			            			    			Swal.showValidationMessage('Username already used');
-				            						setTimeout(() => {resolve()}, 500);
-			            						}
-			            					}
-			            				});
-			            			}
-            					}
-            				});
 			            }
 
 			            bool ? setTimeout(() => {resolve()}, 500) : "";
@@ -254,7 +177,7 @@
 							name: $("[name='name']").val(),
 							email: $("[name='email']").val(),
 							contact: $("[name='contact']").val(),
-							username: $("[name='username']").val(),
+							address: $("[name='address']").val(),
 						},
 						message: "Success"
 					},	() => {

@@ -332,6 +332,27 @@ Route::group([
             }
         );
 
+        $cname = "subscriber";
+        Route::group([
+                'as' => "$cname.",
+                'prefix' => "$cname/"
+            ], function () use($cname){
+                Route::get("/", ucfirst($cname) . "Controller@index")
+                    ->defaults("sidebar", 1)
+                    ->defaults("icon", "fa-solid fa-bells")
+                    ->defaults("name", "Subscribers")
+                    ->defaults("roles", array("Admin"))
+                    ->defaults("group", "Settings")
+                    ->name($cname)
+                    ->defaults("href", "/$cname");
+
+                Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
+                Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
+                Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
+            }
+        );
+
         // LOCATION ROUTES
         // $cname = "location";
         // Route::group([
@@ -543,6 +564,7 @@ Route::group([
                 Route::get("rx", ucfirst($cname) . "Controller@rx")->name('rx');
                 Route::get("site", ucfirst($cname) . "Controller@site")->name('site');
                 Route::get("data", ucfirst($cname) . "Controller@data")->name('data');
+                Route::get("subscriber", ucfirst($cname) . "Controller@subscriber")->name('subscriber');
             }
         );
     }

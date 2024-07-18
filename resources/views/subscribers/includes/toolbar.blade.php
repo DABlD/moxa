@@ -1,5 +1,5 @@
 <h3 class="float-right">
-    <a class="btn btn-success btn-sm" data-toggle="tooltip" title="Add Building" onclick="createCategory()">
+    <a class="btn btn-success btn-sm" data-toggle="tooltip" title="Add Building" onclick="create()">
         <i class="fas fa-plus fa-2xl"></i>
     </a>&nbsp;
     {{-- <a class="btn btn-info btn-sm" data-toggle="tooltip" title="Export" onclick="exportSku()">
@@ -8,7 +8,7 @@
 </h3>
 <br><br>
 
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-3">
         <div class="row iRow">
             <div class="col-md-4 iLabel" style="margin: auto;">
@@ -21,4 +21,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}

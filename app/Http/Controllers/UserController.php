@@ -38,19 +38,28 @@ class UserController extends Controller
 
     public function store(Request $req){
         $user = new User();
-        if($req->role == "Approver" && auth()->user()->role == "Admin"){
+        if($req->role == "Subscriber" && auth()->user()->role == "Admin"){
             $user->admin_id = auth()->user()->id;
+
+            $user->username = bin2hex(random_bytes(20));
+            $user->password = "1234568";
         }
         $user->name = $req->name;
         $user->contact = $req->contact;
         $user->email = $req->email;
         $user->role = $req->role;
+
         if($req->address){
             $user->address = $req->address;
         }
-        $user->username = $req->username;
-        $user->password = $req->password;
+
+        if($req->role != "Subscriber"){
+            $user->username = $req->username;
+            $user->password = $req->password;
+        }
+
         $user->save();
+
         if($req->role == "Admin"){
             $user->login_link = "?u=$user->id";
             $user->save();
