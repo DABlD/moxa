@@ -59,7 +59,7 @@
                 	dataType: "json",
                 	dataSrc: "",
 					data: {
-						table: 'Users',
+						table: 'users',
 						select: "*",
 						where: ["Role", "Subscriber"]
 					}

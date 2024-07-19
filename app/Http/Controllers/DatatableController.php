@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{User, Building, TransactionType, Device, Site, Reading};
 use DB;
-
 class DatatableController extends Controller
 {
     public function admin(Request $req){
@@ -408,7 +407,6 @@ class DatatableController extends Controller
 
     public function subscriber(Request $req){
         $array = User::select($req->select);
-        $array = $array->where('admin_id', auth()->user()->id);
 
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
