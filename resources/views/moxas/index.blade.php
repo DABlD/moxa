@@ -66,14 +66,14 @@
 					data: {
 						table: 'Device',
 						select: "devices.*",
-						load: ['building']
+						load: ['building', 'subscriber']
 					}
 				},
 				columns: [
 					{data: 'id'},
 					{data: 'building.name', visible: false},
+					{data: 'subscriber.name'},
 					{data: 'serial'},
-					{data: 'name'},
 					{data: 'location'},
 					{data: 'floor'},
 					{data: 'utility'},
@@ -130,6 +130,33 @@
 			});
 		});
 
+		function userDetails(id){
+			$.ajax({
+				url: "{{ route('user.get') }}",
+				data: {
+					select: '*',
+					where: ['id', id]
+				},
+				success: user => {
+					user = JSON.parse(user)[0];
+
+					console.log(user);
+
+					Swal.fire({
+						title: 'Subscriber Details',
+						html: `
+			                ${input("name", "Name", user.name, 3, 9, 'text', 'disabled')}
+			                ${input("email", "Email", user.email, 3, 9, 'text', 'disabled')}
+			                ${input("address", "Address", user.address, 3, 9, 'text', 'disabled')}
+			                ${input("contact", "Contact", user.contact, 3, 9, 'text', 'disabled')}
+						`,
+						width: '800px',
+						confirmButtonText: 'Exit',
+					});
+				}
+			})
+		}
+
 		function view(id){
 			$.ajax({
 				url: "{{ route('device.get') }}",
@@ -148,6 +175,16 @@
 		function create(){
 			Swal.fire({
 				html: `
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Subscriber
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="name" class="form-control">
+					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
 					        Building
@@ -169,7 +206,6 @@
 					    </div>
 					</div>
 	                ${input("serial", "Serial", null, 3, 9)}
-	                ${input("name", "Subscriber", null, 3, 9)}
 	                ${input("location", "Location", null, 3, 9)}
 	                ${input("floor", "Unit #", null, 3, 9)}
 				`,
@@ -224,6 +260,29 @@
 							});
 						}
 					})
+
+					$.ajax({
+						url: "{{ route('user.get') }}",
+						data: {
+							select: "*",
+							where: ['role', 'Subscriber']
+						},
+						success: users => {
+							users = JSON.parse(users);
+							userString = "";
+
+							users.forEach(user => {
+								userString += `
+									<option value="${user.id}">${user.name}</option>
+								`;
+							});
+
+							$("[name='name']").append(userString);
+							$("[name='name']").select2({
+								placeholder: "Select Subscriber"
+							});
+						}
+					})
 				},
 				preConfirm: () => {
 				    swal.showLoading();
@@ -269,6 +328,16 @@
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
+					        Subscriber
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="name" class="form-control">
+					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
 					        Building
 					    </div>
 					    <div class="col-md-9 iInput">
@@ -289,7 +358,6 @@
 					</div>
 	                ${input("id", "", moxa.user.id, 3, 9, 'hidden')}
 	                ${input("serial", "Serial #", moxa.serial, 3, 9)}
-	                ${input("name", "Subscriber", moxa.name, 3, 9)}
 	                ${input("location", "Location", moxa.location, 3, 9)}
 	                ${input("floor", "Unit #", moxa.floor, 3, 9)}
 				`,
@@ -346,6 +414,31 @@
 							});
 
 							$("[name='category_id']").val(moxa.category_id).trigger('change');
+						}
+					})
+
+					$.ajax({
+						url: "{{ route('user.get') }}",
+						data: {
+							select: "*",
+							where: ['role', 'Subscriber']
+						},
+						success: users => {
+							users = JSON.parse(users);
+							userString = "";
+
+							users.forEach(user => {
+								userString += `
+									<option value="${user.id}">${user.name}</option>
+								`;
+							});
+
+							$("[name='name']").append(userString);
+							$("[name='name']").select2({
+								placeholder: "Select Subscriber"
+							});
+
+							$("[name='name']").val(moxa.name).trigger('change');
 						}
 					})
 				},

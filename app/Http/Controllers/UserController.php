@@ -41,7 +41,7 @@ class UserController extends Controller
         if($req->role == "Subscriber" && auth()->user()->role == "Admin"){
             $user->admin_id = auth()->user()->id;
 
-            $user->username = bin2hex(random_bytes(20));
+            $user->username = bin2hex(random_bytes(4));
             $user->password = "1234568";
         }
         $user->name = $req->name;

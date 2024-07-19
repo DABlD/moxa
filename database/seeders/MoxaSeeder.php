@@ -27,7 +27,7 @@ class MoxaSeeder extends Seeder
         $data->category_id = $i;
         $data->user_id = 2;
         $data->serial = "D" . $k . "S";
-        $data->name = "D" . $k . "N";
+        $data->name = $i + 5;
         $data->location = "D" . $k . "L";
         $data->floor = "D" . $k . "F";
         $data->utility = $j == 1 ? "Power" : "Water";
