@@ -147,18 +147,12 @@ Route::group([
                 Route::get("/", ucfirst($cname) . "Controller@index")
                     ->defaults("sidebar", 1)
                     ->defaults("icon", "fas fa-file-invoice-dollar")
-                    ->defaults("name", "Reading")
-                    ->defaults("roles", array("Admin", 'RHU'))
+                    ->defaults("name", "Billing")
+                    ->defaults("roles", array("Admin"))
                     ->name($cname)
                     ->defaults("href", "/$cname");
 
                 Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
-                Route::get("getReading/", ucfirst($cname) . "Controller@getReading")->name('getReading');
-                Route::get("perBuilding/", ucfirst($cname) . "Controller@perBuilding")->name('perBuilding');
-                Route::get("exportPerBuilding/", ucfirst($cname) . "Controller@exportPerBuilding")->name('exportPerBuilding');
-                Route::get("moxaPerBuilding/", ucfirst($cname) . "Controller@moxaPerBuilding")->name('moxaPerBuilding');
-                Route::get("perBuilding2/", ucfirst($cname) . "Controller@perBuilding2")->name('perBuilding2');
-                Route::get("moxaPerBuilding2/", ucfirst($cname) . "Controller@moxaPerBuilding2")->name('moxaPerBuilding2');
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
