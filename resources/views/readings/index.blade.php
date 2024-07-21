@@ -260,17 +260,15 @@
 						url: "{{ route('device.get') }}",
 						data: {
 							select: "*",
-							load: ["building", "category"]
+							load: ["building", "category", "subscriber"]
 						},
 						success: moxas => {
 							moxas = JSON.parse(moxas);
 							moxaString = "";
 
-							console.log(moxas);
-
 							moxas.forEach(moxa => {
 								moxaString += `
-									<option value="${moxa.id}">${moxa.name} #${moxa.serial} (${moxa.utility})</option>
+									<option value="${moxa.id}">${moxa.subscriber.name} #${moxa.serial} (${moxa.utility})</option>
 								`;
 							});
 
