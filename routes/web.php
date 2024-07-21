@@ -119,7 +119,34 @@ Route::group([
             ], function () use($cname){
                 Route::get("/", ucfirst($cname) . "Controller@index")
                     ->defaults("sidebar", 1)
-                    ->defaults("icon", "fa-light fa-pen-to-square")
+                    ->defaults("icon", "fas fa-pen-to-square")
+                    ->defaults("name", "Reading")
+                    ->defaults("roles", array("Admin", 'RHU'))
+                    ->name($cname)
+                    ->defaults("href", "/$cname");
+
+                Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::get("getReading/", ucfirst($cname) . "Controller@getReading")->name('getReading');
+                Route::get("perBuilding/", ucfirst($cname) . "Controller@perBuilding")->name('perBuilding');
+                Route::get("exportPerBuilding/", ucfirst($cname) . "Controller@exportPerBuilding")->name('exportPerBuilding');
+                Route::get("moxaPerBuilding/", ucfirst($cname) . "Controller@moxaPerBuilding")->name('moxaPerBuilding');
+                Route::get("perBuilding2/", ucfirst($cname) . "Controller@perBuilding2")->name('perBuilding2');
+                Route::get("moxaPerBuilding2/", ucfirst($cname) . "Controller@moxaPerBuilding2")->name('moxaPerBuilding2');
+                Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
+                Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
+                Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
+            }
+        );
+
+        // BILLING
+        $cname = "billing";
+        Route::group([
+                'as' => "$cname.",
+                'prefix' => "$cname/"
+            ], function () use($cname){
+                Route::get("/", ucfirst($cname) . "Controller@index")
+                    ->defaults("sidebar", 1)
+                    ->defaults("icon", "fas fa-file-invoice-dollar")
                     ->defaults("name", "Reading")
                     ->defaults("roles", array("Admin", 'RHU'))
                     ->name($cname)
@@ -339,7 +366,7 @@ Route::group([
             ], function () use($cname){
                 Route::get("/", ucfirst($cname) . "Controller@index")
                     ->defaults("sidebar", 1)
-                    ->defaults("icon", "fa-solid fa-bells")
+                    ->defaults("icon", "fa-solid fa-bell")
                     ->defaults("name", "Subscribers")
                     ->defaults("roles", array("Admin"))
                     ->defaults("group", "Settings")
