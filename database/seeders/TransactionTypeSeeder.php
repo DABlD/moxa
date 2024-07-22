@@ -35,6 +35,7 @@ class TransactionTypeSeeder extends Seeder
         $tType->operator = $operator;
         $tType->inDashboard = $inDashboard;
         $tType->canDelete = $canDelete;
+        $tType->rate = rand(1,3);
         $tType->save();
     }
 }
