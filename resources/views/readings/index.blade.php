@@ -24,6 +24,7 @@
                     			<tr>
                     				<th>ID</th>
                     				<th>Device</th>
+                    				<th>Serial</th>
                     				<th>Utility</th>
                     				<th>Payload</th>
                     				<th>Datetime</th>
@@ -168,21 +169,22 @@
 						f.where2 = ['m.category_id', trueBuilding];
 						f.from = from;
 						f.to = to;
-						f.load = ['device']
+						f.load = ['device.subscriber']
 						f.select = ['readings.*']
 					}
 				},
 				columns: [
 					{ data: 'id' },
-					{ data: 'device.name' },
-					{ data: 'device.utility' },
+					{ data: 'device.subscriber.name', visible: false},
+					{ data: 'device.serial'},
+					{ data: 'device.utility'},
 					{ data: 'total' },
 					{ data: 'datetime' },
 					{ data: 'created_at' },
 				],
 				columnDefs: [
 					{
-						targets: [4,5],
+						targets: [5,6],
 						render: date => {
 							return moment(date).format("MMM DD, YYYY hh:mm A");
 						}
