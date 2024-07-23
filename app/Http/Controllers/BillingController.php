@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Billing};
+use App\Models\{Billing, Device};
 use DB;
 
 class BillingController extends Controller
@@ -53,16 +53,23 @@ class BillingController extends Controller
         echo json_encode($array);
     }
 
+    public function getDetails(Request $req){
+        $array = Billing::where('moxa_id', $req->id)->latest()->get();
+        $array2 = Device::find($req->id)->load('category');
+
+        return json_encode(["billing" => $array, "device" => $array2]);
+    }
+
     public function store(Request $req){
+        $device = Device::find($req->moxa_id);
+
         $bill = new Billing();
-        $bill = $req->user_id;
-        $bill = $req->moxa_id;
-        $bill = $req->from;
-        $bill = $req->to;
-        $bill = $req->reading;
-        $bill = $req->rate;
-        $bill = $req->total;
-        $bill = $req->status;
+        $bill->user_id = $device->name;
+        $bill->moxa_id = $req->moxa_id;
+        $bill->reading = $req->reading;
+        $bill->rate = $req->rate;
+        $bill->total = $req->total;
+        $bill->status = "Unpaid";
         $bill->save();
     }
 

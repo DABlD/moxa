@@ -23,8 +23,6 @@
                     				<th>ID</th>
                     				<th>User</th>
                     				<th>Device</th>
-                    				<th>From</th>
-                    				<th>To</th>
                     				<th>Reading</th>
                     				<th>Rate</th>
                     				<th>Total</th>
@@ -50,6 +48,12 @@
 	<link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
 	{{-- <link rel="stylesheet" href="{{ asset('css/datatables-jquery.min.css') }}"> --}}
+
+	<style>
+		#table td, #table th{
+			text-align: center;
+		}
+	</style>
 @endpush
 
 @push('scripts')
@@ -61,7 +65,7 @@
 		$(document).ready(()=> {
 			var table = $('#table').DataTable({
 				ajax: {
-					url: "{{ route('datatable.moxa') }}",
+					url: "{{ route('datatable.billing') }}",
                 	dataType: "json",
                 	dataSrc: "",
 					data: {
@@ -73,9 +77,7 @@
 				columns: [
 					{data: 'id'},
 					{data: 'user.name'},
-					{data: 'device.name'},
-					{data: 'from'},
-					{data: 'to'},
+					{data: 'device.serial'},
 					{data: 'reading'},
 					{data: 'rate'},
 					{data: 'total'},
@@ -83,12 +85,6 @@
 					{data: 'actions'},
 				],
 				columnDefs: [
-        			{
-        				targets: [3,4],
-        				render: value => {
-        					return moment(value).format(dateFormat);
-        				}
-        			}
 				],
         		pageLength: 25,
 				// drawCallback: function(){
@@ -147,34 +143,59 @@
 					        Subscriber
 					    </div>
 					    <div class="col-md-9 iInput">
-					        <select name="name" class="form-control">
+					        <select name="user_id" class="form-control">
 					        	<option value=""></option>
 					        </select>
 					    </div>
 					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Building
+					        Device
 					    </div>
 					    <div class="col-md-9 iInput">
-					        <select name="category_id" class="form-control">
+					        <select name="moxa_id" class="form-control">
 					        	<option value=""></option>
 					        </select>
 					    </div>
 					</div>
+
+					${input("reading", "Current Reading", null, 3, 9, 'number', 'min=0')}
+
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Utility
+					        Last Billing
 					    </div>
 					    <div class="col-md-9 iInput">
-					        <select name="utility" class="form-control">
-					        	<option value=""></option>
-					        </select>
+					        <div id="last_billing">N/A</div>
 					    </div>
 					</div>
-	                ${input("serial", "Serial", null, 3, 9)}
-	                ${input("location", "Location", null, 3, 9)}
-	                ${input("floor", "Unit #", null, 3, 9)}
+
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Reading
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <div id="last_reading" data-value="0">N/A</div>
+					    </div>
+					</div>
+
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Rate
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <div id="rate" data-value="0">0</div>
+					    </div>
+					</div>
+
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Total Amount
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <div id="total">₱0.00</div>
+					    </div>
+					</div>
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -183,73 +204,95 @@
 				cancelButtonText: 'Cancel',
 				didOpen: () => {
 					$.ajax({
-						url: "{{ route('transactionType.get') }}",
-						data: {
-							select: "*",
-							where: ['admin_id', {{ auth()->user()->id }}]
-						},
-						success: utys => {
-							utys = JSON.parse(utys);
-							utyString = "";
-
-							utys.forEach(uty => {
-								utyString += `
-									<option value="${uty.type}">${uty.type}</option>
-								`;
-							});
-
-							$("[name='utility']").append(utyString);
-							$("[name='utility']").select2({
-								placeholder: "Select Utility",
-							});
-						}
-					})
-
-					$.ajax({
-						url: "{{ route('building.getCategories') }}",
-						data: {
-							select: "*",
-							where: ['admin_id', {{ auth()->user()->id }}]
-						},
-						success: buildings => {
-							buildings = JSON.parse(buildings);
-							buildingString = "";
-
-							buildings.forEach(building => {
-								buildingString += `
-									<option value="${building.id}">${building.name}</option>
-								`;
-							});
-
-							$("[name='category_id']").append(buildingString);
-							$("[name='category_id']").select2({
-								placeholder: "Select Building"
-							});
-						}
-					})
-
-					$.ajax({
 						url: "{{ route('user.get') }}",
 						data: {
 							select: "*",
 							where: ['role', 'Subscriber']
 						},
-						success: users => {
-							users = JSON.parse(users);
-							userString = "";
+						success: subscribers => {
+							subscribers = JSON.parse(subscribers);
+							subscriberString = "";
 
-							users.forEach(user => {
-								userString += `
-									<option value="${user.id}">${user.name}</option>
+							subscribers.forEach(subscriber => {
+								subscriberString += `
+									<option value="${subscriber.id}">${subscriber.name}</option>
 								`;
 							});
 
-							$("[name='name']").append(userString);
-							$("[name='name']").select2({
-								placeholder: "Select Subscriber"
+							$("[name='user_id']").append(subscriberString);
+							$("[name='user_id']").select2({
+								placeholder: "Select Subscriber",
 							});
 						}
-					})
+					});
+
+					$("[name='moxa_id']").select2({
+						placeholder: "Select Subscriber First"
+					});
+
+					$("[name='user_id']").on('change', e => {
+						$("[name='moxa_id']").html('<option value=""></option>');
+
+						$.ajax({
+							url: "{{ route('device.get') }}",
+							data: {
+								select: "*",
+								where: ['name', e.target.value]
+							},
+							success: devices => {
+								devices = JSON.parse(devices);
+								deviceString = "";
+
+								devices.forEach(device => {
+									deviceString += `
+										<option value="${device.id}">${device.serial}</option>
+									`;
+								});
+
+								$("[name='moxa_id']").append(deviceString);
+								$("[name='moxa_id']").select2({
+									placeholder: "Select Device"
+								});
+							}
+						})
+					});
+
+					$("[name='moxa_id']").on('change', e => {
+						$.ajax({
+							url: "{{ route('billing.getDetails') }}",
+							data: {
+								select: "*",
+								id: e.target.value
+							},
+							success: data => {
+								data = JSON.parse(data);
+
+								if(data.billing.length){
+									$('#last_billing').html(moment(data.billing[0].created_at).format(dateTimeFormat2 + " A"));
+									$('#last_reading').html(data.billing[0].reading);
+									$('#last_reading').data("value", data.billing[0].reading);
+								}
+								else{
+									$('#last_billing').html("N/A");
+								}
+
+								if(data.device.serial){
+									$('#rate').html(data.device.category.rate + "/" + data.device.category.operator);
+									$('#rate').data('value', data.device.category.rate);
+								}
+								else{
+									$('#rate').html("0");
+								}
+							}
+						})
+					});
+
+					$("[name='reading']").on('keyup', e => {
+						let lr = $('#last_reading').data('value');
+						let r = $('#rate').data('value');
+
+						$('#total').html("₱" + numeral((e.target.value - lr) * r).format('0,0.00'));
+					});
 				},
 				preConfirm: () => {
 				    swal.showLoading();
@@ -269,16 +312,19 @@
 			}).then(result => {
 				if(result.value){
 					swal.showLoading();
+
+					let cr = $("[name='reading']").val();
+					let lr = $('#last_reading').data('value');
+					let r = $('#rate').data('value');
+
 					$.ajax({
-						url: "{{ route('device.store') }}",
+						url: "{{ route('billing.store') }}",
 						type: "POST",
 						data: {
-							category_id: $("[name='category_id']").val(),
-							serial: $("[name='serial']").val(),
-							name: $("[name='name']").val(),
-							location: $("[name='location']").val(),
-							floor: $("[name='floor']").val(),
-							utility: $("[name='utility']").val(),
+							moxa_id: $("[name='moxa_id']").val(),
+							reading: cr,
+							rate: r,
+							total: (cr - lr) * r,
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {

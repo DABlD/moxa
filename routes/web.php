@@ -153,6 +153,7 @@ Route::group([
                     ->defaults("href", "/$cname");
 
                 Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::get("getDetails/", ucfirst($cname) . "Controller@getDetails")->name('getDetails');
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
@@ -586,6 +587,7 @@ Route::group([
                 Route::get("site", ucfirst($cname) . "Controller@site")->name('site');
                 Route::get("data", ucfirst($cname) . "Controller@data")->name('data');
                 Route::get("subscriber", ucfirst($cname) . "Controller@subscriber")->name('subscriber');
+                Route::get("billing", ucfirst($cname) . "Controller@billing")->name('billing');
             }
         );
     }

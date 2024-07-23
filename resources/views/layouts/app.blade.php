@@ -94,6 +94,7 @@
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
         <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('js/custom.js') }}"></script>
+        <script src="{{ asset('js/numeral.min.js') }}"></script>
 
         <script>
             @if(session('success'))
