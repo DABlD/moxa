@@ -44,7 +44,7 @@
                             <div class="col-md-12">
                                 <h3 class="card-title" style="width: 100%;">
                                     <i class="fas fa-chart-line mr-1"></i>
-                                    {{ $moxa->name }} #{{ $moxa->serial }} ({{ $moxa->utility }})
+                                    {{ $moxa->subscriber->name }} #{{ $moxa->serial }} ({{ $moxa->utility }})
 
                                     <div style="float: right;">
                                         <a class="btn btn-danger" {!! $moxa->inDashboard ? "" : "style='display: none;' " !!} id="rmv{{ $moxa->id }}" onclick="hide(this)">
