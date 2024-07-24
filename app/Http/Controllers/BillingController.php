@@ -79,6 +79,7 @@ class BillingController extends Controller
         $bill->refno = $req->refno;
         $bill->invoice = "INV" . now()->format('Ymd') . sprintf('%06d', Billing::where('invoice', 'like', "INV" . now()->format('Ymd') . '%')->count() + 1);
         $bill->status = "Paid";
+        $bill->date_paid = now();
         $bill->save();
     }
 

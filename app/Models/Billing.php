@@ -12,11 +12,11 @@ class Billing extends Model
     use BillingAttribute;
 
     protected $fillable = [
-        "user_id","moxa_id","reading","rate","total","status", 'mop', 'invoice', 'refno'
+        "user_id","moxa_id","reading","rate","total","status", 'mop', 'invoice', 'refno', 'date_paid'
     ];
 
     protected $dates = [
-        'created_at', 'updated_at', 'deleted_at', 'from', 'to'
+        'created_at', 'updated_at', 'deleted_at', 'from', 'to', 'date_paid'
     ];
 
     public function user(){

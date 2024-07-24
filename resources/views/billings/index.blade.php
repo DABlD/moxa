@@ -455,8 +455,16 @@
 							${input("mop", "Mode of Payment", bill.mop, 3, 9, null, 'disabled')}
 							${input("refno", "Reference No.", bill.refno, 3, 9, null, 'disabled')}
 							${input("invoice", "Invoice No.", bill.invoice, 3, 9, null, 'disabled')}
+							${input("date_paid", "Date Paid", bill.date_paid, 3, 9, null, 'disabled')}
 						`,
-						width: '50%'
+						width: '50%',
+						didOpen: () => {
+							$('[name="date_paid"]').flatpickr({
+								altInput: true,
+								altFormat: "F j, Y h:i:s K",
+								dateFormat: "Y-m-d",
+							});
+						}
 					})
 				}
 			})
