@@ -157,6 +157,7 @@ Route::group([
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
+                Route::post("pay/", ucfirst($cname) . "Controller@pay")->name('pay');
             }
         );
 

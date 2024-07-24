@@ -73,6 +73,15 @@ class BillingController extends Controller
         $bill->save();
     }
 
+    public function pay(Request $req){
+        $bill = Billing::find($req->id);
+        $bill->mop = $req->mop;
+        $bill->refno = $req->refno;
+        $bill->invoice = "INV" . now()->format('Ymd') . sprintf('%06d', Billing::where('invoice', 'like', "INV" . now()->format('Ymd') . '%')->count() + 1);
+        $bill->status = "Paid";
+        $bill->save();
+    }
+
     public function update(Request $req){
         $query = DB::table($this->table);
 

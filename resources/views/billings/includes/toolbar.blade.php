@@ -6,7 +6,7 @@
                 Subscriber Filter
             </div>
             <div class="col-md-8 iInput">
-                <select id="user_id" name="user_id" class="form-control">
+                <select id="fUser_id" name="fUser_id" class="form-control">
                     <option value="%%">Select Subscriber / All</option>
                 </select>
             </div>
@@ -19,7 +19,7 @@
                 Device Filter
             </div>
             <div class="col-md-8 iInput">
-                <select id="moxa_id" name="moxa_id" class="form-control">
+                <select id="fMoxa_id" name="fMoxa_id" class="form-control">
                     <option value="%%">Select Device / All</option>
                 </select>
             </div>
@@ -32,7 +32,7 @@
                 Status Filter
             </div>
             <div class="col-md-8 iInput">
-                <select id="status" name="status" class="form-control">
+                <select id="fStatus" name="fStatus" class="form-control">
                     <option value="%%">Select Status / All</option>
                     <option value="Unpaid">Unpaid</option>
                     <option value="Paid">Paid</option>

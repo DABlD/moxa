@@ -25,6 +25,10 @@ class CreateBillingsTable extends Migration
 
             $table->string('status');
 
+            $table->string('mop')->nullable();
+            $table->string('refno')->nullable();
+            $table->string('invoice')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

@@ -63,25 +63,25 @@
 	{{-- <script src="{{ asset('js/datatables-jquery.min.js') }}"></script> --}}
 
 	<script>
-		var user_id = "%%";
-		var moxa_id = "%%";
-		var status = "%%";
+		var fUser_id = "%%";
+		var fMoxa_id = "%%";
+		var fStatus = "%%";
 
 		$(document).ready(()=> {
 			$("[name='user_id']").on('change', e => {
-				user_id = e.target.value;
+				fUser_id = e.target.value;
 				filter();
 				reload();
 			});
 
 			$("[name='moxa_id']").on('change', e => {
-				moxa_id = e.target.value;
+				fMoxa_id = e.target.value;
 				filter();
 				reload();
 			});
 
 			$("[name='status']").on('change', e => {
-				status = e.target.value;
+				fStatus = e.target.value;
 				filter();
 				reload();
 			});
@@ -102,14 +102,14 @@
 						`;
 					});
 
-					$("[name='user_id']").append(subscriberString);
-					$("[name='user_id']").select2({
+					$("[name='fUser_id']").append(subscriberString);
+					$("[name='fUser_id']").select2({
 						placeholder: "Select Subscriber / All"
 					});
 
-					$("[name='user_id']").change(e => {
-						user_id = e.target.value;
-						moxa_id = "%%";
+					$("[name='fUser_id']").change(e => {
+						fUser_id = e.target.value;
+						fMoxa_id = "%%";
 						getDevices();
 						$("[name='moxa_id']").html(`
 								<option value="%%">Select Device / All</option>
@@ -129,7 +129,7 @@
 				url: "{{ route('device.get') }}",
 				data: {
 					select: "*",
-					like: ['name', user_id]
+					like: ['name', fUser_id]
 				},
 				success: moxas => {
 					moxas = JSON.parse(moxas);
@@ -141,12 +141,12 @@
 						`;
 					});
 
-					$("[name='moxa_id']").append(moxaString);
-					$("[name='moxa_id']").select2({
+					$("[name='fMoxa_id']").append(moxaString);
+					$("[name='fMoxa_id']").select2({
 						placeholder: "Select Device / All"
 					});
-					$("[name='moxa_id']").change(e => {
-						moxa_id = e.target.value;
+					$("[name='fMoxa_id']").change(e => {
+						fMoxa_id = e.target.value;
 						filter();
 					});
 				}
@@ -168,9 +168,9 @@
 						f.table = 'billings';
 						f.select = "*";
 						f.load = ['user', 'device'];
-						f.user_id = user_id;
-						f.moxa_id = moxa_id;
-						f.status = status;
+						f.user_id = fUser_id;
+						f.moxa_id = fMoxa_id;
+						f.status = fStatus;
 					}
 				},
 				columns: [
@@ -357,7 +357,7 @@
 				    return new Promise(resolve => {
 				    	let bool = true;
 
-			            if($('.swal2-container input:placeholder-shown').length || $('.select2-selection__placeholder').length){
+			            if($('.swal2-container input:placeholder-shown').length || $('#swal2-html-container .select2-selection__placeholder').length){
 			                Swal.showValidationMessage('Fill all fields');
 			            }
 			            else{
@@ -392,6 +392,73 @@
 					})
 				}
 			});
+		}
+
+		function pay(id){
+			Swal.fire({
+				title: 'Input Details',
+				html: `
+					${input("mop", "Mode of Payment", null, 3, 9)}
+					${input("refno", "Reference No.", null, 3, 9)}
+				`,
+				preConfirm: () => {
+				    swal.showLoading();
+				    return new Promise(resolve => {
+				    	let bool = true;
+
+			            if($('.swal2-container input:placeholder-shown').length || $('#swal2-html-container .select2-selection__placeholder').length){
+			                Swal.showValidationMessage('Fill all fields');
+			            }
+			            else{
+			            	let bool = false;
+			            }
+
+			            bool ? setTimeout(() => {resolve()}, 500) : "";
+				    });
+				},
+				width: '50%'
+			}).then(result => {
+				if(result.value){
+					$.ajax({
+						url: "{{ route('billing.pay') }}",
+						type: "POST",
+						data: {
+							id: id,
+							refno: $("[name='refno']").val(),
+							mop: $("[name='mop']").val(),
+							_token: $('meta[name="csrf-token"]').attr('content')
+						},
+						success: () => {
+							reload();
+							ss("Success");
+						}
+					})
+				}
+			})
+		}
+
+		function viewPayment(id){
+			swal.showLoading();
+			$.ajax({
+				url: '{{ route('billing.get') }}',
+				data: {
+					select: '*',
+					where: ['id', id]
+				},
+				success: bill => {
+					bill = JSON.parse(bill)[0];
+
+					Swal.fire({
+						title: 'Payment Details',
+						html: `
+							${input("mop", "Mode of Payment", bill.mop, 3, 9, null, 'disabled')}
+							${input("refno", "Reference No.", bill.refno, 3, 9, null, 'disabled')}
+							${input("invoice", "Invoice No.", bill.invoice, 3, 9, null, 'disabled')}
+						`,
+						width: '50%'
+					})
+				}
+			})
 		}
 	</script>
 @endpush
