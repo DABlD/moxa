@@ -360,6 +360,18 @@
 	                ${input("serial", "Serial #", moxa.serial, 3, 9)}
 	                ${input("location", "Location", moxa.location, 3, 9)}
 	                ${input("floor", "Unit #", moxa.floor, 3, 9)}
+
+	                <br>
+	                <br>
+
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Current Reading
+					    </div>
+					    <div class="col-md-9 iInput" id="curReading" style="font-weight: bold;">
+					        N/A
+					    </div>
+					</div>
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
@@ -439,6 +451,27 @@
 							});
 
 							$("[name='name']").val(moxa.name).trigger('change');
+						}
+					})
+
+					$.ajax({
+						url: '{{ route('reading.get') }}',
+						data: {
+							select: '*',
+							where: ['moxa_id', moxa.id],
+							order: ['datetime', 'desc']
+						},
+						success: result => {
+							result = JSON.parse(result);
+
+							if(result.length){
+								result = result[0].total;
+							}
+							else{
+								result = 0;
+							}
+
+							$('#curReading').html(result);
 						}
 					})
 				},
