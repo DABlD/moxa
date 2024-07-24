@@ -24,7 +24,7 @@ class MoxaSeeder extends Seeder
 
     public function create($i, $j, $k){
         $data = new Device();
-        $data->category_id = $i;
+        $data->category_id = $j == 1 ? 5 : 6;
         $data->user_id = 2;
         $data->serial = "D" . $k . "S";
         $data->name = $i + 5;
