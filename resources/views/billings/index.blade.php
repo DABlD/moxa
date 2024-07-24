@@ -13,10 +13,11 @@
                             Billing
                         </h3>
 
-                        @include('billings.includes.toolbar')
                     </div>
 
                     <div class="card-body table-responsive">
+                        @include('billings.includes.toolbar')
+
                     	<table id="table" class="table table-hover">
                     		<thead>
                     			<tr>
@@ -62,16 +63,114 @@
 	{{-- <script src="{{ asset('js/datatables-jquery.min.js') }}"></script> --}}
 
 	<script>
+		var user_id = "%%";
+		var moxa_id = "%%";
+		var status = "%%";
+
 		$(document).ready(()=> {
+			$("[name='user_id']").on('change', e => {
+				user_id = e.target.value;
+				filter();
+				reload();
+			});
+
+			$("[name='moxa_id']").on('change', e => {
+				moxa_id = e.target.value;
+				filter();
+				reload();
+			});
+
+			$("[name='status']").on('change', e => {
+				status = e.target.value;
+				filter();
+				reload();
+			});
+
+			$.ajax({
+				url: "{{ route('user.get') }}",
+				data: {
+					select: "*",
+					where: ['role', 'Subscriber']
+				},
+				success: subscribers => {
+					subscribers = JSON.parse(subscribers);
+					subscriberString = "";
+
+					subscribers.forEach(subscriber => {
+						subscriberString += `
+							<option value="${subscriber.id}">${subscriber.name}</option>
+						`;
+					});
+
+					$("[name='user_id']").append(subscriberString);
+					$("[name='user_id']").select2({
+						placeholder: "Select Subscriber / All"
+					});
+
+					$("[name='user_id']").change(e => {
+						user_id = e.target.value;
+						moxa_id = "%%";
+						getDevices();
+						$("[name='moxa_id']").html(`
+								<option value="%%">Select Device / All</option>
+							`);
+						filter();
+					});
+
+					getDevices();
+				}
+			});
+			
+			createTable();
+		});
+
+		function getDevices(){
+			$.ajax({
+				url: "{{ route('device.get') }}",
+				data: {
+					select: "*",
+					like: ['name', user_id]
+				},
+				success: moxas => {
+					moxas = JSON.parse(moxas);
+					moxaString = "";
+
+					moxas.forEach(moxa => {
+						moxaString += `
+							<option value="${moxa.id}">${moxa.serial}</option>
+						`;
+					});
+
+					$("[name='moxa_id']").append(moxaString);
+					$("[name='moxa_id']").select2({
+						placeholder: "Select Device / All"
+					});
+					$("[name='moxa_id']").change(e => {
+						moxa_id = e.target.value;
+						filter();
+					});
+				}
+			});
+		}
+
+		function filter(){
+			$('#table').DataTable().clear().destroy();
+			createTable();
+		}
+
+		function createTable(){
 			var table = $('#table').DataTable({
 				ajax: {
 					url: "{{ route('datatable.billing') }}",
                 	dataType: "json",
                 	dataSrc: "",
-					data: {
-						table: 'billings',
-						select: "*",
-						load: ['user', 'device']
+					data: f => {
+						f.table = 'billings';
+						f.select = "*";
+						f.load = ['user', 'device'];
+						f.user_id = user_id;
+						f.moxa_id = moxa_id;
+						f.status = status;
 					}
 				},
 				columns: [
@@ -91,7 +190,7 @@
 				// 	init();
 				// }
 			});
-		});
+		}
 
 		function create(){
 			Swal.fire({

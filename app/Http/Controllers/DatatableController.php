@@ -441,6 +441,10 @@ class DatatableController extends Controller
     public function billing(Request $req){
         $array = Billing::select($req->select);
 
+        $array = $array->where('user_id', 'like', $req->user_id);
+        $array = $array->where('moxa_id', 'like', $req->moxa_id);
+        $array = $array->where('status', 'like', $req->status);
+
         // IF HAS SORT PARAMETER $ORDER
         if($req->order){
             $array = $array->orderBy($req->order[0], $req->order[1]);
