@@ -142,7 +142,7 @@
 
 					moxas.forEach(moxa => {
 						moxaString += `
-							<option value="${moxa.id}">${moxa.name}</option>
+							<option value="${moxa.id}">${moxa.serial}</option>
 						`;
 					});
 
