@@ -342,7 +342,7 @@ Route::group([
                 Route::get("/", ucfirst($cname) . "Controller@index")
                     ->defaults("sidebar", 1)
                     ->defaults("icon", "fa-solid fa-tags")
-                    ->defaults("name", "Transaction Type")
+                    ->defaults("name", "Classifications")
                     ->defaults("roles", array("Admin"))
                     ->defaults("group", "Settings")
                     ->name($cname)

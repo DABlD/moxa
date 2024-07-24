@@ -36,6 +36,8 @@ class TransactionTypeSeeder extends Seeder
         $tType->inDashboard = $inDashboard;
         $tType->canDelete = $canDelete;
         $tType->rate = rand(5,10);
+        $tType->late_interest = rand(3,5);
+        $tType->classification = ["Residential", "Commercial", "Industrial"][rand(0,2)];
         $tType->save();
     }
 }

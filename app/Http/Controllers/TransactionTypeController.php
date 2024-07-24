@@ -14,7 +14,7 @@ class TransactionTypeController extends Controller
 
     public function index(){
         return $this->_view('index', [
-            'title' => 'Transaction Type'
+            'title' => 'Classifications'
         ]);
     }
 
@@ -65,6 +65,8 @@ class TransactionTypeController extends Controller
         $entry->operator = $req->operator;
         $entry->demand = $req->demand;
         $entry->rate = $req->rate;
+        $entry->late_interest = $req->late_interest;
+        $entry->classification = $req->classification;
         $entry->save();
     }
 
