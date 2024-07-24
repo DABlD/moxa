@@ -51,7 +51,7 @@
 	<script src="{{ asset('js/select2.min.js') }}"></script>
 
 	<script>
-		$('.m-0, .breadcrumb-item.active').html('Buildings');
+		$('.m-0, .breadcrumb-item.active').html('Areas');
 		var site_id = "%%";
 
 		$(document).ready(()=> {

@@ -21,7 +21,7 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
-                    				<th>Building</th>
+                    				<th>Area</th>
                     				<th>Subscriber</th>
                     				<th>Serial</th>
                     				<th>Location</th>
@@ -187,7 +187,7 @@
 					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Building
+					        Area
 					    </div>
 					    <div class="col-md-9 iInput">
 					        <select name="category_id" class="form-control">
@@ -256,7 +256,7 @@
 
 							$("[name='category_id']").append(buildingString);
 							$("[name='category_id']").select2({
-								placeholder: "Select Building"
+								placeholder: "Select Area"
 							});
 						}
 					})
@@ -338,7 +338,7 @@
 					</div>
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Building
+					        Area
 					    </div>
 					    <div class="col-md-9 iInput">
 					        <select name="category_id" class="form-control">
@@ -410,7 +410,7 @@
 
 							$("[name='category_id']").append(buildingString);
 							$("[name='category_id']").select2({
-								placeholder: "Select Building"
+								placeholder: "Select Area"
 							});
 
 							$("[name='category_id']").val(moxa.category_id).trigger('change');
