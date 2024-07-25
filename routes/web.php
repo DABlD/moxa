@@ -370,6 +370,7 @@ Route::group([
                     ->defaults("href", "/$cname");
 
                 Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
+                Route::get("getSubscriberDetails/", ucfirst($cname) . "Controller@getSubscriberDetails")->name('getSubscriberDetails');
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');

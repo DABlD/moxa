@@ -81,13 +81,12 @@
 
 		function view(id){
 			$.ajax({
-				url: "{{ route('user.get') }}",
+				url: "{{ route('subscriber.getSubscriberDetails') }}",
 				data: {
-					select: '*',
-					where: ['id', id],
+					id: id
 				},
 				success: subscriber => {
-					subscriber = JSON.parse(subscriber)[0];
+					subscriber = JSON.parse(subscriber);
 					showDetails(subscriber);
 				}
 			})
@@ -141,7 +140,256 @@
 			});
 		}
 
-		function showDetails(approver){
+		function showDetails(subscriber){
+			Swal.fire({
+				title: 'Subscriber Details',
+				html: `
+
+					<br>
+
+        			<div class="row">
+		                <section class="col-lg-4 connectedSortable">
+		                    <div class="card">
+		                        <div class="card-header row">
+		                            <div class="col-md-12">
+		                                <h3 class="card-title" style="width: 100%; text-align: left;">
+		                                    <i class="fas fa-user mr-1"></i>
+
+		                                    User Details
+
+		                                </h3>
+		                            </div>
+		                        </div>
+
+		                        <div class="card-body">
+
+		                            <div class="row iRow">
+		                                <div class="col-md-3 iLabel">
+											Name:
+		                                </div>
+		                                <div class="col-md-9 iInput">
+		                                	${subscriber.user.name}
+		                                </div>
+		                            </div>
+		                        
+		                            <div class="row iRow">
+		                                <div class="col-md-3 iLabel">
+											Email:
+		                                </div>
+		                                <div class="col-md-9 iInput">
+		                                	${subscriber.user.email}
+		                                </div>
+		                            </div>
+		                        
+		                            <div class="row iRow">
+		                                <div class="col-md-3 iLabel">
+											Contact:
+		                                </div>
+		                                <div class="col-md-9 iInput">
+		                                	${subscriber.user.contact}
+		                                </div>
+		                            </div>
+		                        
+		                            <div class="row iRow">
+		                                <div class="col-md-3 iLabel">
+											Address:
+		                                </div>
+		                                <div class="col-md-9 iInput">
+		                                	${subscriber.user.address}
+		                                </div>
+		                            </div>
+
+		                        </div>
+		                    </div>
+		                </section>
+
+		                <section class="col-lg-8 connectedSortable">
+		                    <div class="card">
+		                        <div class="card-header row">
+		                            <div class="col-md-12">
+		                                <h3 class="card-title" style="width: 100%; text-align: left;">
+		                                    <i class="fas fa-file-invoice-dollar mr-1"></i>
+
+		                                    Billings
+
+		                                </h3>
+		                            </div>
+		                        </div>
+
+		                        <div class="card-body">
+			                    	<table class="table table-hover">
+			                    		<thead>
+			                    			<tr>
+			                    				<th>Serial</th>
+			                    				<th>From</th>
+			                    				<th>To</th>
+			                    				<th>Reading</th>
+			                    				<th>Total</th>
+			                    				<th>Status</th>
+			                    			</tr>
+			                    		</thead>
+			                    		<tbody id="billingsTable">
+
+			                    		</tbody>
+			                    	</table>
+		                        </div>
+		                    </div>
+		                </section>
+
+		                <section class="col-lg-4 connectedSortable">
+		                    <div class="card">
+		                        <div class="card-header row">
+		                            <div class="col-md-12">
+		                                <h3 class="card-title" style="width: 100%; text-align: left;">
+		                                    <i class="fas fa-bolt-lightning mr-1"></i>
+
+		                                    Devices
+
+		                                </h3>
+		                            </div>
+		                        </div>
+
+		                        <div class="card-body">
+			                    	<table class="table table-hover">
+			                    		<thead>
+			                    			<tr>
+			                    				<th>Serial</th>
+			                    				<th>Type</th>
+			                    				<th>Classification</th>
+			                    			</tr>
+			                    		</thead>
+			                    		<tbody id="devicesTable">
+
+			                    		</tbody>
+			                    	</table>
+		                        </div>
+		                    </div>
+		                </section>
+
+		                <section class="col-lg-8 connectedSortable">
+		                    <div class="card">
+		                        <div class="card-header row">
+		                            <div class="col-md-12">
+		                                <h3 class="card-title" style="width: 100%; text-align: left;">
+		                                    <i class="fas fa-dollar mr-1"></i>
+
+		                                    Transactions
+
+		                                </h3>
+		                            </div>
+		                        </div>
+
+		                        <div class="card-body">
+			                    	<table class="table table-hover">
+			                    		<thead>
+			                    			<tr>
+			                    				<th>Mode of Payment</th>
+			                    				<th>Reference No</th>
+			                    				<th>Invoice</th>
+			                    				<th>Date Paid</th>
+			                    			</tr>
+			                    		</thead>
+			                    		<tbody id="transactionsTable">
+
+			                    		</tbody>
+			                    	</table>
+		                        </div>
+		                    </div>
+		                </section>
+		            </div>
+				`,
+				width: '80%',
+				confirmButtonText: 'Ok',
+				didOpen: () => {
+					let devicesTable = "";
+					let devices = subscriber.devices;
+
+					if(devices.length){
+						devices.forEach(device => {
+							devicesTable += `
+								<tr>
+									<td>${device.serial}</td>
+									<td>${device.category.type}</td>
+									<td>${device.category.classification}</td>
+								</tr>
+							`;
+						});
+					}
+					else{
+						devicesTable = `
+							<tr>
+								<td colspan="3">N/A</td>
+							</tr>
+						`;
+					}
+
+					let billingsTable = "";
+					let billings = subscriber.billings;
+
+					let paidSize = 0;
+
+					if(billings.length){
+						billings.forEach(billing => {
+							billingsTable += `
+								<tr>
+									<td>${billing.device.serial}</td>
+									<td>${moment(billing.from).format(dateFormat2)}</td>
+									<td>${moment(billing.to).format(dateFormat2)}</td>
+									<td>${billing.reading}</td>
+									<td>${billing.total}</td>
+									<td>${billing.status}</td>
+								</tr>
+							`;
+
+							if(billing.status == "Paid"){
+								paidSize++;
+							}
+						});
+					}
+					else{
+						billingsTable = `
+							<tr>
+								<td colspan="6">N/A</td>
+							</tr>
+						`;
+					}
+
+					let transactionsTable = "";
+
+					if(paidSize){
+						billings.forEach(billing => {
+							if(billing.status == "Paid"){
+								transactionsTable += `
+									<tr>
+										<td>${billing.mop}</td>
+										<td>${billing.refno}</td>
+										<td>${billing.invoice}</td>
+										<td>${moment(billing.date_paid).format(dateFormat2)}</td>
+									</tr>
+								`;
+
+							}
+						});
+					}
+					else{
+						transactionsTable = `
+							<tr>
+								<td colspan="4">N/A</td>
+							</tr>
+						`;
+					}
+
+					$('#transactionsTable').append(transactionsTable);
+					$('#billingsTable').append(billingsTable);
+					$('#devicesTable').append(devicesTable);
+
+					$('#swal2-html-container .card-header').css('margin', "1px");
+					$('#swal2-html-container .card-header').css('background-color', "#83c8e5");
+				}
+			});
+		}
+
+		function showDetails2(approver){
 			Swal.fire({
 				html: `
 	                ${input("id", "", approver.id, 3, 9, 'hidden')}
