@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, Device, Building};
+use App\Models\{User, Device, Building, Reading};
 use DB;
 
 class DeviceController extends Controller
@@ -69,6 +69,12 @@ class DeviceController extends Controller
         $moxa->floor = $req->floor;
         $moxa->utility = $req->utility;
         $moxa->save();
+
+        $data = new Reading();
+        $data->moxa_id = $moxa->id;
+        $data->total = 0;
+        $data->datetime = now();
+        $data->save();
     }
 
     public function update(Request $req){

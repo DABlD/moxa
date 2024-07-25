@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Device;
+use App\Models\{Device, Reading};
 
 class MoxaSeeder extends Seeder
 {
@@ -32,5 +32,11 @@ class MoxaSeeder extends Seeder
         $data->floor = "D" . $k . "F";
         $data->utility = $j == 1 ? "Power" : "Water";
         $data->save();
+
+        $data2 = new Reading();
+        $data2->moxa_id = $data->id;
+        $data2->total = 0;
+        $data2->datetime = now()->subDays(16);
+        $data2->save();
     }
 }

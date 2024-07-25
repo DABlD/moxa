@@ -290,7 +290,7 @@
 								if(data){
 									data = JSON.parse(data);
 
-									$('#last_reading').html(numeral(data.total).format('0,0.00'));
+									$('#last_reading').html(numeral(data.total).format('0,0'));
 									$('#last_reading').data("value", data.total);
 								}
 								else{
