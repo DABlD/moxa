@@ -127,6 +127,7 @@ Route::group([
 
                 Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
                 Route::get("getReading/", ucfirst($cname) . "Controller@getReading")->name('getReading');
+                Route::get("getLatestReading/", ucfirst($cname) . "Controller@getLatestReading")->name('getLatestReading');
                 Route::get("perBuilding/", ucfirst($cname) . "Controller@perBuilding")->name('perBuilding');
                 Route::get("exportPerBuilding/", ucfirst($cname) . "Controller@exportPerBuilding")->name('exportPerBuilding');
                 Route::get("moxaPerBuilding/", ucfirst($cname) . "Controller@moxaPerBuilding")->name('moxaPerBuilding');
@@ -153,7 +154,6 @@ Route::group([
                     ->defaults("href", "/$cname");
 
                 Route::get("get/", ucfirst($cname) . "Controller@get")->name('get');
-                Route::get("getDetails/", ucfirst($cname) . "Controller@getDetails")->name('getDetails');
                 Route::post("store/", ucfirst($cname) . "Controller@store")->name('store');
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');

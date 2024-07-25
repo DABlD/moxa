@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Billing, Device};
+use App\Models\{Billing, Device, Reading};
 use DB;
 
 class BillingController extends Controller
@@ -53,22 +53,20 @@ class BillingController extends Controller
         echo json_encode($array);
     }
 
-    public function getDetails(Request $req){
-        $array = Billing::where('moxa_id', $req->id)->latest()->get();
-        $array2 = Device::find($req->id)->load('category');
-
-        return json_encode(["billing" => $array, "device" => $array2]);
-    }
-
     public function store(Request $req){
         $device = Device::find($req->moxa_id);
+
+        $readings = Reading::where('moxa_id', $req->moxa_id)->whereBetween('datetime', [$req->from . ' 00:00:00', $req->to . ' 11:59:59'])->orderBy('datetime', 'desc')->get();
 
         $bill = new Billing();
         $bill->user_id = $device->name;
         $bill->moxa_id = $req->moxa_id;
         $bill->reading = $req->reading;
-        $bill->rate = $req->rate;
-        $bill->total = $req->total;
+        $bill->from = $req->from;
+        $bill->to = $req->to;
+        $bill->rate = $device->category->rate;
+        $bill->late_interest = $device->category->late_interest;
+        $bill->total = ($req->reading - $readings->last()->total) * $device->category->rate;
         $bill->status = "Unpaid";
         $bill->save();
     }

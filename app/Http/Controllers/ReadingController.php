@@ -102,6 +102,10 @@ class ReadingController extends Controller
         echo json_encode($array);
     }
 
+    public function getLatestReading(Request $req){
+        echo Reading::where('moxa_id', $req->id)->orderBy('datetime', 'desc')->get()->first();
+    }
+
     public function perBuilding(Request $req){
         // +1 IN FROM DATE TO GET INITIAL
         $from = now()->parse($req->from)->sub(1, 'day')->toDateString();

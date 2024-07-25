@@ -19,7 +19,11 @@ class CreateBillingsTable extends Migration
             $table->integer('user_id');
             $table->integer('moxa_id');
 
+            $table->date('from');
+            $table->date('to');
+
             $table->double('reading');
+            $table->double('late_interest');
             $table->double('rate');
             $table->double('total');
 

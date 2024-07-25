@@ -24,8 +24,11 @@
                     				<th>ID</th>
                     				<th>User</th>
                     				<th>Device</th>
+                    				<th>From</th>
+                    				<th>To</th>
                     				<th>Reading</th>
                     				<th>Rate</th>
+                    				<th>Late Interest</th>
                     				<th>Total</th>
                     				<th>Status</th>
                     				<th>Actions</th>
@@ -177,13 +180,34 @@
 					{data: 'id'},
 					{data: 'user.name'},
 					{data: 'device.serial'},
+					{data: 'from'},
+					{data: 'to'},
 					{data: 'reading'},
 					{data: 'rate'},
+					{data: 'late_interest'},
 					{data: 'total'},
 					{data: 'status'},
 					{data: 'actions'},
 				],
 				columnDefs: [
+					{
+						targets: [3,4],
+						render: date => {
+							return moment(date).format("MMM DD, YYYY");
+						}
+					},
+					{
+						targets: [7],
+						render: rate => {
+							return rate + "%";
+						}
+					},
+					{
+						targets: [5,8],
+						render: value => {
+							return numeral(value).format("0,0");
+						}
+					},
 				],
         		pageLength: 25,
         		order: [[0, 'desc']],
@@ -198,17 +222,7 @@
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Subscriber
-					    </div>
-					    <div class="col-md-9 iInput">
-					        <select name="user_id" class="form-control">
-					        	<option value=""></option>
-					        </select>
-					    </div>
-					</div>
-					<div class="row iRow">
-					    <div class="col-md-3 iLabel">
-					        Device
+					        Serial
 					    </div>
 					    <div class="col-md-9 iInput">
 					        <select name="moxa_id" class="form-control">
@@ -217,140 +231,79 @@
 					    </div>
 					</div>
 
+					<br>
+
+					${input("from", "From", null, 3, 9, 'text')}
+					${input("to", "To", null, 3, 9, 'text')}
+
+					<br>
+
 					${input("reading", "Current Reading", null, 3, 9, 'number', 'min=0')}
 
-					<div class="row iRow">
-					    <div class="col-md-3 iLabel">
-					        Last Billing
-					    </div>
-					    <div class="col-md-9 iInput">
-					        <div id="last_billing">N/A</div>
-					    </div>
-					</div>
+					<br>
 
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
-					        Reading
+					        Latest Reading
 					    </div>
 					    <div class="col-md-9 iInput">
 					        <div id="last_reading" data-value="0">N/A</div>
 					    </div>
 					</div>
-
-					<div class="row iRow">
-					    <div class="col-md-3 iLabel">
-					        Rate
-					    </div>
-					    <div class="col-md-9 iInput">
-					        <div id="rate" data-value="0">0</div>
-					    </div>
-					</div>
-
-					<div class="row iRow">
-					    <div class="col-md-3 iLabel">
-					        Total Amount
-					    </div>
-					    <div class="col-md-9 iInput">
-					        <div id="total">₱0.00</div>
-					    </div>
-					</div>
 				`,
-				width: '800px',
+				width: '600px',
 				confirmButtonText: 'Add',
 				showCancelButton: true,
 				cancelButtonColor: errorColor,
 				cancelButtonText: 'Cancel',
 				didOpen: () => {
 					$.ajax({
-						url: "{{ route('user.get') }}",
+						url: "{{ route('device.get') }}",
 						data: {
-							select: "*",
-							where: ['role', 'Subscriber']
+							select: "*"
 						},
-						success: subscribers => {
-							subscribers = JSON.parse(subscribers);
-							subscriberString = "";
+						success: devices => {
+							devices = JSON.parse(devices);
+							deviceString = "";
 
-							subscribers.forEach(subscriber => {
-								subscriberString += `
-									<option value="${subscriber.id}">${subscriber.name}</option>
+							devices.forEach(device => {
+								deviceString += `
+									<option value="${device.id}">${device.serial}</option>
 								`;
 							});
 
-							$("[name='user_id']").append(subscriberString);
-							$("[name='user_id']").select2({
-								placeholder: "Select Subscriber",
+							$("[name='moxa_id']").append(deviceString);
+							$("[name='moxa_id']").select2({
+								placeholder: "Select Device"
 							});
 						}
 					});
 
-					$("[name='moxa_id']").select2({
-						placeholder: "Select Subscriber First"
-					});
-
-					$("[name='user_id']").on('change', e => {
-						$("[name='moxa_id']").html('<option value=""></option>');
-
-						$.ajax({
-							url: "{{ route('device.get') }}",
-							data: {
-								select: "*",
-								where: ['name', e.target.value]
-							},
-							success: devices => {
-								devices = JSON.parse(devices);
-								deviceString = "";
-
-								devices.forEach(device => {
-									deviceString += `
-										<option value="${device.id}">${device.serial}</option>
-									`;
-								});
-
-								$("[name='moxa_id']").append(deviceString);
-								$("[name='moxa_id']").select2({
-									placeholder: "Select Device"
-								});
-							}
-						})
-					});
-
 					$("[name='moxa_id']").on('change', e => {
 						$.ajax({
-							url: "{{ route('billing.getDetails') }}",
+							url: "{{ route('reading.getLatestReading') }}",
 							data: {
 								select: "*",
 								id: e.target.value
 							},
 							success: data => {
-								data = JSON.parse(data);
+								if(data){
+									data = JSON.parse(data);
 
-								if(data.billing.length){
-									$('#last_billing').html(moment(data.billing[0].created_at).format(dateTimeFormat2 + " A"));
-									$('#last_reading').html(data.billing[0].reading);
-									$('#last_reading').data("value", data.billing[0].reading);
+									$('#last_reading').html(numeral(data.total).format('0,0.00'));
+									$('#last_reading').data("value", data.total);
 								}
 								else{
-									$('#last_billing').html("N/A");
 									$('#last_reading').html("N/A");
-								}
-
-								if(data.device.serial){
-									$('#rate').html(data.device.category.rate + "/" + data.device.category.operator);
-									$('#rate').data('value', data.device.category.rate);
-								}
-								else{
-									$('#rate').html("0");
 								}
 							}
 						})
 					});
 
-					$("[name='reading']").on('keyup', e => {
-						let lr = $('#last_reading').data('value');
-						let r = $('#rate').data('value');
-
-						$('#total').html("₱" + numeral((e.target.value - lr) * r).format('0,0.00'));
+					$('[name="from"], [name="to"]').flatpickr({
+						altInput: true,
+						altFormat: "F j, Y",
+						dateFormat: "Y-m-d",
 					});
 				},
 				preConfirm: () => {
@@ -373,17 +326,15 @@
 					swal.showLoading();
 
 					let cr = $("[name='reading']").val();
-					let lr = $('#last_reading').data('value');
-					let r = $('#rate').data('value');
 
 					$.ajax({
 						url: "{{ route('billing.store') }}",
 						type: "POST",
 						data: {
 							moxa_id: $("[name='moxa_id']").val(),
-							reading: cr,
-							rate: r,
-							total: (cr - lr) * r,
+							from: $("[name='from']").val(),
+							to: $("[name='to']").val(),
+							reading: $("[name='reading']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -461,7 +412,7 @@
 						didOpen: () => {
 							$('[name="date_paid"]').flatpickr({
 								altInput: true,
-								altFormat: "F j, Y h:i:s K",
+								altFormat: "F j, Y h:i:S K",
 								dateFormat: "Y-m-d",
 							});
 						}
