@@ -335,8 +335,8 @@
 									<td>${billing.device.serial}</td>
 									<td>${moment(billing.from).format(dateFormat2)}</td>
 									<td>${moment(billing.to).format(dateFormat2)}</td>
-									<td>${billing.reading}</td>
-									<td>${billing.total}</td>
+									<td>${numeral(billing.reading).format('0,0')}</td>
+									<td>${"₱" + numeral(billing.total).format('0,0.00')}</td>
 									<td>${billing.status}</td>
 								</tr>
 							`;
