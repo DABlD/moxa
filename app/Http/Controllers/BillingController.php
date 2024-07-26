@@ -56,14 +56,15 @@ class BillingController extends Controller
     public function store(Request $req){
         $device = Device::find($req->moxa_id);
 
-        $readings = Reading::where('moxa_id', $req->moxa_id)->whereBetween('datetime', [$req->from . ' 00:00:00', $req->to . ' 11:59:59'])->orderBy('datetime', 'desc')->get();
+        // $readings = Reading::where('moxa_id', $req->moxa_id)->whereBetween('datetime', [$req->from . ' 00:00:00', $req->to . ' 11:59:59'])->orderBy('datetime', 'desc')->get();
+        $readings = Reading::where('moxa_id', $req->moxa_id)->orderBy('datetime', 'desc')->first();
 
         $bill = new Billing();
         $bill->user_id = $device->name;
         $bill->moxa_id = $req->moxa_id;
         $bill->billno = "MB" . now()->format('Ymd') . sprintf('%06d', Billing::count() + 1);
         $bill->reading = $req->reading;
-        $bill->initReading = $readings->last()->total;
+        $bill->initReading = $readings->total;
         $bill->consumption = $req->reading - $bill->initReading;
         $bill->from = $req->from;
         $bill->to = $req->to;
