@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 @section('content')
 
@@ -26,9 +27,11 @@
                     				<th>Device</th>
                     				<th>From</th>
                     				<th>To</th>
-                    				<th>Reading</th>
+                    				<th>Current</th>
+                    				<th>Previous</th>
+                    				<th>Consumption</th>
                     				<th>Rate</th>
-                    				<th>Late Interest</th>
+                    				<th>Late %</th>
                     				<th>Total</th>
                     				<th>Status</th>
                     				<th>Actions</th>
@@ -183,6 +186,8 @@
 					{data: 'from'},
 					{data: 'to'},
 					{data: 'reading'},
+					{data: 'initReading'},
+					{data: 'consumption'},
 					{data: 'rate'},
 					{data: 'late_interest'},
 					{data: 'total'},
@@ -197,15 +202,21 @@
 						}
 					},
 					{
-						targets: [7],
+						targets: [9],
 						render: rate => {
 							return rate + "%";
 						}
 					},
 					{
-						targets: [5,8],
+						targets: [5,6,7],
 						render: value => {
 							return numeral(value).format("0,0");
+						}
+					},
+					{
+						targets: [10],
+						render: value => {
+							return "₱" + numeral(value).format("0,0");
 						}
 					},
 				],

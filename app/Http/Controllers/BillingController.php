@@ -63,11 +63,13 @@ class BillingController extends Controller
         $bill->moxa_id = $req->moxa_id;
         $bill->billno = "MB" . now()->format('Ymd') . sprintf('%06d', Billing::count() + 1);
         $bill->reading = $req->reading;
+        $bill->initReading = $readings->last()->total;
+        $bill->consumption = $req->reading - $bill->initReading;
         $bill->from = $req->from;
         $bill->to = $req->to;
         $bill->rate = $device->category->rate;
         $bill->late_interest = $device->category->late_interest;
-        $bill->total = ($req->reading - $readings->last()->total) * $device->category->rate;
+        $bill->total = $bill->consumption * $device->category->rate;
         $bill->status = "Unpaid";
         $bill->save();
     }

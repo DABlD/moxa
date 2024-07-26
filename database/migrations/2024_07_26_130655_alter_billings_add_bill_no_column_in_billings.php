@@ -15,6 +15,8 @@ class AlterBillingsAddBillNoColumnInBillings extends Migration
     {
         Schema::table('billings', function (Blueprint $table) {
             $table->string('billno')->after('moxa_id');
+            $table->double('initReading')->after('reading')->nullable();
+            $table->double('consumption')->after('initReading')->nullable();
         });
     }
 
@@ -27,6 +29,8 @@ class AlterBillingsAddBillNoColumnInBillings extends Migration
     {
         Schema::table('billings', function (Blueprint $table) {
             $table->dropColumn('billno');
+            $table->dropColumn('initReading');
+            $table->dropColumn('consumption');
         });
     }
 }
