@@ -23,6 +23,7 @@
                     		<thead>
                     			<tr>
                     				<th>ID</th>
+                    				<th>Bill No</th>
                     				<th>User</th>
                     				<th>Device</th>
                     				<th>From</th>
@@ -181,6 +182,7 @@
 				},
 				columns: [
 					{data: 'id'},
+					{data: 'billno'},
 					{data: 'user.name'},
 					{data: 'device.serial'},
 					{data: 'from'},
@@ -196,25 +198,25 @@
 				],
 				columnDefs: [
 					{
-						targets: [3,4],
+						targets: [4,5],
 						render: date => {
 							return moment(date).format("MMM DD, YYYY");
 						}
 					},
 					{
-						targets: [9],
+						targets: [10],
 						render: rate => {
 							return rate + "%";
 						}
 					},
 					{
-						targets: [5,6,7],
+						targets: [6,7,8],
 						render: value => {
 							return numeral(value).format("0,0");
 						}
 					},
 					{
-						targets: [10],
+						targets: [11],
 						render: value => {
 							return "₱" + numeral(value).format("0,0");
 						}
