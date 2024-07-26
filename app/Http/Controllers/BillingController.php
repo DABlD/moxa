@@ -61,6 +61,7 @@ class BillingController extends Controller
         $bill = new Billing();
         $bill->user_id = $device->name;
         $bill->moxa_id = $req->moxa_id;
+        $bill->billno = "MB" . now()->format('Ymd') . sprintf('%06d', Billing::count() + 1);
         $bill->reading = $req->reading;
         $bill->from = $req->from;
         $bill->to = $req->to;
