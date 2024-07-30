@@ -71,4 +71,36 @@ class ApiController extends Controller
             'message' => "Success"
         ]);
     }
+
+    public function getBillings(Request $req){
+        $billings = Billing::select('*');
+
+        // if(isset(($req->user_id))){
+        //     $devices->where('user_id', $req->user_id);
+        // }
+
+        $billings = $billings->get();
+        $billings->load('device.subscriber');
+
+        return response()->json([
+            'data' => $billings,
+            'message' => "Success"
+        ]);
+    }
+
+    public function getLatestBilling(Request $req){
+        $billings = Billing::select('*');
+
+        // if(isset(($req->user_id))){
+        //     $devices->where('user_id', $req->user_id);
+        // }
+
+        $billings = $billings->latest()->first();
+        $billings->load('device.subscriber');
+
+        return response()->json([
+            'data' => $billings,
+            'message' => "Success"
+        ]);
+    }
 }
