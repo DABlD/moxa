@@ -43,6 +43,10 @@
                 width: 80%;
             }
 
+            .card-header{
+                background-color: #83c8e5;
+            }
+
             #rowasd{
                 width: 50%;
             }
@@ -93,29 +97,6 @@
 
                                         <br>
 
-
-                                        <div class="row iRow">
-                                            <div class="col-md-3 iLabel">
-                                                From
-                                            </div>
-                                            <div class="col-md-9 iInput">
-                                                <input type="text" name="from" placeholder="Enter From" class="form-control" value="">
-                                            </div>
-                                        </div>
-
-                                        <br>
-
-                                        <div class="row iRow">
-                                            <div class="col-md-3 iLabel">
-                                                To
-                                            </div>
-                                            <div class="col-md-9 iInput">
-                                                <input type="text" name="to" placeholder="Enter To" class="form-control" value="">
-                                            </div>
-                                        </div>
-
-                                        <br>
-
                                         <div class="row iRow">
                                             <div class="col-md-3 iLabel">
                                                 Current Reading
@@ -138,17 +119,58 @@
 
                                         <br>
 
-                                        <div class="row">
-                                            <div class="col-md-5"></div>
-                                            <div class="col-md-5">
-                                                <div class="btn btn-success" onclick="createBilling()">CREATE BILLING</div>
+                                        <div class="row iRow">
+                                            <div class="col-md-3 iLabel">
+                                                Subscriber Name
                                             </div>
-                                            <div class="col-md-2"></div>
+                                            <div class="col-md-9 iInput">
+                                                <div id="sName">-</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row iRow">
+                                            <div class="col-md-3 iLabel">
+                                                Subscriber Email
+                                            </div>
+                                            <div class="col-md-9 iInput">
+                                                <div id="sEmail">-</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row iRow">
+                                            <div class="col-md-3 iLabel">
+                                                Subscriber Contact
+                                            </div>
+                                            <div class="col-md-9 iInput">
+                                                <div id="sContact">-</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row iRow">
+                                            <div class="col-md-3 iLabel">
+                                                Subscriber Address
+                                            </div>
+                                            <div class="col-md-9 iInput">
+                                                <div id="sAddress">-</div>
+                                            </div>
                                         </div>
 
                                     </div>
 
+
+                                    <div class="card-footer">
+
+                                        <div class="row">
+                                            <div class="col-md-5"></div>
+                                            <div class="col-md-5">
+                                                <div class="btn btn-success" onclick="createBilling()">SAVE</div>
+                                            </div>
+                                            <div class="col-md-2"></div>
+                                        </div>
+                                    </div>
+
                                 </div>
+
 
                             </section>
 
@@ -209,23 +231,27 @@
                             id: e.target.value
                         },
                         success: data => {
-                            if(data){
+                            if(data != "null"){
                                 data = JSON.parse(data);
 
                                 $('#last_reading').html(numeral(data.total).format('0,0'));
                                 $('#last_reading').data("value", data.total);
+
+                                $('#sName').html(data.device.subscriber.name);
+                                $('#sEmail').html(data.device.subscriber.email);
+                                $('#sContact').html(data.device.subscriber.contact);
+                                $('#sAddress').html(data.device.subscriber.address);
                             }
                             else{
                                 $('#last_reading').html("N/A");
+
+                                $('#sName').html('-');
+                                $('#sEmail').html('-');
+                                $('#sContact').html('-');
+                                $('#sAddress').html('-');
                             }
                         }
                     })
-                });
-
-                $('[name="from"], [name="to"]').flatpickr({
-                    altInput: true,
-                    altFormat: "F j, Y",
-                    dateFormat: "Y-m-d",
                 });
             });
 
@@ -239,9 +265,7 @@
                     type: "POST",
                     data: {
                         moxa_id: $("[name='moxa_id']").val(),
-                        from: $("[name='from']").val(),
-                        to: $("[name='to']").val(),
-                        reading: $("[name='reading']").val(),
+                        total: $("[name='reading']").val(),
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: () => {
@@ -251,7 +275,7 @@
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
-                            window.location.reload();
+                            $("[name='moxa_id']").val('').change();
                         });
                     }
                 })
