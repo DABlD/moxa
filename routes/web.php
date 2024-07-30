@@ -34,6 +34,11 @@ Route::group([
     }
 );
 
+Route::get("readAndBill", "SampleController@readAndBill")->name('readAndBill');
+Route::get("readAndBill/getDevices", "SampleController@getDevices")->name('readAndBill.getDevices');
+Route::get("readAndBill/getLatestReading", "SampleController@getLatestReading")->name('readAndBill.getLatestReading');
+Route::post("readAndBill/store", "SampleController@store")->name('readAndBill.store');
+
 Route::group([
         'middleware' => 'auth',
     ], function() {
