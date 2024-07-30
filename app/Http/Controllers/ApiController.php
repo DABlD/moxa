@@ -75,9 +75,9 @@ class ApiController extends Controller
     public function getBillings(Request $req){
         $billings = Billing::select('*');
 
-        // if(isset(($req->user_id))){
-        //     $devices->where('user_id', $req->user_id);
-        // }
+        if(isset(($req->device_id))){
+            $devices->where('moxa_id', $req->device_id);
+        }
 
         $billings = $billings->get();
         $billings->load('device.subscriber');
@@ -89,11 +89,7 @@ class ApiController extends Controller
     }
 
     public function getLatestBilling(Request $req){
-        $billings = Billing::select('*');
-
-        // if(isset(($req->user_id))){
-        //     $devices->where('user_id', $req->user_id);
-        // }
+        $billings = Billing::select('*')->where('moxa_id', $req->device_id);
 
         $billings = $billings->latest()->first();
         $billings->load('device.subscriber');
