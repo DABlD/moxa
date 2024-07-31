@@ -26,8 +26,9 @@
                     				<th>Bill No</th>
                     				<th>User</th>
                     				<th>Device</th>
-                    				<th>From</th>
-                    				<th>To</th>
+                    				{{-- <th>From</th>
+                    				<th>To</th> --}}
+                    				<th>Billing Date</th>
                     				<th>Current</th>
                     				<th>Previous</th>
                     				<th>Consumption</th>
@@ -185,8 +186,9 @@
 					{data: 'billno'},
 					{data: 'user.name'},
 					{data: 'device.serial'},
-					{data: 'from'},
-					{data: 'to'},
+					// {data: 'from'},
+					// {data: 'to'},
+					{data: 'created_at'},
 					{data: 'reading'},
 					{data: 'initReading'},
 					{data: 'consumption'},
@@ -198,25 +200,25 @@
 				],
 				columnDefs: [
 					{
-						targets: [4,5],
+						targets: [4],
 						render: date => {
 							return moment(date).format("MMM DD, YYYY");
 						}
 					},
 					{
-						targets: [10],
+						targets: [11],
 						render: rate => {
 							return rate + "%";
 						}
 					},
 					{
-						targets: [6,7,8],
+						targets: [7,8,9],
 						render: value => {
 							return numeral(value).format("0,0");
 						}
 					},
 					{
-						targets: [11],
+						targets: [12],
 						render: value => {
 							return "₱" + numeral(value).format("0,0");
 						}
