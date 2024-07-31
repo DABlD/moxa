@@ -30,7 +30,9 @@ Route::group([
         Route::middleware('auth:sanctum')->post('/tokens/revoke', 'ApiController@revokeToken');
 
         Route::middleware('auth:sanctum')->post('reading/device', 'ApiController@receive');
-        Route::middleware('auth:sanctum')->post('reading/getDevices', 'ApiController@getDevices');
+        Route::middleware('auth:sanctum')->post('reading/getBillings', 'ApiController@getBillings');
+        Route::middleware('auth:sanctum')->post('reading/getLatestBilling', 'ApiController@getLatestBilling');
+        Route::middleware('auth:sanctum')->post('billing/pay', 'ApiController@pay');
     }
 );
 

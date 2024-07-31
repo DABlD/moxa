@@ -15,25 +15,11 @@ class SampleController extends Controller
     }
 
     public function store(Request $req){
-        $device = Device::find($req->moxa_id);
-
-        // $readings = Reading::where('moxa_id', $req->moxa_id)->whereBetween('datetime', [$req->from . ' 00:00:00', $req->to . ' 11:59:59'])->orderBy('datetime', 'desc')->get();
-        $readings = Reading::where('moxa_id', $req->moxa_id)->orderBy('datetime', 'desc')->first();
-
-        $bill = new Billing();
-        $bill->user_id = $device->name;
-        $bill->moxa_id = $req->moxa_id;
-        $bill->billno = "MB" . now()->format('Ymd') . sprintf('%06d', Billing::count() + 1);
-        $bill->reading = $req->reading;
-        $bill->initReading = $readings->total;
-        $bill->consumption = $req->reading - $bill->initReading;
-        $bill->from = $req->from;
-        $bill->to = $req->to;
-        $bill->rate = $device->category->rate;
-        $bill->late_interest = $device->category->late_interest;
-        $bill->total = $bill->consumption * $device->category->rate;
-        $bill->status = "Unpaid";
-        $bill->save();
+        $reading = new Reading();
+        $reading->moxa_id = $req->moxa_id;
+        $reading->total = $req->total;
+        $reading->datetime = now();
+        $reading->save();
     }
 
     public function getDevices(Request $req){
@@ -72,6 +58,11 @@ class SampleController extends Controller
     }
 
     public function getLatestReading(Request $req){
-        echo Reading::where('moxa_id', $req->id)->orderBy('datetime', 'desc')->get()->first();
+        $data = Reading::where('moxa_id', $req->id)->orderBy('datetime', 'desc')->get()->first();
+        if($data){
+            $data->load('device.subscriber');
+        }
+
+        echo json_encode($data);
     }
 }

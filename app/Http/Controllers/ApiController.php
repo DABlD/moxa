@@ -71,4 +71,42 @@ class ApiController extends Controller
             'message' => "Success"
         ]);
     }
+
+    public function getBillings(Request $req){
+        $billings = Billing::select('*');
+
+        if(isset(($req->device_id))){
+            $devices->where('moxa_id', $req->device_id);
+        }
+
+        $billings = $billings->get();
+        $billings->load('device.subscriber');
+
+        return response()->json([
+            'data' => $billings,
+            'message' => "Success"
+        ]);
+    }
+
+    public function getLatestBilling(Request $req){
+        $billings = Billing::select('*')->where('moxa_id', $req->device_id);
+
+        $billings = $billings->latest()->first();
+        $billings->load('device.subscriber');
+
+        return response()->json([
+            'data' => $billings,
+            'message' => "Success"
+        ]);
+    }
+
+    public function pay(Request $req){
+        $bill = Billing::where("billno", $req->billing_no);
+        $bill->mop = $req->mop;
+        $bill->refno = $req->refno;
+        $bill->invoice = "INV" . now()->format('Ymd') . sprintf('%06d', Billing::where('invoice', 'like', "INV" . now()->format('Ymd') . '%')->count() + 1);
+        $bill->status = "Paid";
+        $bill->date_paid = now();
+        $bill->save();
+    }
 }
