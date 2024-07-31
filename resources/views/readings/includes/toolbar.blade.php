@@ -35,6 +35,10 @@
 
             <a class="btn btn-info btn-sm" data-toggle="tooltip" title="Add Billing" onclick="create()">
                 <i class="fas fa-plus fa-2xl"></i>
+            </a>&nbsp;
+
+            <a class="btn btn-info" data-toggle="tooltip" title="Generate Billings" onclick="create2()">
+                <i class="fas fa-folder-plus"></i>
             </a>
         </div>
 

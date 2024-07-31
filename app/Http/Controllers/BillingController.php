@@ -75,6 +75,46 @@ class BillingController extends Controller
         $bill->save();
     }
 
+    public function createBillings(Request $req){
+        // building: $("#building").val(),
+        // trueBuilding: $("#trueBuilding").val(), // DEVICE
+        // from: $("#from").val(),
+        // to: $("#to").val(),
+
+        $devices = Device::where('category_id', 'like', $req->building)->where('id', 'like', $req->trueBuilding)->get();
+        $devices->load('category');
+
+        foreach($devices as $device){
+            $readings = Reading::where('moxa_id', $device->id)->orderBy('datetime', 'desc')->take(2)->get();
+
+            $bill = new Billing();
+
+            if($readings->count() == 0){
+                continue;
+            }
+            elseif($readings->count() == 1){
+                $bill->reading = $readings->first()->total;
+                $bill->initReading = 0;
+            }
+            elseif($readings->count() == 2){
+                $bill->reading = $readings->first()->total;
+                $bill->initReading = $readings->last()->total;
+            }
+
+            $bill->user_id = $device->name;
+            $bill->moxa_id = $device->id;
+            $bill->billno = "MB" . now()->format('Ymd') . sprintf('%06d', Billing::count() + 1);
+            $bill->from = $req->from;
+            $bill->to = $req->to;
+            $bill->rate = $device->category->rate;
+            $bill->late_interest = $device->category->late_interest;
+            $bill->status = "Unpaid";
+            $bill->consumption = $bill->reading - $bill->initReading;
+            $bill->total = $bill->consumption * $device->category->rate;
+            $bill->save();
+        }
+    }
+
     public function pay(Request $req){
         $bill = Billing::find($req->id);
         $bill->mop = $req->mop;

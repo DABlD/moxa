@@ -163,6 +163,7 @@ Route::group([
                 Route::post("update/", ucfirst($cname) . "Controller@update")->name('update');
                 Route::post("delete/", ucfirst($cname) . "Controller@delete")->name('delete');
                 Route::post("pay/", ucfirst($cname) . "Controller@pay")->name('pay');
+                Route::get("createBillings/", ucfirst($cname) . "Controller@createBillings")->name('createBillings');
             }
         );
 

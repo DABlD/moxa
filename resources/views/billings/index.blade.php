@@ -206,13 +206,13 @@
 						}
 					},
 					{
-						targets: [11],
+						targets: [9],
 						render: rate => {
 							return rate + "%";
 						}
 					},
 					{
-						targets: [7,8,9],
+						targets: [5,6,7,10],
 						render: value => {
 							return numeral(value).format("0,0");
 						}

@@ -445,5 +445,78 @@
 				}
 			});
 		}
+
+		function create2(){
+			// f.where = ['moxa_id', building];
+			// f.where2 = ['m.category_id', trueBuilding];
+			// f.from = from;
+			// f.to = to;
+			// f.load = ['device.subscriber']
+			// f.select = ['readings.*']
+
+			Swal.fire({
+
+				title: "Confirm Details",
+				html: `
+					<div class="row iRow">
+					    <div class="col-md-6 iLabel">
+					        Building
+					    </div>
+					    <div class="col-md-6 iInput">
+					        <div id="building">${building == "%%" ? "All" : $('#bldg option:selected').html()}</div>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-6 iLabel">
+					        Device
+					    </div>
+					    <div class="col-md-6 iInput">
+					        <div id="trueBuilding">${trueBuilding == "%%" ? "All" : $('#outlet option:selected').html()}</div>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-6 iLabel">
+					        From
+					    </div>
+					    <div class="col-md-6 iInput">
+					        <div id="from">${moment(from).format(dateFormat2)}</div>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-6 iLabel">
+					        To
+					    </div>
+					    <div class="col-md-6 iInput">
+					        <div id="to">${moment(to).format(dateFormat2)}</div>
+					    </div>
+					</div>
+				`,
+				width: '600px',
+				confirmButtonText: 'Generate',
+				showCancelButton: true,
+				cancelButtonColor: errorColor,
+				cancelButtonText: 'Cancel',
+			}).then(result => {
+				if(result.value){
+					swal.showLoading();
+
+					$.ajax({
+						url: "{{ route('billing.createBillings') }}",
+						// type: "POST",
+						data: {
+							building: trueBuilding,
+							trueBuilding: building,
+							from: from,
+							to: to,
+							_token: $('meta[name="csrf-token"]').attr('content')
+						},
+						success: () => {
+							reload();
+							ss("Success");
+						}
+					})
+				}
+			});
+		}
 	</script>
 @endpush
