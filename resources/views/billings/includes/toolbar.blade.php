@@ -40,12 +40,6 @@
             </div>
         </div>
     </div>
-
-    <div class="col-md-3" style="text-align: right;">
-        <a class="btn btn-success btn-sm" data-toggle="tooltip" title="Add RHU" onclick="create()">
-            <i class="fas fa-plus fa-2xl"></i>
-        </a>
-    </div>
 </div>
 
 <br>
