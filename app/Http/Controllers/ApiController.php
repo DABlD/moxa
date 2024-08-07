@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\{Request, JsonResponse};
-use App\Models\{Reading, User, Device};
+use App\Models\{Reading, User, Device, Billing};
 use Exception;
 
 use Illuminate\Support\Facades\Hash;
