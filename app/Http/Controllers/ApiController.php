@@ -76,7 +76,7 @@ class ApiController extends Controller
         $billings = Billing::select('*');
 
         if(isset(($req->device_id))){
-            $devices->where('moxa_id', $req->device_id);
+            $billings->where('moxa_id', $req->device_id);
         }
 
         $billings = $billings->get();
