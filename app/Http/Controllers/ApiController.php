@@ -101,7 +101,7 @@ class ApiController extends Controller
     }
 
     public function pay(Request $req){
-        $bill = Billing::where("billno", $req->billing_no);
+        $bill = Billing::where("billno", $req->billing_no)->first();
         $bill->mop = $req->mop;
         $bill->refno = $req->refno;
         $bill->invoice = "INV" . now()->format('Ymd') . sprintf('%06d', Billing::where('invoice', 'like', "INV" . now()->format('Ymd') . '%')->count() + 1);
