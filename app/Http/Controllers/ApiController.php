@@ -108,5 +108,10 @@ class ApiController extends Controller
         $bill->status = "Paid";
         $bill->date_paid = now();
         $bill->save();
+
+        return response()->json([
+            'data' => $bill,
+            'message' => "Success"
+        ]);
     }
 }
