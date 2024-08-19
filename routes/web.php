@@ -34,6 +34,7 @@ Route::group([
         Route::middleware('auth:sanctum')->post('reading/getLatestBilling', 'ApiController@getLatestBilling');
         Route::middleware('auth:sanctum')->post('billing/pay', 'ApiController@pay');
         Route::middleware('auth:sanctum')->post('reading/store', 'ApiController@store');
+        Route::middleware('auth:sanctum')->post('subscribers/list', 'ApiController@subscribers');
     }
 );
 

@@ -121,5 +121,21 @@ class ApiController extends Controller
         $reading->total = $req->reading;
         $reading->datetime = now();
         $reading->save();
+
+        return response()->json([
+            'data' => $reading,
+            'message' => "Success"
+        ]);
+    }
+
+    public function subscribers(Request $req){
+        $users = User::where('role', 'Subscriber')
+                    ->select('name', 'email', 'address', 'contact')
+                    ->get();
+
+        return response()->json([
+            'data' => $users,
+            'message' => "Success"
+        ]);
     }
 }
