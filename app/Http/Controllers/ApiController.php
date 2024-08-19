@@ -130,8 +130,13 @@ class ApiController extends Controller
 
     public function subscribers(Request $req){
         $users = User::where('role', 'Subscriber')
-                    ->select('name', 'email', 'address', 'contact')
-                    ->get();
+                    ->select('name', 'email', 'address', 'contact');
+
+        if(isset(($req->id))){
+            $users->where('id', $req->id);
+        }
+
+        $user->get();
 
         return response()->json([
             'data' => $users,
