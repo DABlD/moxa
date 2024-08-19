@@ -114,4 +114,12 @@ class ApiController extends Controller
             'message' => "Success"
         ]);
     }
+
+    public function store(Request $req){
+        $reading = new Reading();
+        $reading->moxa_id = $req->moxa_id;
+        $reading->total = $req->total;
+        $reading->datetime = now();
+        $reading->save();
+    }
 }

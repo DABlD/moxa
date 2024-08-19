@@ -33,6 +33,7 @@ Route::group([
         Route::middleware('auth:sanctum')->post('reading/getBillings', 'ApiController@getBillings');
         Route::middleware('auth:sanctum')->post('reading/getLatestBilling', 'ApiController@getLatestBilling');
         Route::middleware('auth:sanctum')->post('billing/pay', 'ApiController@pay');
+        Route::middleware('auth:sanctum')->post('readAndBill/store', 'ApiController@store');
     }
 );
 
