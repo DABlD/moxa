@@ -89,7 +89,7 @@ class ApiController extends Controller
     }
 
     public function getLatestBilling(Request $req){
-        $billings = Billing::select('*')->where('moxa_id', $req->device_id);
+        $billings = Billing::select('*')->where('billno', $req->billing_no);
 
         $billings = $billings->latest()->first();
         $billings->load('device.subscriber');
@@ -117,8 +117,8 @@ class ApiController extends Controller
 
     public function store(Request $req){
         $reading = new Reading();
-        $reading->moxa_id = $req->moxa_id;
-        $reading->total = $req->total;
+        $reading->moxa_id = $req->device_id;
+        $reading->total = $req->reading;
         $reading->datetime = now();
         $reading->save();
     }
