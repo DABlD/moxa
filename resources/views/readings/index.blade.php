@@ -462,7 +462,7 @@
 
 			Swal.fire({
 
-				title: "Confirm Details",
+				title: "Generate SOA cutoff",
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-6 iLabel">
