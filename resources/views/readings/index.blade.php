@@ -235,6 +235,7 @@
 
 		function add(){
 			Swal.fire({
+				title: "Input Reading",
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
