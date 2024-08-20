@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <i class="fas fa-table mr-1"></i>
+                            <i class="fas fa-pen-to-square mr-1"></i>
                             Reading
                         </h3>
                     </div>

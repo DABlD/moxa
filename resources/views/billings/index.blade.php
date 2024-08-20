@@ -10,7 +10,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <i class="fas fa-table mr-1"></i>
+                            <i class="fas fa-file-invoice-dollar mr-1"></i>
                             Billing
                         </h3>
 
