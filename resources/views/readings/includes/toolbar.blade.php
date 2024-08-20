@@ -37,7 +37,7 @@
                 <i class="fas fa-file-invoice-dollar"></i>
             </a>&nbsp;
 
-            <a class="btn btn-info" data-toggle="tooltip" title="Generate Billings" onclick="create2()">
+            <a class="btn btn-warning" data-toggle="tooltip" title="Generate Billings" onclick="create2()">
                 <i class="fas fa-folder-plus"></i>
             </a>
         </div>
