@@ -53,6 +53,10 @@
 		td, th{
 			text-align: center;
 		}
+
+		.fa-2xl{
+			line-height: -0.96875em !important;
+		}
 	</style>
 @endpush
 
@@ -319,6 +323,7 @@
 
 		function create(){
 			Swal.fire({
+				title: 'SOA Generator',
 				html: `
 					<div class="row iRow">
 					    <div class="col-md-3 iLabel">
