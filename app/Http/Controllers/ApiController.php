@@ -136,7 +136,7 @@ class ApiController extends Controller
             $users->where('id', $req->id);
         }
 
-        $user->get();
+        $users->get();
 
         return response()->json([
             'data' => $users,
