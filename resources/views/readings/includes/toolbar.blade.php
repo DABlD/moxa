@@ -29,11 +29,11 @@
     <div class="col-md-3">
 
         <div class="row iRow float-right">
-            <a class="btn btn-success btn-sm" data-toggle="tooltip" title="Add Entry" onclick="add()">
-                <i class="fas fa-plus fa-2xl"></i>
+            <a class="btn btn-success" data-toggle="tooltip" title="Add Entry" onclick="add()">
+                <i class="fas fa-plus"></i>
             </a>&nbsp;
 
-            <a class="btn btn-info btn-sm" data-toggle="tooltip" title="Add Billing" onclick="create()">
+            <a class="btn btn-info" data-toggle="tooltip" title="Add Billing" onclick="create()">
                 <i class="fas fa-file-invoice-dollar"></i>
             </a>&nbsp;
 
