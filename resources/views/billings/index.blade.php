@@ -218,7 +218,7 @@
 						}
 					},
 					{
-						targets: [12],
+						targets: [10],
 						render: value => {
 							return "₱" + numeral(value).format("0,0");
 						}
