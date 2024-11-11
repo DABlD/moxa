@@ -211,18 +211,19 @@
 							return rate + "%";
 						}
 					},
-					{
-						targets: [5,6,7,10],
-						render: value => {
-							return numeral(value).format("0,0");
-						}
-					},
-					{
-						targets: [10],
-						render: value => {
-							return "₱" + numeral(value).format("0,0");
-						}
-					},
+					// {
+					// 	targets: [5,6,7,10],
+					// 	targets: [5,6,7,10],
+					// 	render: value => {
+					// 		return numeral(value).format("0,0");
+					// 	}
+					// },
+					// {
+					// 	targets: [10],
+					// 	render: value => {
+					// 		return "₱" + numeral(value).format("0,0");
+					// 	}
+					// },
 				],
         		pageLength: 25,
         		order: [[0, 'desc']],
