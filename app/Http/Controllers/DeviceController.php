@@ -68,6 +68,7 @@ class DeviceController extends Controller
         $moxa->location = $req->location;
         $moxa->floor = $req->floor;
         $moxa->utility = $req->utility;
+        $moxa->type = $req->type;
         $moxa->save();
 
         $data = new Reading();

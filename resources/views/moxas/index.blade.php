@@ -27,6 +27,7 @@
                     				<th>Location</th>
                     				<th>Unit Number</th>
                     				<th>Utility</th>
+                    				<th>Type</th>
                     				<th>In Dashboard</th>
                     				<th>Actions</th>
                     			</tr>
@@ -77,12 +78,19 @@
 					{data: 'location'},
 					{data: 'floor'},
 					{data: 'utility'},
+					{data: 'type'},
 					{data: 'inDashboard'},
 					{data: 'actions'},
 				],
 				columnDefs: [
         			{
         				targets: 7,
+        				render: type => {
+        					return type ?? "-";
+        				}
+        			},
+        			{
+        				targets: 8,
         				render: (value, display, row) => {
         					let btn = value ? "success" : "danger";
         					let slash = value ? "" : "-slash";
@@ -114,7 +122,7 @@
 		                            .eq(i)
 		                            .before(`
 		                            	<tr class="group">
-		                            		<td colspan="8">
+		                            		<td colspan="9">
 		                            			${building}
 		                            		</td>
 		                            	</tr>
@@ -202,6 +210,18 @@
 					    <div class="col-md-9 iInput">
 					        <select name="utility" class="form-control">
 					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Type
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="type" class="form-control">
+					        	<option value="">Select Type</option>
+					        	<option value="Postpaid">Postpaid</option>
+					        	<option value="Prepaid">Prepaid</option>
 					        </select>
 					    </div>
 					</div>
@@ -312,6 +332,7 @@
 							location: $("[name='location']").val(),
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
+							type: $("[name='type']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -353,6 +374,18 @@
 					    <div class="col-md-9 iInput">
 					        <select name="utility" class="form-control">
 					        	<option value=""></option>
+					        </select>
+					    </div>
+					</div>
+					<div class="row iRow">
+					    <div class="col-md-3 iLabel">
+					        Type
+					    </div>
+					    <div class="col-md-9 iInput">
+					        <select name="type" class="form-control">
+					        	<option value="">Select Type</option>
+					        	<option value="Prepaid">Prepaid</option>
+					        	<option value="Postpaid">Postpaid</option>
 					        </select>
 					    </div>
 					</div>
@@ -454,6 +487,9 @@
 						}
 					})
 
+					// SET TYPE
+					$("[name='type']").val(moxa.type).trigger('change');
+
 					$.ajax({
 						url: '{{ route('reading.get') }}',
 						data: {
@@ -506,6 +542,7 @@
 							location: $("[name='location']").val(),
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
+							type: $("[name='type']").val(),
 						},
 						message: "Success"
 					}, () => {

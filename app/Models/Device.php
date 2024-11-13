@@ -14,7 +14,8 @@ class Device extends Model
     protected $fillable = [
         'id','user_id',
         'name','location','floor','utility',
-        'category_id', 'serial', 'inDashboard'
+        'category_id', 'serial', 'inDashboard',
+        'type'
     ];
 
     protected $dates = [
