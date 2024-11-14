@@ -14,11 +14,15 @@ class ApiController extends Controller
     public function receive(Request $req)
     {
         try{
-            $reading = new Reading();
-            $reading->moxa_id = $req->id;
-            $reading->datetime = $req->datetime;
-            $reading->total = $req->payload;
-            $reading->save();
+            $device = Device::where('serial', $req->meter_id)->first();
+
+            if($device){
+                $reading = new Reading();
+                $reading->moxa_id = $device->id;
+                $reading->datetime = now()->parse($req->datetime)->toDateTimeString();
+                $reading->total = $req->wh_total;
+                $reading->save();
+            }
         } catch (Exception $e) {
             return response()->json([
                 'data' => [],

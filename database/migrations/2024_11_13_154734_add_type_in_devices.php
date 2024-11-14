@@ -26,7 +26,7 @@ class AddTypeInDevices extends Migration
     public function down()
     {
         Schema::table('devices', function (Blueprint $table) {
-            $table->dropColumn();
+            $table->dropColumn('type');
         });
     }
 }
