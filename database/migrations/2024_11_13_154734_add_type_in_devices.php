@@ -15,6 +15,8 @@ class AddTypeInDevices extends Migration
     {
         Schema::table('devices', function (Blueprint $table) {
             $table->string('type')->after('utility')->nullable();
+            $table->string('lat')->after('serial')->nullable();
+            $table->string('lng')->after('lat')->nullable();
         });
     }
 
@@ -27,6 +29,8 @@ class AddTypeInDevices extends Migration
     {
         Schema::table('devices', function (Blueprint $table) {
             $table->dropColumn('type');
+            $table->dropColumn('lat');
+            $table->dropColumn('lng');
         });
     }
 }

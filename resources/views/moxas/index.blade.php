@@ -228,6 +228,8 @@
 	                ${input("serial", "Serial", null, 3, 9)}
 	                ${input("location", "Location", null, 3, 9)}
 	                ${input("floor", "Unit #", null, 3, 9)}
+	                ${input("lat", "Latitude", null, 3, 9)}
+	                ${input("lng", "Longitude", null, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Add',
@@ -333,6 +335,8 @@
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
 							type: $("[name='type']").val(),
+							lat: $("[name='lat']").val(),
+							lng: $("[name='lng']").val(),
 							_token: $('meta[name="csrf-token"]').attr('content')
 						},
 						success: () => {
@@ -393,6 +397,8 @@
 	                ${input("serial", "Serial #", moxa.serial, 3, 9)}
 	                ${input("location", "Location", moxa.location, 3, 9)}
 	                ${input("floor", "Unit #", moxa.floor, 3, 9)}
+	                ${input("lat", "Latitude", moxa.lat, 3, 9)}
+	                ${input("lng", "Longitude", moxa.lng, 3, 9)}
 
 	                <br>
 	                <br>
@@ -543,6 +549,8 @@
 							floor: $("[name='floor']").val(),
 							utility: $("[name='utility']").val(),
 							type: $("[name='type']").val(),
+							lat: $("[name='lat']").val(),
+							lng: $("[name='lng']").val(),
 						},
 						message: "Success"
 					}, () => {

@@ -15,7 +15,7 @@ class Device extends Model
         'id','user_id',
         'name','location','floor','utility',
         'category_id', 'serial', 'inDashboard',
-        'type'
+        'type', "lat", "lng"
     ];
 
     protected $dates = [
