@@ -22,6 +22,8 @@ class ApiController extends Controller
                 $reading->datetime = now()->parse($req->datetime)->toDateTimeString();
                 $reading->total = $req->wh_total;
                 $reading->save();
+
+                return ["message" => "OK, " . now()->format('Y-m-d')];
             }
         } catch (Exception $e) {
             return response()->json([
