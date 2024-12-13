@@ -28,6 +28,12 @@ class ApiController extends Controller
                     'message' => 'Success'
                 ], JsonResponse::HTTP_OK);
             }
+            else{
+                return response()->json([
+                    'seriak' => $device->id,
+                    'message' => 'Device serial not detected.'
+                ], JsonResponse::HTTP_OK);
+            }
         } catch (Exception $e) {
             return response()->json([
                 'data' => [],
