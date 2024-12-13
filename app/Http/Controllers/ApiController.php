@@ -13,8 +13,6 @@ class ApiController extends Controller
 {
     public function receive(Request $req)
     {
-        $reading = null;
-        
         try{
             $device = Device::where('serial', $req->meter_id)->first();
 
@@ -25,7 +23,10 @@ class ApiController extends Controller
                 $reading->total = $req->wh_total;
                 $reading->save();
 
-                return ["message" => "OK, " . now()->format('Y-m-d')];
+                return response()->json([
+                    'data' => $reading,
+                    'message' => 'Success'
+                ], JsonResponse::HTTP_OK);
             }
         } catch (Exception $e) {
             return response()->json([
@@ -33,11 +34,6 @@ class ApiController extends Controller
                 'message' => $e->getMessage()
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-        
-        return response()->json([
-            'data' => $reading,
-            'message' => 'Success'
-        ], JsonResponse::HTTP_OK);
     }
 
     public function getToken(Request $request){
