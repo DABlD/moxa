@@ -13,6 +13,8 @@ class ApiController extends Controller
 {
     public function receive(Request $req)
     {
+        $reading = null;
+        
         try{
             $device = Device::where('serial', $req->meter_id)->first();
 
