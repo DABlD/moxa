@@ -20,7 +20,7 @@ class ApiController extends Controller
                 $reading = new Reading();
                 $reading->moxa_id = $device->id;
                 $reading->datetime = now()->parse($req->datetime)->toDateTimeString();
-                $reading->total = $req->wh_total;
+                $reading->total = $req->wh_total ?? $req->payload;
                 $reading->save();
 
                 return response()->json([
