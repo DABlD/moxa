@@ -10,7 +10,11 @@ trait BillingAttribute{
 			return 
 			"<a class='btn btn-success' data-toggle='tooltip' title='Input Payment' onClick='pay($id)'>" .
 		        "<i class='fas fa-hand-holding-dollar'></i>" .
-		    "</a>&nbsp;";
+		    "</a>&nbsp;" .
+			"<a class='btn btn-warning' data-toggle='tooltip' title='Send Billing' onClick='sendBilling($id)'>" .
+		        "<i class='fas fa-envelope'></i>" .
+		    "</a>&nbsp;"
+		    ;
 		}
 		else{
 			return 

@@ -307,5 +307,24 @@
 				}
 			})
 		}
+
+		function sendBilling(id){
+			swal.showLoading();
+			$.ajax({
+				url: "{{ route('billing.sendBilling') }}",
+				data: {
+					id: id
+				},
+				success: result => {
+					setTimeout(() => {
+						ss("Successfully sent billing");
+					}, 2000);
+				},
+				error: result => {
+					console.log(result);
+					se("Error sending email.");
+				}
+			})
+		}
 	</script>
 @endpush
