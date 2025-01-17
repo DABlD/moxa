@@ -9,7 +9,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
             <td align="center" style="padding: 20px;">
-                <img src="{{ asset($theme['logo_img']) }}">
+                <img src="{{ env("APP_URL") . $theme['logo_img'] }}">
                 <table class="content" width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc;">
                     <!-- Header -->
                     <tr>
