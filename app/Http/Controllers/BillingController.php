@@ -120,7 +120,7 @@ class BillingController extends Controller
 
     public function sendBilling(Request $req){
         $billing = Billing::find($req->id);
-        $billing->load('device.user');
+        $billing->load('device');
 
         require base_path("vendor/autoload.php");
 
@@ -137,7 +137,7 @@ class BillingController extends Controller
             $mail->Port = 587;                          // port - 587/465
 
             $mail->setFrom('info@onehealthnetwork.com.ph', 'AMR NO REPLY');
-            $mail->addAddress($billing->device->user->email);
+            $mail->addAddress($billing->user->email);
             // $mail->addAddress("darm.111220@gmail.com");
 
             $mail->isHTML(true);                // Set email content format to HTML
