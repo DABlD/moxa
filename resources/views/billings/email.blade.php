@@ -50,7 +50,7 @@
                     <!-- Footer -->
                     <tr>
                         <td class="footer" style="background-color: #333333; padding: 40px; text-align: center; color: white; font-size: 14px;">
-                        Copyright &copy; {{ now()->format("Y") }} | AMR
+                        Copyright &copy; {{ now()->format("Y") }} | Moresco
                         </td>
                     </tr>
                 </table>

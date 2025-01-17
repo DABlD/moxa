@@ -142,7 +142,7 @@ class BillingController extends Controller
 
             $mail->isHTML(true);                // Set email content format to HTML
 
-            $mail->Subject = "AMR Billing";
+            $mail->Subject = "Moresco Billing";
 
             $mail->Body    = view('billings.email', ['billing' => $billing])->render();
 
