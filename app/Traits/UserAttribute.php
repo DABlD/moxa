@@ -17,6 +17,10 @@ trait UserAttribute{
 					        "<i class='fas fa-search'></i>" .
 					    "</a>&nbsp;";
 
+			$action .= 	"<a class='btn btn-warning' data-toggle='tooltip' title='Edit' onClick='edit($id)'>" .
+					        "<i class='fas fa-pencil'></i>" .
+					    "</a>&nbsp;";
+
 			if($this->role == "Admin"){
 				$action .= 	"<a class='btn btn-primary' data-toggle='tooltip' title='Themes' onClick='themes($id)'>" .
 						        "<i class='fas fa-palette'></i>" .

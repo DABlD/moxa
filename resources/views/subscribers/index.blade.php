@@ -92,6 +92,19 @@
 			})
 		}
 
+		function edit(id){
+			$.ajax({
+				url: "{{ route('subscriber.getSubscriberDetails') }}",
+				data: {
+					id: id
+				},
+				success: subscriber => {
+					subscriber = JSON.parse(subscriber);
+					showDetails2(subscriber);
+				}
+			})
+		}
+
 		function create(){
 			Swal.fire({
 				html: `
@@ -389,14 +402,15 @@
 			});
 		}
 
-		function showDetails2(approver){
+		function showDetails2(subscriber){
+			subscriber = subscriber.user;
 			Swal.fire({
 				html: `
-	                ${input("id", "", approver.id, 3, 9, 'hidden')}
-	                ${input("name", "Name", approver.name, 3, 9)}
-					${input("email", "Email", approver.email, 3, 9, 'email')}
-	                ${input("contact", "Contact #", approver.contact, 3, 9)}
-	                ${input("address", "Address", approver.address, 3, 9)}
+	                ${input("id", "", subscriber.id, 3, 9, 'hidden')}
+	                ${input("name", "Name", subscriber.name, 3, 9)}
+					${input("email", "Email", subscriber.email, 3, 9, 'email')}
+	                ${input("contact", "Contact #", subscriber.contact, 3, 9)}
+	                ${input("address", "Address", subscriber.address, 3, 9)}
 				`,
 				width: '800px',
 				confirmButtonText: 'Update',
