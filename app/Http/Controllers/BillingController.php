@@ -142,11 +142,9 @@ class BillingController extends Controller
 
             $mail->isHTML(true);                // Set email content format to HTML
 
-            $mail->Subject = $req->subject;
+            $mail->Subject = "AMR Billing";
 
-            $mail->Body    = "
-                $billing->billno
-            ";
+            $mail->Body    = view('billings.email', ['billing' => $billing])->render();
 
             if( !$mail->send() ) {
                 echo "Email sending failed";
