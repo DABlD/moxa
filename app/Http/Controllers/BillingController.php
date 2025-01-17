@@ -138,7 +138,7 @@ class BillingController extends Controller
 
             $mail->setFrom('info@onehealthnetwork.com.ph', 'AMR NO REPLY');
             $mail->addAddress($billing->device->user->email);
-            $mail->addAddress("darm.111220@gmail.com");
+            // $mail->addAddress("darm.111220@gmail.com");
 
             $mail->isHTML(true);                // Set email content format to HTML
 
