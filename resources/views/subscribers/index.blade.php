@@ -405,6 +405,7 @@
 		function showDetails2(subscriber){
 			subscriber = subscriber.user;
 			Swal.fire({
+				title: "Edit User Info",
 				html: `
 	                ${input("id", "", subscriber.id, 3, 9, 'hidden')}
 	                ${input("name", "Name", subscriber.name, 3, 9)}
