@@ -10,7 +10,7 @@
         <tr>
             <td align="center" style="padding: 20px;">
                 <img src="{{ env("APP_URL") . $theme['logo_img'] }}" style="width: 100px;">
-                <table class="content" width="600" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc;">
+                <table class="content" width="{{ $width }}" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #cccccc;">
                     <!-- Header -->
                     <tr>
                         <td class="header" style="background-color: #345C72; padding: 40px; text-align: center; color: white; font-size: 24px;">
@@ -21,7 +21,7 @@
                     <!-- Body -->
                     <tr>
                         <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
-                        You have a bill amounting ₱{{ number_format($billing->total, 2) }} <br>
+                        You have a bill amounting <span style="font-family: DejaVu Sans; sans-serif;">₱</span>{{ number_format($billing->total, 2) }} <br>
                         Billing cycle: {{ $billing->from->format("F j, Y") }} - {{ $billing->to->format("F j, Y") }} <br>
                         Consumption: {{ $billing->consumption }} {{ $billing->device->category->operator }}
                         {{-- <br><br>

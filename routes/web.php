@@ -169,6 +169,7 @@ Route::group([
                 Route::post("pay/", ucfirst($cname) . "Controller@pay")->name('pay');
                 Route::get("createBillings/", ucfirst($cname) . "Controller@createBillings")->name('createBillings');
                 Route::get("sendBilling/", ucfirst($cname) . "Controller@sendBilling")->name('sendBilling');
+                Route::get("generatePDF/", ucfirst($cname) . "Controller@generatePDF")->name('generatePDF');
             }
         );
 

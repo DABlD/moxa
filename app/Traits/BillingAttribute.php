@@ -13,6 +13,9 @@ trait BillingAttribute{
 		    "</a>&nbsp;" .
 			"<a class='btn btn-warning' data-toggle='tooltip' title='Send Billing' onClick='sendBilling($id)'>" .
 		        "<i class='fas fa-envelope'></i>" .
+		    "</a>&nbsp;" .
+			"<a class='btn btn-primary' data-toggle='tooltip' title='Generate PDF' onClick='generatePDF($id)'>" .
+		        "<i class='fas fa-file-pdf'></i>" .
 		    "</a>&nbsp;"
 		    ;
 		}

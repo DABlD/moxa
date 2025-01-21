@@ -9,6 +9,11 @@ use DB;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// PDF CLASSES
+use App\Exports\PDFExport;
+use PDF;
+use File;
+
 class BillingController extends Controller
 {
     public function __construct(){
@@ -144,7 +149,7 @@ class BillingController extends Controller
 
             $mail->Subject = "Moresco Billing";
 
-            $mail->Body    = view('billings.email', ['billing' => $billing])->render();
+            $mail->Body    = view('billings.email', ['billing' => $billing, 'width' => "600px"])->render();
 
             if( !$mail->send() ) {
                 echo "Email sending failed";
@@ -163,6 +168,16 @@ class BillingController extends Controller
             dd($e->errorMessage());
             echo "Error. Email not sent";
         }
+    }
+
+    public function generatePDF(Request $req){
+        $billing = Billing::find($req->id);
+        $billing->load('device');
+
+        $fn = "RNB-" . $billing->billno;
+
+        $pdf = new PDFExport($billing, $fn, "billing");
+        return $pdf->billing();
     }
 
     public function pay(Request $req){

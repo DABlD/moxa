@@ -326,5 +326,14 @@
 				}
 			})
 		}
+
+		function generatePDF(id){
+			swal.showLoading();
+
+			let data = {};
+    		data.id = id;
+
+        	window.location.href = `{{ route('billing.generatePDF') }}?` + $.param(data);
+		}
 	</script>
 @endpush
