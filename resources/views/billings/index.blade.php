@@ -334,6 +334,9 @@
     		data.id = id;
 
         	window.location.href = `{{ route('billing.generatePDF') }}?` + $.param(data);
+        	setTimeout(() => {
+        		swal.close();
+        	}, 1000);
 		}
 	</script>
 @endpush
